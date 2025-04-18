@@ -1,7 +1,6 @@
 package com.example.part35teammonew.domain.interest.entity;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
