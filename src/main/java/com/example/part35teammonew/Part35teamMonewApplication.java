@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Part35teamMonewApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Part35teamMonewApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(Part35teamMonewApplication.class, args);
+  }
+	
 }
