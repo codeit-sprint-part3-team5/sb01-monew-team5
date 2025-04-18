@@ -1,13 +1,13 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/monew_postgres
+    username: postgres
+    password: 1234
     driver-class-name: org.postgresql.Driver
 
   data:
     mongodb:
-      uri: mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}
-logging:
-  level:
-    root: debug
+      uri: mongodb://localhost:27017/monew_mongo
+#logging:
+#  level:
+#    root: debug
