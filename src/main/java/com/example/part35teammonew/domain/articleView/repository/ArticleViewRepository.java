@@ -1,6 +1,6 @@
-package com.example.part35teammonew.domain.ArticleView.repository;
+package com.example.part35teammonew.domain.articleView.repository;
 
-import com.example.part35teammonew.domain.ArticleView.entity.ArticleView;
+import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import java.util.Optional;
 import java.util.UUID;
 import org.bson.types.ObjectId;

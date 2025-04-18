@@ -1,9 +1,9 @@
-package com.example.part35teammonew.domain.UserActivity.entity;
+package com.example.part35teammonew.domain.userActivity.entity;
 
-import com.example.part35teammonew.domain.UserActivity.Dto.ArticleView;
-import com.example.part35teammonew.domain.UserActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.UserActivity.Dto.LikeComentView;
-import com.example.part35teammonew.domain.UserActivity.Dto.RecentComentView;
+import com.example.part35teammonew.domain.userActivity.Dto.ArticleView;
+import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.Dto.LikeComentView;
+import com.example.part35teammonew.domain.userActivity.Dto.RecentComentView;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;

@@ -1,6 +1,6 @@
-package com.example.part35teammonew.domain.UserActivity.repository;
+package com.example.part35teammonew.domain.userActivity.repository;
 
-import com.example.part35teammonew.domain.UserActivity.entity.UserActivity;
+import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import java.util.Optional;
 import java.util.UUID;
 import org.bson.types.ObjectId;

@@ -1,4 +1,4 @@
-package com.example.part35teammonew.domain.UserActivity.Dto;
+package com.example.part35teammonew.domain.userActivity.Dto;
 
 import java.math.BigInteger;
 import java.time.Instant;

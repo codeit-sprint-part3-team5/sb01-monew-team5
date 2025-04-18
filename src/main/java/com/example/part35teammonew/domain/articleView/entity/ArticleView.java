@@ -1,4 +1,4 @@
-package com.example.part35teammonew.domain.ArticleView.entity;
+package com.example.part35teammonew.domain.articleView.entity;
 
 import java.util.HashSet;
 import java.util.Set;
