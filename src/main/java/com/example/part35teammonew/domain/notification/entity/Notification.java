@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "notification")
 @Getter
-@Builder
 public class Notification {
 
   @Id

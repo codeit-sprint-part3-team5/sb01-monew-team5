@@ -9,7 +9,6 @@ import lombok.Getter;
 import org.bson.types.ObjectId;
 
 @Getter
-@Builder
 public class Notice {
 
   @Id
