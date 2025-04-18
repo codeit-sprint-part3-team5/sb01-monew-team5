@@ -22,7 +22,7 @@ public class NoticeRepositoryImpl implements NoticeRepository {
   @Override
   public void markNoticeAsRead(UUID userId, ObjectId noticeId) {
     Query query = new Query(Criteria.where("_id").is(userId)
-        .and("noticeList.id").is(noticeId));
+        .and("noticeList._id").is(noticeId));
 
     Update update = new Update()
         .set("noticeList.$.confirmed", true)

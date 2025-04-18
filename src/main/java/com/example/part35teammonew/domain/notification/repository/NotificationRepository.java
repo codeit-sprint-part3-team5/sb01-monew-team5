@@ -11,7 +11,5 @@ public interface NotificationRepository extends MongoRepository<Notification, Ob
 
   List<Notification> findByUserId(UUID userId);
 
-  List<Notification> findByConfirmedFalseAndUserId(UUID userId);
-
 
 }

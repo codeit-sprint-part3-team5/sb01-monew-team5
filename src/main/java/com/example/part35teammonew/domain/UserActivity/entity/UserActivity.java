@@ -1,9 +1,9 @@
 package com.example.part35teammonew.domain.UserActivity.entity;
 
-import com.example.part35teammonew.domain.UserActivity.Dto.ArticleDto;
-import com.example.part35teammonew.domain.UserActivity.Dto.InterestDTO;
-import com.example.part35teammonew.domain.UserActivity.Dto.LikeComentDto;
-import com.example.part35teammonew.domain.UserActivity.Dto.RecentComent;
+import com.example.part35teammonew.domain.UserActivity.Dto.ArticleView;
+import com.example.part35teammonew.domain.UserActivity.Dto.InterestView;
+import com.example.part35teammonew.domain.UserActivity.Dto.LikeComentView;
+import com.example.part35teammonew.domain.UserActivity.Dto.RecentComentView;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -26,10 +26,10 @@ public class UserActivity {
   private String nickName;
   private String email;
   private Instant createdAt;
-  private Set<InterestDTO> subscriptions;
-  public Queue<RecentComent> recentcomments;
-  public Queue<LikeComentDto> likeComment;
-  public Queue<ArticleDto> articleViews;
+  private Set<InterestView> subscriptions;
+  public Queue<RecentComentView> recentcomments;
+  public Queue<LikeComentView> likeComment;
+  public Queue<ArticleView> articleViews;
 
   @Builder
   private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {
@@ -53,7 +53,7 @@ public class UserActivity {
         .build();
   }
 
-  public void updateSubscriptions(InterestDTO interest) {
+  public void updateSubscriptions(InterestView interest) {
     if (!subscriptions.contains(interest)) {
       subscriptions.add(interest);
     } else {
@@ -61,21 +61,21 @@ public class UserActivity {
     }
   }
 
-  public void updateComments(RecentComent coment) {
+  public void updateComments(RecentComentView comment) {
     if (recentcomments.size() >= 10) {
       recentcomments.poll();
     }
-    recentcomments.add(coment);
+    recentcomments.add(comment);
   }
 
-  public void updateCommentLikes(LikeComentDto coment) {
+  public void updateCommentLikes(LikeComentView comment) {
     if (likeComment.size() >= 10) {
       likeComment.poll();
     }
-    likeComment.add(coment);
+    likeComment.add(comment);
   }
 
-  public void updateArticleViews(ArticleDto article) {
+  public void updateArticleViews(ArticleView article) {
     if (articleViews.size() >= 10) {
       articleViews.poll();
     }

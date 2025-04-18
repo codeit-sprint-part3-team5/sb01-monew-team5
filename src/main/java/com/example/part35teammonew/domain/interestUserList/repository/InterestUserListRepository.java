@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.interestUserList.repository;
 
-import com.example.part35teammonew.domain.interestUserList.emtity.InterestUserList;
+import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import java.util.Optional;
 import java.util.UUID;
 import org.bson.types.ObjectId;

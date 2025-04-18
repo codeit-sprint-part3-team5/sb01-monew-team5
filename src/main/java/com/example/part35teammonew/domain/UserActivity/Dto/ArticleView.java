@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.UserActivity.Dto;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Builder;
@@ -7,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ArticleDto {
+public class ArticleView {
 
   private UUID id;
   private UUID viewedBy;
@@ -21,6 +22,6 @@ public class ArticleDto {
   private Instant articlePublishedDate;
   private String articleSummary;
 
-  private long articleCommentCount;
-  private long articleViewCount;
+  private BigInteger articleCommentCount;
+  private BigInteger articleViewCount;
 }

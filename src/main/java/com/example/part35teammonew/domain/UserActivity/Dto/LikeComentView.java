@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.UserActivity.Dto;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.Builder;
@@ -7,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class LikeComentDto {
+public class LikeComentView {
 
   private UUID id;
   private Instant createdAt;
@@ -20,6 +21,6 @@ public class LikeComentDto {
   private String commentUserNickname;
 
   private String commentContent;
-  private long commentLikeCount;
+  private BigInteger commentLikeCount;
   private Instant commentCreatedAt;
 }

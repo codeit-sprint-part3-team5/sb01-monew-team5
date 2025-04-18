@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.ArticleView.entity;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -19,14 +18,12 @@ public class ArticleView {
 
   private final UUID articleId;
   private Set<UUID> readUserIds;
-  private BigInteger count;
 
 
   @Builder
   private ArticleView(UUID articleId) {
     this.articleId = articleId;
     this.readUserIds = new HashSet<>();
-    this.count = new BigInteger("0");
   }
 
   public static ArticleView setUpNewArticleView(UUID articleId) {
@@ -37,7 +34,6 @@ public class ArticleView {
 
   public void addNewReader(UUID readerId) {
     if (!readUserIds.contains(readerId)) {
-      this.count = count.add(new BigInteger("1"));
       readUserIds.add(readerId);
     }
   }

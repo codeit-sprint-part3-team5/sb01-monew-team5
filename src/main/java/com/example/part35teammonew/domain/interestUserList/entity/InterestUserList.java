@@ -1,6 +1,5 @@
-package com.example.part35teammonew.domain.interestUserList.emtity;
+package com.example.part35teammonew.domain.interestUserList.entity;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -17,14 +16,12 @@ public class InterestUserList {
   @Id
   private ObjectId id;
   private UUID interest;
-  private Set<UUID> chooseUser;
-  private BigInteger count;
+  private Set<UUID> subscribedUser;
 
   @Builder
   private InterestUserList(UUID interest) {
     this.interest = interest;
-    this.chooseUser = new HashSet<>();
-    this.count = new BigInteger("0");
+    this.subscribedUser = new HashSet<>();
   }
 
   public static InterestUserList setUpNewInterestUserList(UUID interest) {
@@ -34,20 +31,18 @@ public class InterestUserList {
   }
 
   public void addUser(UUID readerId) {
-    if (!chooseUser.contains(readerId)) {
-      this.count = count.add(new BigInteger("1"));
-      chooseUser.add(readerId);
-    }
+    subscribedUser.add(readerId);
   }
 
   public void subtractUser(UUID readerId) {
-    if (chooseUser.contains(readerId)) {
-      this.count = count.subtract(new BigInteger("1"));
-      chooseUser.remove(readerId);
-    }
+    subscribedUser.remove(readerId);
   }
 
   public boolean findUser(UUID readerId) {
-    return chooseUser.contains(readerId);
+    return subscribedUser.contains(readerId);
+  }
+
+  public long getUserCount() {
+    return (long) subscribedUser.size();
   }
 }

@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.notification.entity;
 
-import com.example.part35teammonew.domain.notification.Enum.NotificationType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +18,7 @@ public class Notification {
   private List<Notice> noticeList;
 
   @Builder
-  private Notification(UUID userId, String content, NotificationType type, UUID resourceId) {
+  private Notification(UUID userId) {
     this.userId = userId;
     noticeList = new ArrayList<>();
   }
