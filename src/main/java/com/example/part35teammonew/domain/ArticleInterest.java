@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain;
 
+import com.example.part35teammonew.domain.article.entity.Article;
 import java.util.UUID;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;

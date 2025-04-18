@@ -1,6 +1,8 @@
 package com.example.part35teammonew.domain.comment.entity;
 
 
+import com.example.part35teammonew.domain.article.entity.Article;
+import com.example.part35teammonew.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -48,13 +50,13 @@ public class Comment {
   @Column(name = "is_deleted", nullable = false)
   private boolean isDeleted; //논리삭제여부
 
-/*  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "article_id", nullable = false)
   private Article article; //연관된 기사 아이디 FK
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user; //댓글 작성자 아이디 FK*/
+  private User user; //댓글 작성자 아이디 FK
 
   @Column(name = "user_nickname", nullable = false)
   private String userNickname; //댓글 작성자 닉네임

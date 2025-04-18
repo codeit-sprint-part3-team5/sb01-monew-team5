@@ -1,5 +1,7 @@
 package com.example.part35teammonew.domain.comment.entity;
 
+import com.example.part35teammonew.domain.article.entity.Article;
+import com.example.part35teammonew.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,9 +41,9 @@ public class CommentLike {
   @Id @GeneratedValue
   private UUID id; //댓글 좋아요의 고유 아이디
 
-/*  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "article_id", nullable = false)
-  private Article article; //연관된 게시글 아이디*/
+  private Article article; //연관된 게시글 아이디
 
   @Column(name = "created_at", nullable = false)
   private ZonedDateTime createdAt; //좋아요 생성 시간
@@ -50,12 +52,11 @@ public class CommentLike {
   @JoinColumn(name = "comment_id", nullable = false)
   private Comment comment; //연관된 댓글 아이디
 
-/*  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user; //좋아요를 누른 사용자아이디 (한 댓글에 여러 사람이 좋아요를 누를 수 있기에)*/
+  private User user; //좋아요를 누른 사용자아이디 (한 댓글에 여러 사람이 좋아요를 누를 수 있기에)
 
 
-    /*
     public static CommentLike create(Comment comment, User user) {
         return CommentLike.builder()
             .comment(comment)
@@ -63,6 +64,5 @@ public class CommentLike {
             .createdAt(ZonedDateTime.now())
             .build();
     }
-    */
 
 }
