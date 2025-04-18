@@ -2,7 +2,7 @@ package com.example.part35teammonew.domain.article.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
@@ -21,13 +21,15 @@ public class ArticleCreateDto {
   private String source;
 
   @NotNull
-  private Instant date;
+  private LocalDateTime date;
 
   // 기본 생성자 금지
-  private ArticleCreateDto() {}
+  private ArticleCreateDto() {
+  }
 
   // 생성자
-  public ArticleCreateDto(String title, String summary, String link, String source, Instant date) {
+  public ArticleCreateDto(String title, String summary, String link, String source,
+      LocalDateTime date) {
     this.title = title;
     this.summary = summary;
     this.link = link;
