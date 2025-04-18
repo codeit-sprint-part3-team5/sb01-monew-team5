@@ -26,4 +26,8 @@ public class ArticleInterest {
 	@JoinColumn(name = "interest_id", nullable = false)
 	private Interest interest;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "article_id", nullable = false)
+	private Article article;
+
 }
