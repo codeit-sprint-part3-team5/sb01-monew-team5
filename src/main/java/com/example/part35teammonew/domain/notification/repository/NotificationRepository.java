@@ -6,7 +6,8 @@ import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface NotificationRepository extends MongoRepository<Notification, ObjectId> {
+public interface NotificationRepository extends MongoRepository<Notification, ObjectId>,
+    NoticeRepository {
 
   List<Notification> findByUserId(UUID userId);
 

@@ -1,9 +1,14 @@
 package com.example.part35teammonew.domain.UserActivity.entity;
 
+import com.example.part35teammonew.domain.UserActivity.Dto.ArticleDto;
+import com.example.part35teammonew.domain.UserActivity.Dto.InterestDTO;
+import com.example.part35teammonew.domain.UserActivity.Dto.LikeComentDto;
+import com.example.part35teammonew.domain.UserActivity.Dto.RecentComent;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,10 +26,10 @@ public class UserActivity {
   private String nickName;
   private String email;
   private Instant createdAt;
-  private Set<Interest> subscriptions;
-  public Queue<Coment> comments;
-  public Queue<Coment> commentLikes;
-  public Queue<Article> articleViews;
+  private Set<InterestDTO> subscriptions;
+  public Queue<RecentComent> recentcomments;
+  public Queue<LikeComentDto> likeComment;
+  public Queue<ArticleDto> articleViews;
 
   @Builder
   private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {
@@ -33,8 +38,8 @@ public class UserActivity {
     this.email = email;
     this.createdAt = createdAt;
     this.subscriptions = new HashSet<>();
-    this.comments = new LinkedList<>();
-    this.commentLikes = new LinkedList<>();
+    this.recentcomments = new LinkedList<>();
+    this.likeComment = new LinkedList<>();
     this.articleViews = new LinkedList<>();
   }
 
@@ -48,33 +53,33 @@ public class UserActivity {
         .build();
   }
 
-  public void updateSubscriptions(Interest interest) {
+  public void updateSubscriptions(InterestDTO interest) {
     if (!subscriptions.contains(interest)) {
-      subscriptions.add(readerId);
+      subscriptions.add(interest);
     } else {
       //예외처리
     }
   }
 
-  public void updateComments(Coment coment) {
-    if (comments.size() >= 10) {
-      comments.poll();
+  public void updateComments(RecentComent coment) {
+    if (recentcomments.size() >= 10) {
+      recentcomments.poll();
     }
-    comments.add(comment);
+    recentcomments.add(coment);
   }
 
-  public void updateCommentLikes(Coment coment) {
-    if (commentLikes.size() >= 10) {
-      commentLikes.poll();
+  public void updateCommentLikes(LikeComentDto coment) {
+    if (likeComment.size() >= 10) {
+      likeComment.poll();
     }
-    commentLikes.add(comment);
+    likeComment.add(coment);
   }
 
-  public void updateArticleViews(Coment coment) {
+  public void updateArticleViews(ArticleDto article) {
     if (articleViews.size() >= 10) {
       articleViews.poll();
     }
-    articleViews.add(comment);
+    articleViews.add(article);
   }
 
 }
