@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Notification {
 
   @Id
+  private ObjectId id;
   private final UUID userId;
   private List<Notice> noticeList;
 

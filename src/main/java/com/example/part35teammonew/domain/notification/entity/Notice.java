@@ -23,7 +23,7 @@ public class Notice {
   @Builder
   private Notice(String content, NotificationType type, UUID resourceId) {
     this.createdAt = Instant.now();
-    this.updateAt = Instant.MIN;
+    this.updateAt = Instant.EPOCH;
     this.confirmed = false;
     this.content = content;
     this.type = type;
