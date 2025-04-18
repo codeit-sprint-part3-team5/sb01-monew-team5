@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,12 +49,12 @@ public class Article {
   private String source;
 
   @NotNull
-  private Instant date;
+  private LocalDateTime date;
 
   @NotNull
-  private Instant createdAt;
+  private LocalDateTime createdAt;
 
-  private Instant deletedAt;
+  private LocalDateTime deletedAt;
 
   @NotNull
   private int commentCount = 0;
@@ -66,16 +66,21 @@ public class Article {
   private List<CommentLike> commentLikes = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "article_interest", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
+  @JoinTable(name = "article_interests", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
   private List<Interest> interests = new ArrayList<>();
 
   public Article(ArticleCreateDto articleCreateDto) {
     this.title = articleCreateDto.getTitle();
-    this.summary = articleCreateDto.getSummary();;
-    this.link = articleCreateDto.getTitle();;
-    this.source = articleCreateDto.getSource();;
-    this.date = articleCreateDto.getDate();;
-    this.createdAt = Instant.now();;
+    this.summary = articleCreateDto.getSummary();
+    ;
+    this.link = articleCreateDto.getTitle();
+    ;
+    this.source = articleCreateDto.getSource();
+    ;
+    this.date = articleCreateDto.getDate();
+    ;
+    this.createdAt = LocalDateTime.now();
+    ;
     this.commentCount = 0;
   }
 }
