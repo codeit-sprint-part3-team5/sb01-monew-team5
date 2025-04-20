@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.article.entity;
 
-import com.example.part35teammonew.domain.article.dto.ArticleCreateDto;
+import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.comment.entity.CommentLike;
 import com.example.part35teammonew.domain.interest.entity.Interest;
@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -49,12 +49,12 @@ public class Article {
   private String source;
 
   @NotNull
-  private Instant date;
+  private LocalDateTime date;
 
   @NotNull
-  private Instant createdAt;
+  private LocalDateTime createdAt;
 
-  private Instant deletedAt;
+  private LocalDateTime deletedAt;
 
   @NotNull
   private int commentCount = 0;
@@ -66,16 +66,42 @@ public class Article {
   private List<CommentLike> commentLikes = new ArrayList<>();
 
   @ManyToMany
-  @JoinTable(name = "article_interest", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
+  @JoinTable(name = "article_interests", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
   private List<Interest> interests = new ArrayList<>();
 
-  public Article(ArticleCreateDto articleCreateDto) {
-    this.title = articleCreateDto.getTitle();
-    this.summary = articleCreateDto.getSummary();;
-    this.link = articleCreateDto.getTitle();;
-    this.source = articleCreateDto.getSource();;
-    this.date = articleCreateDto.getDate();;
-    this.createdAt = Instant.now();;
+  public Article(ArticleBaseDto articleBaseDto) {
+    this.title = articleBaseDto.getTitle();
+    this.summary = articleBaseDto.getSummary();
+    this.link = articleBaseDto.getLink();
+    this.source = articleBaseDto.getSource();
+    this.date = articleBaseDto.getDate();
+    this.createdAt = LocalDateTime.now();
     this.commentCount = 0;
+  }
+  public Article update(ArticleBaseDto articleUpdateDto) {
+    if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
+    if(articleUpdateDto.getSummary() != null) { this.summary = articleUpdateDto.getSummary(); }
+    if(articleUpdateDto.getLink() != null) { this.link = articleUpdateDto.getLink(); }
+    if(articleUpdateDto.getSource() != null) { this.source = articleUpdateDto.getSource(); }
+    if(articleUpdateDto.getDate() != null) { this.date = articleUpdateDto.getDate(); }
+    return this;
+  }
+
+  @Override
+  public String toString() {
+    return "Article{" +
+        "id=" + id +
+        ", title='" + title + '\'' +
+        ", summary='" + summary + '\'' +
+        ", link='" + link + '\'' +
+        ", source='" + source + '\'' +
+        ", date=" + date +
+        ", createdAt=" + createdAt +
+        ", deletedAt=" + deletedAt +
+        ", commentCount=" + commentCount +
+        ", comments=" + comments +
+        ", commentLikes=" + commentLikes +
+        ", interests=" + interests +
+        '}';
   }
 }

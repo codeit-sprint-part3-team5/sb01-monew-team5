@@ -11,20 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
-//import com.example.part35teammonew.domain.user.entity.User;
-//import com.example.part35teammonew.domain.article.entity.Article;
 
 @Entity
-@Table (
+@Table(
     name = "comment_like",
     uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "comment_id"})
@@ -38,7 +35,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CommentLike {
 
-  @Id @GeneratedValue
+  @Id
+  @GeneratedValue
   private UUID id; //댓글 좋아요의 고유 아이디
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -46,7 +44,7 @@ public class CommentLike {
   private Article article; //연관된 게시글 아이디
 
   @Column(name = "created_at", nullable = false)
-  private ZonedDateTime createdAt; //좋아요 생성 시간
+  private LocalDateTime createdAt; //좋아요 생성 시간
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "comment_id", nullable = false)
@@ -54,15 +52,15 @@ public class CommentLike {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user; //좋아요를 누른 사용자아이디 (한 댓글에 여러 사람이 좋아요를 누를 수 있기에)
+  private User user; //좋아요를 누른 사용자아이디 (한 댓글에 여러 사람이 좋아요를 누를 수 있기에)*/
 
 
-    public static CommentLike create(Comment comment, User user) {
-        return CommentLike.builder()
-            .comment(comment)
-            .user(user)
-            .createdAt(ZonedDateTime.now())
-            .build();
-    }
+  public static CommentLike create(Comment comment, User user) {
+    return CommentLike.builder()
+        .comment(comment)
+        .user(user)
+        .createdAt(LocalDateTime.now())
+        .build();
+  }
 
 }
