@@ -15,7 +15,7 @@ public class ArticleSchedule {
   private final JobLauncher jobLauncher;
   private final Job articleJob;
 
-  @Scheduled(cron = "0 0 * * * *") //매 시
+  @Scheduled(cron = "0 * * * * *") //매 시
   public void runJob() throws Exception {
     JobParameters jobParameters = new JobParametersBuilder().addLong("time",
             System.currentTimeMillis()) // 중복 방지용

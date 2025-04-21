@@ -5,6 +5,9 @@ import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import jakarta.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,7 +36,6 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     Article article = new Article(dto);
-    System.out.println("article = " + article);
     Article saved = articleRepository.save(article);
     return saved.getId();
   }
@@ -71,25 +73,43 @@ public class ArticleServiceImpl implements ArticleService {
 
   @Override
   public List<ArticleBaseDto> findBySourceAndDateAndInterests(String source, String date, String interests) {
-    List<Article> articles = articleRepository.findBySourceAndDateAndInterests(source, date, interests);
-    Set<String> requestedKeywords = new HashSet<>(Arrays.asList(interests.split(",")));
+    if( source == null && date == null ){
+      throw new IllegalArgumentException("소스와 날짜 중 하나의 파라미터는 채워져야 합니다.");
+    }
+    List<Article> articles = new ArrayList<>();
+    if( date == null ){
+      articles = articleRepository.findBySource(source);
+    }else if( source == null ){
+      LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      //System.out.println("findByDate_localDate = " + localDate);
+      articles = articleRepository.findByDate(localDate);
+    }else {
+      LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      //System.out.println("findBySourceAndDate_localDate = " + localDate);
+      articles = articleRepository.findBySourceAndDate(source, localDate);
+    }
+    //List<Article> articles = articleRepository.findBySourceAndDateAndInterests(source, localDate, interests);
 
-    List<ArticleBaseDto> result = new ArrayList<>();
-    Set<UUID> addedArticleIds = new HashSet<>(); // 중복 방지용
-
-    for (Article article : articles) {
-      for (Interest interest : article.getInterests()) {
-        for (String keyword : interest.getKeywords().split(",")) {
-          if (requestedKeywords.contains(keyword.trim()) && !addedArticleIds.contains(article.getId())) {
+    if(interests != null && !interests.isEmpty()){
+      //System.out.println("interests = " + interests);
+      Set<String> requestedKeywords = new HashSet<>();
+      if(interests.contains(",")){
+         requestedKeywords = new HashSet<>(Arrays.asList(interests.split(",")));
+      }else {
+        requestedKeywords.add(interests);
+      }
+      List<ArticleBaseDto> result = new ArrayList<>();
+      for (Article article : articles) {
+        for (String keyword : requestedKeywords) {
+          String articleTitle = article.getTitle().toLowerCase();
+          if(article.getTitle().contains(keyword) || articleTitle.contains(keyword)){
             result.add(new ArticleBaseDto(article));
-            addedArticleIds.add(article.getId()); // 중복 방지
-            break; // 키워드 하나라도 매칭되면 다음 기사로
           }
         }
       }
+      return result;
     }
-
-    return result;
+    return articles.stream().map(ArticleBaseDto::new).collect(Collectors.toList());
   }
 
 
