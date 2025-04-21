@@ -1,13 +1,13 @@
 package com.example.part35teammonew.domain.userActivity.entity;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleView;
+import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeComentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentComentView;
+import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Builder;
@@ -27,9 +27,9 @@ public class UserActivity {
   private String email;
   private Instant createdAt;
   private Set<InterestView> subscriptions;
-  public Queue<RecentComentView> recentcomments;
-  public Queue<LikeComentView> likeComment;
-  public Queue<ArticleView> articleViews;
+  public LinkedList<RecentComentView> recentcomments;
+  public LinkedList<LikeComentView> likeComment;
+  public LinkedList<ArticleInfoView> articleViews;
 
   @Builder
   private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {
@@ -57,7 +57,7 @@ public class UserActivity {
     if (!subscriptions.contains(interest)) {
       subscriptions.add(interest);
     } else {
-      //예외처리
+      throw new AlreadySubscribedException("이미 구독한 관심사입니다: " + interest.getInterestName());
     }
   }
 
@@ -75,7 +75,7 @@ public class UserActivity {
     likeComment.add(comment);
   }
 
-  public void updateArticleViews(ArticleView article) {
+  public void updateArticleViews(ArticleInfoView article) {
     if (articleViews.size() >= 10) {
       articleViews.poll();
     }

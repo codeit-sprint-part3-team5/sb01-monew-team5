@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ArticleView {
+public class ArticleInfoView {
 
   private UUID id;
   private UUID viewedBy;
