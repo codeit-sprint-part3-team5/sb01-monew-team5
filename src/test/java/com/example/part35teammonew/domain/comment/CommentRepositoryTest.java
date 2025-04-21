@@ -7,7 +7,7 @@ import com.example.part35teammonew.domain.article.repository.ArticleRepository;
 import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
 import com.example.part35teammonew.domain.user.entity.User;
-import com.example.part35teammonew.domain.user.repository.userRepostiory;
+import com.example.part35teammonew.domain.user.repository.UserRepository;
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,7 +40,7 @@ class CommentRepositoryTest {
   private ArticleRepository articleRepository;
 
   @Autowired
-  private userRepostiory userRepository;
+  private UserRepository userRepository;
 
   private User testUser;
   private Article testArticle;
