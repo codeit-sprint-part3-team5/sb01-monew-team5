@@ -7,7 +7,7 @@ public interface ArticleViewServiceInterface {
 
   ArticleViewDto createArticleView(UUID articleId);
 
-  boolean addReadUser(UUID userId);
+  boolean addReadUser(UUID articleId, UUID userId);
 
-  Long countReadUser();
+  Long countReadUser(UUID articleId);
 }

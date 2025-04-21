@@ -38,4 +38,8 @@ public class ArticleView {
     }
   }
 
+  public Long getCount() {
+    return (long) readUserIds.size();
+  }
+
 }
