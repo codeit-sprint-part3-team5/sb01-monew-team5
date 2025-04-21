@@ -1,4 +1,11 @@
 spring:
+  ### Spring batch를 위해 추가된 내용
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+  ###
   profiles:
     active: dev ## 설정
 

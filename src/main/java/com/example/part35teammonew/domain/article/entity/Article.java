@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.article.entity;
 
-import com.example.part35teammonew.domain.article.dto.ArticleCreateDto;
+import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.comment.entity.CommentLike;
 import com.example.part35teammonew.domain.interest.entity.Interest;
@@ -28,7 +28,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
-@Table(name = "article")
+@Table(name = "articles")
 public class Article {
 
   @Id
@@ -69,18 +69,39 @@ public class Article {
   @JoinTable(name = "article_interests", joinColumns = @JoinColumn(name = "article_id"), inverseJoinColumns = @JoinColumn(name = "interest_id"))
   private List<Interest> interests = new ArrayList<>();
 
-  public Article(ArticleCreateDto articleCreateDto) {
-    this.title = articleCreateDto.getTitle();
-    this.summary = articleCreateDto.getSummary();
-    ;
-    this.link = articleCreateDto.getTitle();
-    ;
-    this.source = articleCreateDto.getSource();
-    ;
-    this.date = articleCreateDto.getDate();
-    ;
+  public Article(ArticleBaseDto articleBaseDto) {
+    this.title = articleBaseDto.getTitle();
+    this.summary = articleBaseDto.getSummary();
+    this.link = articleBaseDto.getLink();
+    this.source = articleBaseDto.getSource();
+    this.date = articleBaseDto.getDate();
     this.createdAt = LocalDateTime.now();
-    ;
     this.commentCount = 0;
+  }
+  public Article update(ArticleBaseDto articleUpdateDto) {
+    if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
+    if(articleUpdateDto.getSummary() != null) { this.summary = articleUpdateDto.getSummary(); }
+    if(articleUpdateDto.getLink() != null) { this.link = articleUpdateDto.getLink(); }
+    if(articleUpdateDto.getSource() != null) { this.source = articleUpdateDto.getSource(); }
+    if(articleUpdateDto.getDate() != null) { this.date = articleUpdateDto.getDate(); }
+    return this;
+  }
+
+  @Override
+  public String toString() {
+    return "Article{" +
+        "id=" + id +
+        ", title='" + title + '\'' +
+        ", summary='" + summary + '\'' +
+        ", link='" + link + '\'' +
+        ", source='" + source + '\'' +
+        ", date=" + date +
+        ", createdAt=" + createdAt +
+        ", deletedAt=" + deletedAt +
+        ", commentCount=" + commentCount +
+        ", comments=" + comments +
+        ", commentLikes=" + commentLikes +
+        ", interests=" + interests +
+        '}';
   }
 }
