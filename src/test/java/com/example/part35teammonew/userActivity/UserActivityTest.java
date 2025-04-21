@@ -5,8 +5,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeComentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentComentView;
+import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
@@ -74,7 +74,7 @@ class UserActivityTest {
   @DisplayName("최신댓글 최대 갯수 10개 유지")
   void updateRecentComments_limitTo10() {
     for (int i = 0; i < 12; i++) {
-      RecentComentView comment = RecentComentView.builder()
+      RecentCommentView comment = RecentCommentView.builder()
           .id(UUID.randomUUID())
           .content("댓글" + i)
           .createdAt(Instant.now())
@@ -90,7 +90,7 @@ class UserActivityTest {
   @DisplayName("좋아요 댓글 10개 유지")
   void updateCommentLikes_limitTo10() {
     for (int i = 0; i < 20; i++) {
-      LikeComentView like = LikeComentView.builder()
+      LikeCommentView like = LikeCommentView.builder()
           .commentContent("댓글 " + i)
           .createdAt(Instant.now())
           .build();

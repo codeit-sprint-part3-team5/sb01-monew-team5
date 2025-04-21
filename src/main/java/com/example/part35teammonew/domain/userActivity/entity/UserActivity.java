@@ -2,8 +2,8 @@ package com.example.part35teammonew.domain.userActivity.entity;
 
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeComentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentComentView;
+import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
 import java.util.HashSet;
@@ -27,8 +27,8 @@ public class UserActivity {
   private String email;
   private Instant createdAt;
   private Set<InterestView> subscriptions;
-  public LinkedList<RecentComentView> recentcomments;
-  public LinkedList<LikeComentView> likeComment;
+  public LinkedList<RecentCommentView> recentcomments;
+  public LinkedList<LikeCommentView> likeComment;
   public LinkedList<ArticleInfoView> articleViews;
 
   @Builder
@@ -61,14 +61,14 @@ public class UserActivity {
     }
   }
 
-  public void updateComments(RecentComentView comment) {
+  public void updateComments(RecentCommentView comment) {
     if (recentcomments.size() >= 10) {
       recentcomments.poll();
     }
     recentcomments.add(comment);
   }
 
-  public void updateCommentLikes(LikeComentView comment) {
+  public void updateCommentLikes(LikeCommentView comment) {
     if (likeComment.size() >= 10) {
       likeComment.poll();
     }

@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class RecentComentView {
+public class RecentCommentView {
 
   private UUID id;
   private UUID articleId;
