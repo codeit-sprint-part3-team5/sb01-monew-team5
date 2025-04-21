@@ -8,7 +8,10 @@ import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class ArticleViewServiceImp implements ArticleViewServiceInterface {
 
   private final ArticleViewRepository articleViewRepository;
@@ -22,6 +25,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
+  @Transactional
   public ArticleViewDto createArticleView(UUID articleId) {
     ArticleView articleView = setUpNewArticleView(articleId);
     articleViewRepository.save(articleView);
@@ -29,6 +33,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
+  @Transactional
   public boolean addReadUser(UUID articleId, UUID userId) {
     return articleViewRepository.findByArticleId(articleId)
         .map(articleView -> {
@@ -40,6 +45,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public Long countReadUser(UUID articleId) {
     return articleViewRepository.findByArticleId(articleId)
         .map(ArticleView::getCount)

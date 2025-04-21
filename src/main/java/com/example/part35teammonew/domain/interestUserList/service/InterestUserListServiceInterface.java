@@ -2,19 +2,20 @@ package com.example.part35teammonew.domain.interestUserList.service;
 
 import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListDto;
 import java.util.UUID;
-import org.bson.types.ObjectId;
 
 public interface InterestUserListServiceInterface {
 
   InterestUserListDto createInterestList(UUID interest);
 
-  boolean addSubscribedUser(ObjectId id, UUID user);
+  boolean addSubscribedUser(UUID id, UUID user);
 
-  boolean subtractSubscribedUser(ObjectId id, UUID user);
+  boolean subtractSubscribedUser(UUID id, UUID user);
 
-  Long countSubscribedUser(ObjectId id);
+  Long countSubscribedUser(UUID id);
 
   void deleteInterestList(UUID interest);
+
+  boolean checkUserSubscribe(UUID interestId, UUID userId);
 
 
 }

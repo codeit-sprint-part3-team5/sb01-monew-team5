@@ -9,4 +9,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface InterestUserListRepository extends MongoRepository<InterestUserList, ObjectId> {
 
   Optional<InterestUserList> findByInterest(UUID interest);
+
+  void deleteByInterest(UUID interest);
 }
