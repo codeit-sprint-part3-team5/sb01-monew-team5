@@ -13,6 +13,7 @@ import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,7 +55,7 @@ public class InterestServiceImpl implements InterestService {
 
 		//유사도 검증
 		if (isNameTooSimilar(name)) {
-			throw new IllegalArgumentException("관심사 이름의 유사도가 80% 이상입니다.");
+			throw new DuplicateInterestNameException("관심사 이름의 유사도가 80% 이상입니다.");
 		}
 
 		//List keywords -> DB 저장용 String 으로 변환

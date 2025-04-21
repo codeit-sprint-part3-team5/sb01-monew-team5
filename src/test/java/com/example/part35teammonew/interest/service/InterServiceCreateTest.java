@@ -23,6 +23,7 @@ import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
+import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterServiceCreateTest {
@@ -81,7 +82,7 @@ public class InterServiceCreateTest {
 
 		//when & then
 		assertThatThrownBy(() -> interestService.createInterest(req))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(DuplicateInterestNameException.class)
 			.hasMessageContaining("관심사 이름의 유사도가 80% 이상입니다.");
 
 		verify(interestRepository, never()).save(any(Interest.class));
