@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface NotificationServieInterface {
+public interface NotificationServiceInterface {
 
   NotificationeDto addNewsNotice(UUID userId, NotificationeDto noticeDto);
 
