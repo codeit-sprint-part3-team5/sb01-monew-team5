@@ -1,4 +1,4 @@
-package com.example.part35teammonew.interest;
+package com.example.part35teammonew.interest.repository;
 
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 

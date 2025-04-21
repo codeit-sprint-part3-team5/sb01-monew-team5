@@ -4,7 +4,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.example.part35teammonew.domain.notification.Enum.NotificationType;
 import com.example.part35teammonew.domain.notification.entity.Notification;
-import com.example.part35teammonew.domain.notification.repository.NoticeRepository;
+import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
+
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 public class NotificationRepositoryTest {
 
   @Autowired
-  private NoticeRepository noticeRepository;
+  private NotificationRepository noticeRepository;
 
   @Test
   @DisplayName("댓글 알림 생성 및 저장 테스트")
