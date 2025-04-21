@@ -14,7 +14,6 @@ import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class InterestServiceImpl implements InterestService {
 
 	private final InterestRepository interestRepository;
-	private static final LevenshteinDistance levenshtein = LevenshteinDistance.getDefaultInstance() ;
+	private static final LevenshteinDistance levenshtein = LevenshteinDistance.getDefaultInstance();
 
 	@Override
 	public boolean isNameTooSimilar(String name) {
@@ -31,11 +30,11 @@ public class InterestServiceImpl implements InterestService {
 
 		String newName = name.toLowerCase();
 
-		for(String raw : existingNames) {
+		for (String raw : existingNames) {
 			String existing = raw.toLowerCase();
 
 			int max = Math.max(existing.length(), newName.length());
-			int allowedDistance = (int) Math.floor(max * 0.2);
+			int allowedDistance = (int)Math.floor(max * 0.2);
 
 			int distance = levenshtein.apply(existing, newName);
 
@@ -54,7 +53,7 @@ public class InterestServiceImpl implements InterestService {
 		String name = request.getName().trim();
 
 		//유사도 검증
-		if(isNameTooSimilar(name)) {
+		if (isNameTooSimilar(name)) {
 			throw new IllegalArgumentException("관심사 이름의 유사도가 80% 이상입니다.");
 		}
 

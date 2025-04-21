@@ -73,14 +73,14 @@ public class InterServiceCreateTest {
 
 	@Test
 	@DisplayName("유사도가 80% 이상 유사하면 createInterest 에서 예외처리")
-	void createInterest_duplicateName(){
+	void createInterest_duplicateName() {
 		//given
 		given(interestRepository.findAllNames()).willReturn(List.of("제주도여행"));
 
 		InterestCreateRequest req = new InterestCreateRequest("제주도여행1", List.of("제주도"));
 
 		//when & then
-		assertThatThrownBy(()-> interestService.createInterest(req))
+		assertThatThrownBy(() -> interestService.createInterest(req))
 			.isInstanceOf(IllegalArgumentException.class)
 			.hasMessageContaining("관심사 이름의 유사도가 80% 이상입니다.");
 
