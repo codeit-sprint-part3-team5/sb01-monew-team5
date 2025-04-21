@@ -1,4 +1,4 @@
-package com.example.part35teammonew.interest.service;
+package com.example.part35teammonew.domain.interest.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
