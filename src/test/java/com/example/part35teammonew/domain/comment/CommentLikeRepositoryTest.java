@@ -9,7 +9,7 @@ import com.example.part35teammonew.domain.comment.entity.CommentLike;
 import com.example.part35teammonew.domain.comment.repository.CommentLikeRepository;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
 import com.example.part35teammonew.domain.user.entity.User;
-import com.example.part35teammonew.domain.user.repository.userRepostiory;
+import com.example.part35teammonew.domain.user.repository.UserRepository;
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -46,7 +46,7 @@ class CommentLikeRepositoryTest {
   private ArticleRepository articleRepository;
 
   @Autowired
-  private userRepostiory userRepository;
+  private UserRepository userRepository;
 
   private User testUser1;
   private User testUser2;
