@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeComentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentComentView;
+import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
 import java.time.Instant;
@@ -76,7 +76,7 @@ class UserActivityRepositoryTest {
         Instant.now(), userId, "짜장", "짬뽕@탕수육.com"
     );
 
-    RecentComentView comment = RecentComentView.builder()
+    RecentCommentView comment = RecentCommentView.builder()
         .id(UUID.randomUUID())
         .content("테스트")
         .createdAt(Instant.now())
@@ -100,7 +100,7 @@ class UserActivityRepositoryTest {
         Instant.now(), userId, "짜장", "짬뽕@탕수육.com"
     );
 
-    LikeComentView like = LikeComentView.builder()
+    LikeCommentView like = LikeCommentView.builder()
         .commentContent("테스트트트틑")
         .createdAt(Instant.now())
         .build();

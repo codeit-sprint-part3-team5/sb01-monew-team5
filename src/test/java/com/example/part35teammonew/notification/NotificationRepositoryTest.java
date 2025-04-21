@@ -1,10 +1,10 @@
 package com.example.part35teammonew.notification;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.example.part35teammonew.domain.notification.Enum.NotificationType;
 import com.example.part35teammonew.domain.notification.entity.Notification;
-import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
-import java.util.List;
+import com.example.part35teammonew.domain.notification.repository.NoticeRepository;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -13,68 +13,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
 @DataMongoTest
-class NotificationRepositoryTest {
+public class NotificationRepositoryTest {
 
   @Autowired
-  private NotificationRepository notificationRepository;
+  private NoticeRepository noticeRepository;
 
   @Test
-  @DisplayName("Notification을 조회")
-  void findByUserId_success() {
-    UUID userId = UUID.randomUUID();
-    Notification notification = Notification.setUpNotification(userId);
-    notificationRepository.save(notification);
+  @DisplayName("댓글 알림 생성 및 저장 테스트")
+  void saveCommentNotice_success() {
+    // given
+    UUID resourceId = UUID.randomUUID();
+    Notification notification = Notification.createCommentNotice("댓글 알림입니다.", resourceId);
 
-    List<Notification> result = notificationRepository.findByUserId(userId);
+    // when
+    Notification saved = noticeRepository.save(notification);
 
-    assertThat(result).hasSize(1);
-    assertThat(result.get(0).getUserId()).isEqualTo(userId);
-  }
-
-  @Test
-  @DisplayName("userId로 필터링 조회")
-  void findByUserId_filtersCorrectly() {
-    UUID user1 = UUID.randomUUID();
-    UUID user2 = UUID.randomUUID();
-
-    notificationRepository.save(Notification.setUpNotification(user1));
-    notificationRepository.save(Notification.setUpNotification(user2));
-    notificationRepository.save(Notification.setUpNotification(user1));
-
-    List<Notification> result = notificationRepository.findByUserId(user1);
-
-    assertThat(result).hasSize(2);
-    assertThat(result).allMatch(n -> n.getUserId().equals(user1));
-  }
-
-  @Test
-  @DisplayName("없는거 조회하면 빈거 반환")
-  void findByUserId_notFound() {
-    List<Notification> result = notificationRepository.findByUserId(UUID.randomUUID());
-
-    assertThat(result).isEmpty();
-  }
-
-  @Test
-  @DisplayName("저장 테스트)")
-  void createNotification_success() {
-    UUID userId = UUID.randomUUID();
-    Notification saved = notificationRepository.save(Notification.setUpNotification(userId));
-
+    // then
     assertThat(saved.getId()).isNotNull();
-    assertThat(saved.getUserId()).isEqualTo(userId);
+    assertThat(saved.getContent()).isEqualTo("댓글 알림입니다.");
+    assertThat(saved.getType()).isEqualTo(NotificationType.COMMENT);
+    assertThat(saved.getResourceId()).isEqualTo(resourceId);
+    assertThat(saved.isConfirmed()).isFalse();
   }
 
+  @Test
+  @DisplayName("알림 조회 테스트")
+  void findNoticeById_success() {
+    // given
+    UUID resourceId = UUID.randomUUID();
+    Notification saved = noticeRepository.save(
+        Notification.createNewsNotice("뉴스 알림입니다.", resourceId));
+
+    // when
+    Optional<Notification> found = noticeRepository.findById(saved.getId());
+
+    // then
+    assertThat(found).isPresent();
+    assertThat(found.get().getContent()).isEqualTo("뉴스 알림입니다.");
+    assertThat(found.get().getType()).isEqualTo(NotificationType.NEWS);
+  }
 
   @Test
-  @DisplayName("삭제 테스트")
-  void deleteNotification_success() {
-    UUID userId = UUID.randomUUID();
-    Notification notification = notificationRepository.save(Notification.setUpNotification(userId));
+  @DisplayName("알림 삭제 테스트")
+  void deleteNotice_success() {
+    // given
+    Notification notification = Notification.createCommentNotice("삭제 테스트용 알림", UUID.randomUUID());
+    Notification saved = noticeRepository.save(notification);
 
-    notificationRepository.delete(notification);
+    // when
+    noticeRepository.deleteById(saved.getId());
 
-    Optional<Notification> result = notificationRepository.findById(notification.getId());
-    assertThat(result).isNotPresent();
+    // then
+    Optional<Notification> deleted = noticeRepository.findById(saved.getId());
+    assertThat(deleted).isNotPresent();
   }
 }

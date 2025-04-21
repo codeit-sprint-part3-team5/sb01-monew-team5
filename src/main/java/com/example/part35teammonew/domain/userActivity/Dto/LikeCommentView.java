@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class LikeComentView {
+public class LikeCommentView {
 
   private UUID id;
   private Instant createdAt;
