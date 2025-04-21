@@ -39,4 +39,4 @@ application-dev.yml
 .env
 
 ## 폴더 무시
-!src/test/resources/application.yml
+src/test/resources/application.yml
