@@ -38,7 +38,7 @@ public class Interest {
   private String keywords; // todo: 나중에 변환 해야 함
 
   @Column(name = "subscriber_count", nullable = false)
-  private Long subscriberCount = 0L;
+  private long subscriberCount;
 
   @Column(name = "subscribed_me")
   private boolean subscribedMe = false;
