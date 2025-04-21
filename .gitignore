@@ -37,4 +37,4 @@ out/
 .vscode/
 application-dev.yml
 .env
-src/test/resources/application.yml
+/src/test/resources/application.yml
