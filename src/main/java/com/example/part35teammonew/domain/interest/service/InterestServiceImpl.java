@@ -35,8 +35,7 @@ public class InterestServiceImpl implements InterestService {
 			String existing = raw.toLowerCase();
 
 			int max = Math.max(existing.length(), newName.length());
-			int allowedDistance = (int)Math.floor(max * 0.2);
-
+			int allowedDistance = Math.max(1, (int)Math.floor(max * 0.2));
 			int distance = levenshtein.apply(existing, newName);
 
 			if (distance <= allowedDistance) {
