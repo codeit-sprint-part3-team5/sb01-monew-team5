@@ -15,6 +15,7 @@ import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,10 +30,10 @@ public class InterestServiceImpl implements InterestService {
 
 		List<String> existingNames = interestRepository.findAllNames();
 
-		String newName = name.toLowerCase();
+		String newName = name.strip().toLowerCase();
 
 		for (String raw : existingNames) {
-			String existing = raw.toLowerCase();
+			String existing = raw.strip().toLowerCase();
 
 			int max = Math.max(existing.length(), newName.length());
 			int allowedDistance = Math.max(1, (int)Math.floor(max * 0.2));
@@ -50,7 +51,7 @@ public class InterestServiceImpl implements InterestService {
 	@Transactional
 	@Override
 	public InterestDto createInterest(InterestCreateRequest request) {
-		String name = request.getName().trim();
+		String name = request.getName().strip();
 
 		//유사도 검증
 		if (isNameTooSimilar(name)) {
@@ -82,7 +83,13 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
-		return null;
+		Interest interest = interestRepository.findById(interestId)
+			.orElseThrow(() -> new EntityNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+
+		interest.setKeywords(String.join(",", newKeywords));
+		Interest saved = interestRepository.save(interest);
+
+		return InterestDto.toDto(saved);
 	}
 
 	@Override
