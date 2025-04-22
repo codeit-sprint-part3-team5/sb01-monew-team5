@@ -15,7 +15,7 @@ import java.util.List;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class InterestServiceSimilarTest {
+public class InterestSimilarServiceTest {
 
 	@Mock
 	private InterestRepository interestRepository;

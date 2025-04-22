@@ -22,7 +22,7 @@ import com.example.part35teammonew.domain.interest.repository.InterestRepository
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 
 @ExtendWith(MockitoExtension.class)
-public class InterestServiceCreateTest {
+public class InterestCreateServiceTest {
 
 	@Mock
 	private InterestRepository interestRepository;

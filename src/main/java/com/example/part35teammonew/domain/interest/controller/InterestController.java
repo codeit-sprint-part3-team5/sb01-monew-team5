@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,5 +46,11 @@ public class InterestController {
 	public ResponseEntity<InterestDto> delete(@PathVariable UUID interestId) {
 		interestService.deleteInterest(interestId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@PostMapping("{interestId}/subscriptions")
+	public ResponseEntity<InterestDto> subscribe(@PathVariable UUID interestId, @RequestHeader("Monew-Request-User-ID") UUID userId) {
+		interestService.subscribe(interestId, userId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

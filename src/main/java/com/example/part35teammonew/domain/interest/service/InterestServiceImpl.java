@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.interest.service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +15,7 @@ import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
+import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 import com.example.part35teammonew.exeception.InterestNotFoundException;
 
@@ -128,7 +128,21 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public void subscribe(UUID interestId, UUID userId) {
+		Interest interest = interestRepository.findById(interestId).orElseThrow(
+			() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
+		InterestUserList list = userListRepository.findByInterest(interestId)
+			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
+
+		if(list.findUser(userId)) {
+			throw new AlreadySubscribedException("이미 구독중 입니다.");
+		}
+
+		list.addUser(userId);
+		userListRepository.save(list);
+
+		interest.setSubscriberCount(interest.getSubscriberCount() + 1);
+		interestRepository.save(interest);
 	}
 
 	@Override

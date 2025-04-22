@@ -24,7 +24,7 @@ import com.example.part35teammonew.domain.interest.repository.InterestRepository
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
-public class InterestServiceUpdateTest {
+public class InterestUpdateServiceTest {
 	@Mock
 	private InterestRepository interestRepository;
 
