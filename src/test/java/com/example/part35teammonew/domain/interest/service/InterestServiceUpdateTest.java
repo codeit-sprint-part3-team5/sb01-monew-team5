@@ -12,10 +12,12 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
@@ -68,16 +70,26 @@ public class InterestServiceUpdateTest {
 		saved.setId(id);
 		saved.setName("여행");
 		saved.setKeywords("부산,대구");
-		saved.setSubscriberCount(5L);
+		saved.setSubscriberCount(5);
 		saved.setSubscribedMe(true);
 		given(interestRepository.save(any(Interest.class)))
 			.willReturn(saved);
 
 		//when
 		List<String> newKeywords = List.of("부산", "대구");
-		interestService.updateKeywords(id, newKeywords);
+		InterestDto dto = interestService.updateKeywords(id, newKeywords);
 
 		//then
+		assertThat(dto.getId()).isEqualTo(id);
+		assertThat(dto.getName()).isEqualTo("여행");
+		assertThat(dto.getKeywords()).containsExactly("부산", "대구");
+		assertThat(dto.getSubscriberCount()).isEqualTo(5);
+		assertThat(dto.isSubscribedByMe()).isTrue();
+
+		// keywords 가 제대로 수정 됐는지 확인
+		ArgumentCaptor<Interest> captor = ArgumentCaptor.forClass(Interest.class);
+		verify(interestRepository).save(captor.capture());
+		assertThat(captor.getValue().getKeywords()).isEqualTo("부산,대구");
 
 	}
 
