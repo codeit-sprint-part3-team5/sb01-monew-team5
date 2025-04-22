@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -28,9 +27,6 @@ import jakarta.persistence.EntityNotFoundException;
 public class InterestServiceUpdateTest {
 	@Mock
 	private InterestRepository interestRepository;
-
-	@Mock
-	private InterestUserListRepository userListRepository;
 
 	@InjectMocks
 	private InterestServiceImpl interestService;
