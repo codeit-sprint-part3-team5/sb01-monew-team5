@@ -13,10 +13,9 @@ import static org.mockito.BDDMockito.given;
 import java.util.List;
 
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class InterServiceSimilarTest {
+public class InterestServiceSimilarTest {
 
 	@Mock
 	private InterestRepository interestRepository;

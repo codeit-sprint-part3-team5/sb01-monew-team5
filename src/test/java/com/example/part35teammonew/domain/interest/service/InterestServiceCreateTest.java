@@ -21,12 +21,11 @@ import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 
 @ExtendWith(MockitoExtension.class)
-public class InterServiceCreateTest {
+public class InterestServiceCreateTest {
 
 	@Mock
 	private InterestRepository interestRepository;
