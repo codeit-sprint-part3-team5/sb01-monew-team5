@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NotificationServiceImpl implements NotificationServiceInterface {
@@ -28,6 +29,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     this.notificationMapper = notificationMapper;
   }
 
+  @Transactional
   @Override
   public NotificationDto addNewsNotice(UUID userId, String content, UUID resourceId) {
     Notification notification = Notification.createNewsNotice(userId, content, resourceId);
@@ -35,6 +37,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return notificationMapper.toDto(notification);
   }
 
+  @Transactional
   @Override
   public NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId) {
     Notification notification = Notification.createCommentNotice(userId, content, resourceId);
@@ -42,6 +45,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return notificationMapper.toDto(notification);
   }
 
+  @Transactional
   @Override
   public boolean confirmedReadNotice(ObjectId id) {
     Optional<Notification> optionalNotification = notificationRepository.findById(id);
@@ -58,6 +62,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return wasChanged;
   }
 
+  @Transactional
   @Override
   public void confirmedReadAllNotice(UUID userId) {
     List<Notification> notificationList = notificationRepository.findAllByUserIdAndConfirmedIsFalse(
@@ -67,6 +72,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   }
 
 
+  @Transactional
   @Override
   public boolean deleteOldConfirmedNotice() {
     Instant threshold = Instant.now().minus(7, ChronoUnit.DAYS);
@@ -74,6 +80,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return true;
   }
 
+  @Transactional
   @Override
   public Page<NotificationDto> getNoticePage(UUID userId, Pageable pageable) {
     Page<Notification> notifications = notificationRepository.findAllByUserIdAndConfirmedIsFalse(
