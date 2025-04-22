@@ -28,7 +28,7 @@ public class InterestDto {
 
 	public static InterestDto toDto(Interest interest) {
 		List<String> keywordList = Arrays.stream(interest.getKeywords().split(","))
-			.map(String::trim)
+			.map(String::strip)
 			.toList();
 		return new InterestDto(
 			interest.getId(),

@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.interest.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,6 +14,8 @@ import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
+import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 import com.example.part35teammonew.exeception.InterestNotFoundException;
 
@@ -23,7 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class InterestServiceImpl implements InterestService {
 
 	private final InterestRepository interestRepository;
-	private static final LevenshteinDistance levenshtein = LevenshteinDistance.getDefaultInstance();
+	private final InterestUserListRepository userListRepository;
+	private static final LevenshteinDistance DISTANCE = LevenshteinDistance.getDefaultInstance();
 
 	@Override
 	public boolean isNameTooSimilar(String name) {
@@ -37,7 +41,7 @@ public class InterestServiceImpl implements InterestService {
 
 			int max = Math.max(existing.length(), newName.length());
 			int allowedDistance = Math.max(1, (int)Math.floor(max * 0.2));
-			int distance = levenshtein.apply(existing, newName);
+			int distance = DISTANCE.apply(existing, newName);
 
 			if (distance <= allowedDistance) {
 				return true;
@@ -48,8 +52,8 @@ public class InterestServiceImpl implements InterestService {
 
 	}
 
-	@Transactional
 	@Override
+	@Transactional
 	public InterestDto createInterest(InterestCreateRequest request) {
 		String name = request.getName().strip();
 
@@ -101,7 +105,20 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public InterestDto getInterestById(UUID interestId, UUID userId) {
-		return null;
+		Interest interest = interestRepository.findById(interestId)
+			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+
+		InterestUserList list = userListRepository.findByInterest(interestId)
+			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
+
+		long subscriberCount = list.getUserCount();
+		boolean subscribedByMe = userId != null && list.findUser(userId);
+
+		interest.setSubscriberCount(subscriberCount);
+		interest.setSubscribedMe(subscribedByMe);
+
+		return InterestDto.toDto(interest);
+
 	}
 
 	@Override
