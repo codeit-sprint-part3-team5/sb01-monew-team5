@@ -94,7 +94,9 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public void deleteInterest(UUID interestId) {
-
+		Interest interest = interestRepository.findById(interestId)
+			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+		interestRepository.delete(interest);
 	}
 
 	@Override

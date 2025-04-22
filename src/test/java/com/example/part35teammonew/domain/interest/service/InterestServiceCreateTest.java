@@ -3,9 +3,7 @@ package com.example.part35teammonew.domain.interest.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +27,6 @@ public class InterestServiceCreateTest {
 	@Mock
 	private InterestRepository interestRepository;
 
-
 	@InjectMocks
 	private InterestServiceImpl interestService;
 
@@ -44,8 +41,6 @@ public class InterestServiceCreateTest {
 		saved.setId(interestId);
 		saved.setName("여행");
 		saved.setKeywords("제주도,서울,부산");
-		saved.setCreatedAt(LocalDateTime.now());
-		saved.setUpdatedAt(LocalDateTime.now());
 		given(interestRepository.save(any(Interest.class))).willReturn(saved);
 
 		//when
