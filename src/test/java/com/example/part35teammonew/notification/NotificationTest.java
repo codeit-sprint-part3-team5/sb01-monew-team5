@@ -43,4 +43,6 @@ class NotificationTest {
     assertThat(notification.getUpdateAt()).isEqualTo(Instant.EPOCH);
     assertThat(notification.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
   }
+
+  
 }

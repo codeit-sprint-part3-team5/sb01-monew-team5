@@ -1,5 +1,7 @@
 package com.example.part35teammonew.domain.notification.service;
 
+import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
+import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
 import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.mapper.NotificationMapper;
@@ -11,8 +13,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,13 +47,18 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
   @Transactional
   @Override
-  public boolean confirmedReadNotice(ObjectId id) {
+  public boolean confirmedReadNotice(ObjectId id, UUID userId) {
     Optional<Notification> optionalNotification = notificationRepository.findById(id);
     if (optionalNotification.isEmpty()) {
       return false;
     }
 
     Notification notification = optionalNotification.get();
+
+    if (!notification.getUserId().equals(userId)) {
+      return false;
+    }
+
     boolean wasChanged = notification.confirmedRead();
     if (wasChanged) {
       notificationRepository.save(notification);
@@ -64,11 +69,18 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
   @Transactional
   @Override
-  public void confirmedReadAllNotice(UUID userId) {
-    List<Notification> notificationList = notificationRepository.findAllByUserIdAndConfirmedIsFalse(
-        userId);
+  public boolean confirmedReadAllNotice(UUID userId) {
+    List<Notification> notificationList =
+        notificationRepository.findAllByUserIdAndConfirmedIsFalse(userId);
+
+    if (notificationList.isEmpty()) {
+      return false;
+    }
+
     notificationList.forEach(Notification::confirmedRead);
     notificationRepository.saveAll(notificationList);
+
+    return true;
   }
 
 
@@ -80,11 +92,30 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return true;
   }
 
-  @Transactional
   @Override
-  public Page<NotificationDto> getNoticePage(UUID userId, Pageable pageable) {
-    Page<Notification> notifications = notificationRepository.findAllByUserIdAndConfirmedIsFalse(
-        userId, pageable);
-    return notifications.map(notificationMapper::toDto);
+  @Transactional(readOnly = true)
+  public CursorPageResponse<NotificationDto> getNoticePage(UUID userId,
+      CursorPageRequest pageRequest) {
+    ObjectId cursorId = pageRequest.getCursorObjectId();
+    int limit = pageRequest.getLimit() + 1; // 다음 페이지 여부 확인 위해 +1
+
+    List<Notification> notifications = (cursorId != null)
+        ? notificationRepository.findAllByUserIdAndIdLessThanOrderByIdDesc(userId, cursorId)
+        : notificationRepository.findAllByUserIdOrderByIdDesc(userId);
+
+    boolean hasNext = notifications.size() > pageRequest.getLimit();
+    if (hasNext) {
+      notifications = notifications.subList(0, pageRequest.getLimit());
+    }
+
+    List<NotificationDto> dtoList = notifications.stream()
+        .map(notificationMapper::toDto)
+        .toList();
+
+    String nextCursor = hasNext
+        ? notifications.get(notifications.size() - 1).getId().toHexString()
+        : null;
+
+    return new CursorPageResponse<>(dtoList, nextCursor, hasNext);
   }
 }

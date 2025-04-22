@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 
 @SpringBootTest
 public class NotificationRepositoryTest {
@@ -75,28 +74,6 @@ public class NotificationRepositoryTest {
     assertThat(result).hasSize(1);
     assertThat(result.get(0).getContent()).isEqualTo("댓글2");
     assertThat(result.get(0).isConfirmed()).isFalse();
-  }
-
-  @Test
-  @DisplayName("페이징으로 미확인 알림 조회 테스트")
-  void findAllByUserIdAndConfirmedIsFalseWithPaging_success() {
-    // given
-    UUID userId = UUID.randomUUID();
-    for (int i = 0; i < 10; i++) {
-      Notification n = Notification.createNewsNotice(userId, "뉴스" + i, UUID.randomUUID());
-      if (i % 2 == 0) {
-        n.confirmedRead();
-      }
-      noticeRepository.save(n);
-    }
-
-    // when
-    var pageable = PageRequest.of(0, 3);
-    var page = noticeRepository.findAllByUserIdAndConfirmedIsFalse(userId, pageable);
-
-    // then
-    assertThat(page.getContent().size()).isEqualTo(3);
-    assertThat(page.getTotalElements()).isEqualTo(5);
   }
 
 }
