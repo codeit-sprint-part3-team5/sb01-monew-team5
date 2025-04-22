@@ -14,6 +14,7 @@ import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
+import com.example.part35teammonew.exeception.InterestNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +85,7 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
 		Interest interest = interestRepository.findById(interestId)
-			.orElseThrow(() -> new EntityNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
 		interest.setKeywords(String.join(",", newKeywords));
 		Interest saved = interestRepository.save(interest);
