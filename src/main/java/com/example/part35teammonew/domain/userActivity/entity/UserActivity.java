@@ -61,6 +61,14 @@ public class UserActivity {
     }
   }
 
+  public void subtractSubscriptions(InterestView interest) {
+    if (subscriptions.contains(interest)) {
+      subscriptions.remove(interest);
+    } else {
+      throw new AlreadySubscribedException("구독되지 않은 관심사ㅏ입니다.: " + interest.getInterestName());
+    }
+  }
+
   public void updateComments(RecentCommentView comment) {
     if (recentcomments.size() >= 10) {
       recentcomments.poll();

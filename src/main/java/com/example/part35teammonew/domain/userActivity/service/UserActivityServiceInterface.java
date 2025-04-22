@@ -6,28 +6,29 @@ import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import java.time.Instant;
 import java.util.UUID;
-import org.bson.types.ObjectId;
 
 public interface UserActivityServiceInterface {
 
-  UserActivityDto createUserActivity(UUID id);
+  UserActivityDto createUserActivity(Instant createdAt, UUID userId, String nickName,
+      String email);
 
   UserActivityDto getUserActivity(UUID id);
 
-  void addInterestView(ObjectId id, InterestView interestView);
+  void addInterestView(UUID id, InterestView interestView);
 
-  void subtractInterestView(ObjectId id, InterestView interestView);
+  void subtractInterestView(UUID id, InterestView interestView);
 
-  UserActivityDto updateUserInformation(ObjectId id, UserInfoDto userInfoDto);
+  UserActivityDto updateUserInformation(UUID id, UserInfoDto userInfoDto);
 
-  void addRecentCommentView(ObjectId id, RecentCommentView recentCommentView);
+  void addRecentCommentView(UUID id, RecentCommentView recentCommentView);
 
-  void addLikeCommentView(ObjectId id, LikeCommentView likeCommentView);
+  void addLikeCommentView(UUID id, LikeCommentView likeCommentView);
 
-  void addArticleInfoView(ObjectId id, ArticleInfoView articleInfoView);
+  void addArticleInfoView(UUID id, ArticleInfoView articleInfoView);
 
-  void deleteUserActivity(ObjectId id);
+  void deleteUserActivity(UUID id);
 
 
 }
