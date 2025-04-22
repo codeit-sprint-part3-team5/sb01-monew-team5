@@ -34,4 +34,22 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
 	)
 	Page<Interest> searchByNameOrKeyword(@Param("search") String search, Pageable pageable);
 
+	/**
+	 * 이름 컬럼 커서 페이지네이션
+	 * 오름차순 -> name > :lastName
+	 * 내림차순 -> name < :lastName
+	 */
+	List<Interest> findByNameGreaterThan(String lastName, Pageable pageable);
+
+	List<Interest> findByNameLessThan(String lastName, Pageable pageable);
+
+	/**
+	 * 구독자 수 컬럼 커서 페이지네이션
+	 *  오름차순 -> subscriberCount > :lastCount, sort=asc
+	 *  내림차순 -> subscriberCount < :lastCount, sort=desc
+	 */
+	List<Interest> findBySubscriberCountGreaterThan(Long lastCount, Pageable pageable);
+
+	List<Interest> findBySubscriberCountLessThan(Long lastCount, Pageable pageable);
+
 }
