@@ -1,7 +1,7 @@
 package com.example.part35teammonew.domain.notification.service;
 
 
-import com.example.part35teammonew.domain.notification.Dto.NotificationeDto;
+import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -9,17 +9,17 @@ import org.springframework.data.domain.Pageable;
 
 public interface NotificationServiceInterface {
 
-  NotificationeDto addNewsNotice(UUID userId, NotificationeDto noticeDto);
+  NotificationDto addNewsNotice(UUID userId, String content, UUID resourceId);
 
-  NotificationeDto addCommentNotice(UUID userId, NotificationeDto noticeDto);
+  NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId);
 
   boolean confirmedReadNotice(ObjectId Id);
 
-  boolean confirmedReadAllNotice(ObjectId userId);
+  void confirmedReadAllNotice(UUID userId);
 
   boolean deleteOldConfirmedNotice();
 
-  Page<NotificationeDto> getNoticePage(UUID userId, Pageable pageable);
+  Page<NotificationDto> getNoticePage(UUID userId, Pageable pageable);
 
 
 }
