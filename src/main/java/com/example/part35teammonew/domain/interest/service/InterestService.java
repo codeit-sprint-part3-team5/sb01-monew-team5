@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 
 import com.example.part35teammonew.domain.interest.Enum.SortBy;
-import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.dto.InterestDto;
 
 public interface InterestService {
