@@ -21,7 +21,7 @@ public class NotificationRepositoryTest {
 
 
   @Test
-  @DisplayName("댓글 생성 및 저장 테스트")
+  @DisplayName("댓글 생성 및 저장 테스트 ")
   void saveCommentNotice_success() {
     // given
     UUID userId = UUID.randomUUID();
