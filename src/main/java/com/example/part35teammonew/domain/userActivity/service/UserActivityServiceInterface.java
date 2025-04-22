@@ -4,21 +4,22 @@ import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
-import com.example.part35teammonew.domain.userActivity.Dto.UserServiceActivityDto;
+import java.util.UUID;
 import org.bson.types.ObjectId;
 
-public interface userActivityServiceInterface {
+public interface UserActivityServiceInterface {
 
-  UserServiceActivityDto createUserActivity(ObjectId id);
+  UserActivityDto createUserActivity(UUID id);
 
-  UserServiceActivityDto getUserActivity(ObjectId id);
+  UserActivityDto getUserActivity(UUID id);
 
   void addInterestView(ObjectId id, InterestView interestView);
 
   void subtractInterestView(ObjectId id, InterestView interestView);
 
-  UserServiceActivityDto updateUserInformation(ObjectId id, UserInfoDto userInfoDto);
+  UserActivityDto updateUserInformation(ObjectId id, UserInfoDto userInfoDto);
 
   void addRecentCommentView(ObjectId id, RecentCommentView recentCommentView);
 
