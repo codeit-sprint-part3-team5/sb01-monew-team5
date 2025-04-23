@@ -89,8 +89,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().recentcomments).hasSize(1);
-    assertThat(result.get().recentcomments.peek().getContent()).isEqualTo("테스트");
+    assertThat(result.get().getRecentcomments()).hasSize(1);
+    assertThat(result.get().getRecentcomments().peek().getContent()).isEqualTo("테스트");
   }
 
   @Test
@@ -112,8 +112,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().likeComment).hasSize(1);
-    assertThat(result.get().likeComment.peek().getCommentContent()).isEqualTo("테스트트트틑");
+    assertThat(result.get().getLikeComment()).hasSize(1);
+    assertThat(result.get().getLikeComment().peek().getCommentContent()).isEqualTo("테스트트트틑");
   }
 
   @Test
@@ -136,8 +136,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().articleViews).hasSize(1);
-    assertThat(result.get().articleViews.peek().getArticleTitle()).isEqualTo("기사사사");
+    assertThat(result.get().getArticleViews()).hasSize(1);
+    assertThat(result.get().getArticleViews().peek().getArticleTitle()).isEqualTo("기사사사");
   }
 
   @Test

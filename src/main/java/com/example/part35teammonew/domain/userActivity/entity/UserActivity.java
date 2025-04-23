@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "UserActivity")
@@ -23,10 +24,11 @@ public class UserActivity {
 
   @Id
   private ObjectId id;
+  @Indexed
   private final UUID userId;
   private String nickName;
   private String email;
-  private Instant createdAt;
+  private final Instant createdAt;
   private Set<InterestView> subscriptions;
   private LinkedList<RecentCommentView> recentcomments;
   private LinkedList<LikeCommentView> likeComment;

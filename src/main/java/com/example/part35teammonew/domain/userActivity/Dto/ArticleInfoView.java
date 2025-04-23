@@ -2,6 +2,7 @@ package com.example.part35teammonew.domain.userActivity.Dto;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +25,21 @@ public class ArticleInfoView {
 
   private int articleCommentCount;
   private int articleViewCount;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ArticleInfoView that = (ArticleInfoView) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 }
