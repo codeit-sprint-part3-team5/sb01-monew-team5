@@ -19,18 +19,12 @@ public class UserDto {
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime updatedAt;
-
-    private boolean isDeleted;
-
     public static UserDto fromEntity(User user) {
         return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .isDeleted(user.isDeleted())
                 .build();
     }
 }
