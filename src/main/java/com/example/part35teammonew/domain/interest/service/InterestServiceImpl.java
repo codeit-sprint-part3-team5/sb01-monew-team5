@@ -131,7 +131,8 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public CursorPageResponse<InterestDto> listInterests(InterestPageRequest req) {
 		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		Pageable pageable = PageRequest.of(0, req.limit(), Sort.by(direction, req.orderBy()).and(Sort.by(direction, "createdAt")));
+		Pageable pageable = PageRequest.of(0, req.limit(),
+			Sort.by(direction, req.orderBy()).and(Sort.by(direction, "createdAt")));
 
 		List<Interest> interests;
 		LocalDateTime nextAfter = null;
@@ -192,7 +193,7 @@ public class InterestServiceImpl implements InterestService {
 		InterestUserList list = userListRepository.findByInterest(interestId)
 			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
 
-		if(list.findUser(userId)) {
+		if (list.findUser(userId)) {
 			throw new AlreadySubscribedException("이미 구독중 입니다.");
 		}
 
@@ -205,7 +206,21 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public void unsubscribe(UUID interestId, UUID userId) {
+		Interest interest = interestRepository.findById(interestId)
+			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
+		InterestUserList userList = userListRepository.findByInterest(interestId)
+			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
+
+		if (!userList.findUser(userId)) {
+			throw new IllegalStateException("사용자가 구독중이 아닙니다.");
+		}
+
+		userList.subtractUser(userId);
+		userListRepository.save(userList);
+
+		interest.setSubscriberCount(interest.getSubscriberCount() - 1);
+		interestRepository.save(interest);
 	}
 
 	@Override

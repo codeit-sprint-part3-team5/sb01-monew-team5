@@ -56,7 +56,7 @@ public class InterestController {
 	}
 
 	@PostMapping("{interestId}/subscriptions")
-	public ResponseEntity<InterestDto> subscribe(@PathVariable UUID interestId,
+	public ResponseEntity<Void> subscribe(@PathVariable UUID interestId,
 		@RequestHeader("Monew-Request-User-ID") UUID userId) {
 		interestService.subscribe(interestId, userId);
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -83,5 +83,12 @@ public class InterestController {
 		);
 		CursorPageResponse<InterestDto> result = interestService.listInterests(request);
 		return ResponseEntity.ok(result);
+	}
+
+	@DeleteMapping("{interestId}/subscriptions")
+	public ResponseEntity<Void> unsubscribe(@PathVariable UUID interestId,
+		@RequestHeader("Monew-Request-User-ID") UUID userId) {
+		interestService.unsubscribe(interestId, userId);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
