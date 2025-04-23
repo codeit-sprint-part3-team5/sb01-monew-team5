@@ -28,9 +28,9 @@ public class UserActivity {
   private String email;
   private Instant createdAt;
   private Set<InterestView> subscriptions;
-  public LinkedList<RecentCommentView> recentcomments;
-  public LinkedList<LikeCommentView> likeComment;
-  public LinkedList<ArticleInfoView> articleViews;
+  private LinkedList<RecentCommentView> recentcomments;
+  private LinkedList<LikeCommentView> likeComment;
+  private LinkedList<ArticleInfoView> articleViews;
 
   @Builder
   private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {

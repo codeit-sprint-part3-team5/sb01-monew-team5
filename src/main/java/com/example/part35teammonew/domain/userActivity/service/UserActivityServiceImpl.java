@@ -109,10 +109,4 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   public void deleteUserActivity(UUID id) {
     userActivityRepository.deleteByUserId(id);
   }
-
-  private UserActivity getUserActivityOrThrow(UUID userId) {
-    return userActivityRepository.findByUserId(userId)
-        .orElseThrow(
-            () -> new NoSuchElementException("UserActivity not found for userId: " + userId));
-  }
 }

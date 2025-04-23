@@ -9,6 +9,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +80,7 @@ class UserActivityRepositoryTest {
     RecentCommentView comment = RecentCommentView.builder()
         .id(UUID.randomUUID())
         .content("테스트")
-        .createdAt(Instant.now())
+        .createdAt(LocalDateTime.now())
         .build();
 
     activity.updateComments(comment);
@@ -102,7 +103,7 @@ class UserActivityRepositoryTest {
 
     LikeCommentView like = LikeCommentView.builder()
         .commentContent("테스트트트틑")
-        .createdAt(Instant.now())
+        .createdAt(LocalDateTime.now())
         .build();
 
     activity.updateCommentLikes(like);
