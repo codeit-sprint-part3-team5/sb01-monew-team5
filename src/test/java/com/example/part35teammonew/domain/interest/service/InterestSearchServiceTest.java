@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;

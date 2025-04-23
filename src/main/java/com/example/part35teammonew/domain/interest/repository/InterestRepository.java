@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.interest.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,24 +33,45 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
 			" WHERE lower(i.name)    LIKE lower(concat('%', :search, '%'))" +
 			"    OR lower(i.keywords) LIKE lower(concat('%', :search, '%'))"
 	)
-	Page<Interest> searchByNameOrKeyword(@Param("search") String search, Pageable pageable);
+	Page<Interest> searchByNameOrKeyword(@Param("keyword") String search, Pageable pageable);
 
 	/**
-	 * 이름 컬럼 커서 페이지네이션
-	 * 오름차순 -> name > :lastName
-	 * 내림차순 -> name < :lastName
+	 2) NAME 기준
 	 */
-	List<Interest> findByNameGreaterThan(String lastName, Pageable pageable);
-
-	List<Interest> findByNameLessThan(String lastName, Pageable pageable);
+	@Query("""
+		SELECT i FROM Interest i
+		 WHERE (:cursor IS NULL
+		    OR i.name > :cursor
+		    OR (i.name = :cursor AND i.createdAt > :after))
+		 ORDER BY i.name   ASC, i.createdAt ASC
+		""")
+	List<Interest> findByNameAfter(
+		@Param("cursor") String nameCursor,
+		@Param("after") LocalDateTime after,
+		Pageable pageable
+	);
 
 	/**
-	 * 구독자 수 컬럼 커서 페이지네이션
-	 *  오름차순 -> subscriberCount > :lastCount, sort=asc
-	 *  내림차순 -> subscriberCount < :lastCount, sort=desc
+	 * SUBSCRIBER_COUNT 기준
 	 */
-	List<Interest> findBySubscriberCountGreaterThan(Long lastCount, Pageable pageable);
+	@Query("""
+		SELECT i FROM Interest i
+		 WHERE (:cursor IS NULL
+		    OR i.subscriberCount > :cursor
+		    OR (i.subscriberCount = :cursor AND i.createdAt > :after))
+		 ORDER BY i.subscriberCount DESC, i.createdAt DESC
+		""")
+	List<Interest> findBySubscriberCountAfter(
+		@Param("cursor") Long countCursor,
+		@Param("after") LocalDateTime after,
+		Pageable pageable
+	);
 
-	List<Interest> findBySubscriberCountLessThan(Long lastCount, Pageable pageable);
+	@Query("""
+			SELECT COUNT(i) FROM Interest i
+			WHERE lower(i.name) LIKE lower(concat('%', :keyword, '%'))
+			   OR lower(i.keywords) LIKE lower(concat('%', :keyword, '%'))
+		""")
+	long countByNameOrKeyword(@Param("keyword") String keyword);
 
 }

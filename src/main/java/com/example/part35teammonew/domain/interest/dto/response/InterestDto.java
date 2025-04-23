@@ -1,4 +1,4 @@
-package com.example.part35teammonew.domain.interest.dto;
+package com.example.part35teammonew.domain.interest.dto.response;
 
 import java.util.Arrays;
 import java.util.List;

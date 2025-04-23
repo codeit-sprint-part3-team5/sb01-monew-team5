@@ -1,15 +1,22 @@
 package com.example.part35teammonew.domain.interest.service;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.part35teammonew.domain.interest.Enum.SortBy;
-import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.response.CursorPageResponse;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
@@ -122,8 +129,59 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
-	public Page<InterestDto> listInterests(String search, String cursorValue, SortBy sortBy, int size, UUID userId) {
-		return null;
+	public CursorPageResponse<InterestDto> listInterests(InterestPageRequest req) {
+		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+		Pageable pageable = PageRequest.of(0, req.limit(), Sort.by(direction, req.orderBy()).and(Sort.by(direction, "createdAt")));
+
+		List<Interest> interests;
+		LocalDateTime nextAfter = null;
+		Long nextIdAfter = null;
+		String nextCursor = null;
+		boolean hasNext = false;
+		long totalElements = interestRepository.count();
+
+		//  검색어 기반 조회
+		if (req.keyword() != null && !req.keyword().isBlank()) {
+			Page<Interest> page = interestRepository.searchByNameOrKeyword(req.keyword(), pageable);
+			interests = page.getContent();
+			totalElements = page.getTotalElements();
+			hasNext = page.hasNext();
+		} else {
+			//  커서 기반 조회
+			if (req.orderBy().equalsIgnoreCase("name")) {
+				interests = interestRepository.findByNameAfter(req.cursor(), req.after(), pageable);
+			} else if (req.orderBy().equalsIgnoreCase("subscriberCount")) {
+				Long countCursor = req.cursor() != null ? Long.parseLong(req.cursor()) : null;
+				interests = interestRepository.findBySubscriberCountAfter(countCursor, req.after(), pageable);
+			} else {
+				throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
+			}
+			hasNext = interests.size() == req.limit();
+
+			if (hasNext && !interests.isEmpty()) {
+				Interest last = interests.get(interests.size() - 1);
+				nextAfter = last.getCreatedAt();
+				if (req.orderBy().equalsIgnoreCase("subscriberCount")) {
+					nextIdAfter = last.getSubscriberCount();
+				} else if (req.orderBy().equalsIgnoreCase("name")) {
+					nextCursor = last.getName();
+				}
+			}
+		}
+
+		// 3. DTO 변환 (구독 정보 포함)
+		List<InterestDto> content = interests.stream()
+			.map(i -> mapToDtoWithSubscription(i, req.userId()))
+			.toList();
+
+		return new CursorPageResponse<>(
+			content,
+			nextAfter,
+			nextIdAfter,
+			content.size(),
+			totalElements,
+			hasNext
+		);
 	}
 
 	@Override
@@ -158,5 +216,30 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public long countSubscribers(UUID interestId) {
 		return 0;
+	}
+
+	//Interest 엔티티 + mongodb 데이터 조합 -> Dto 로 변환
+	private InterestDto mapToDtoWithSubscription(Interest entity, UUID userId) {
+		Optional<InterestUserList> userList = userListRepository.findByInterest(entity.getId());
+
+		boolean subscribedByMe = userList
+			.map(list -> list.findUser(userId))
+			.orElse(false);
+
+		long subscriberCount = userList
+			.map(InterestUserList::getUserCount)
+			.orElse(0L);
+
+		List<String> keywordList = entity.getKeywords() != null
+			? Arrays.stream(entity.getKeywords().split(",")).map(String::strip).toList()
+			: List.of();
+
+		return InterestDto.builder()
+			.id(entity.getId())
+			.name(entity.getName())
+			.keywords(keywordList)
+			.subscriberCount(subscriberCount)
+			.subscribedByMe(subscribedByMe)
+			.build();
 	}
 }
