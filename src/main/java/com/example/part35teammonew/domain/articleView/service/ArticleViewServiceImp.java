@@ -6,6 +6,8 @@ import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
+import java.awt.print.Pageable;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,5 +52,10 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
     return articleViewRepository.findByArticleId(articleId)
         .map(ArticleView::getCount)
         .orElse(0L);
+  }
+
+  @Override
+  public List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction) {
+    return List.of();
   }
 }

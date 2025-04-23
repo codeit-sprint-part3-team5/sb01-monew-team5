@@ -4,13 +4,10 @@ import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListD
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 
 @Mapper(componentModel = "spring")
 public interface InterestUserListMapper {
-
-  InterestUserListMapper INSTANCE = Mappers.getMapper(InterestUserListMapper.class);
 
   @Mapping(source = "interest", target = "interest")
   @Mapping(source = "subscribedUser", target = "subscribedUser")

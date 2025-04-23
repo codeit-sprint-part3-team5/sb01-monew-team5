@@ -4,6 +4,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
 import java.util.HashSet;
@@ -88,6 +89,10 @@ public class UserActivity {
       articleViews.poll();
     }
     articleViews.add(article);
+  }
+
+  public void updateUserInfo(UserInfoDto userInfoDto) {
+    this.nickName = userInfoDto.getNickName();
   }
 
 }

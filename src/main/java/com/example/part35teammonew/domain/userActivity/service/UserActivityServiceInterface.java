@@ -16,16 +16,22 @@ public interface UserActivityServiceInterface {
 
   UserActivityDto getUserActivity(UUID id);
 
+  //유저가 관심사 구독 할떄
   void addInterestView(UUID id, InterestView interestView);
 
+  //유저가 관심사 구독 취소 할떄
   void subtractInterestView(UUID id, InterestView interestView);
 
+  //유저 정보 바뀔떄마다
   UserActivityDto updateUserInformation(UUID id, UserInfoDto userInfoDto);
 
+  //유조가 댓글 달떄마다
   void addRecentCommentView(UUID id, RecentCommentView recentCommentView);
 
+  //유저가 좋아요 누를떄마다
   void addLikeCommentView(UUID id, LikeCommentView likeCommentView);
 
+  //유저가 기사 볼떄마다
   void addArticleInfoView(UUID id, ArticleInfoView articleInfoView);
 
   void deleteUserActivity(UUID id);

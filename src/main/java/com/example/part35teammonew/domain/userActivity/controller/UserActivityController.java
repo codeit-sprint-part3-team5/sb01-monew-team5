@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("api/user-activities/{userId}")
+@RestController
+@RequestMapping("/api/user-activities")
 public class UserActivityController {
 
   private final UserActivityServiceInterface userActivityServiceInterface;

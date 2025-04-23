@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.userActivity.Dto;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -13,11 +12,11 @@ import lombok.Getter;
 @Builder
 public class InterestView {
 
-  private UUID id;          //interstUserKist의 아이디?
+  private UUID id;          //여기 그대로 interestId 넣으면 됨, 인덱스 설정해서 고ㅑㄴ찮음
   private UUID interestId;
   private String interestName;
-  private List<String> interestKeywords;
-  private BigInteger interestSubscriberCount;
+  private List<String> interestKeywords; //,로 구분되는거 자르기
+  private Long interestSubscriberCount;
   private Instant createdAt;
 
   @Override

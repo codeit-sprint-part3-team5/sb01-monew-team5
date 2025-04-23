@@ -11,12 +11,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class NotificationServiceImpl implements NotificationServiceInterface {
 
 
@@ -97,7 +99,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   public CursorPageResponse<NotificationDto> getNoticePage(UUID userId,
       CursorPageRequest pageRequest) {
     ObjectId cursorId = pageRequest.getCursorObjectId();
-    int limit = pageRequest.getLimit() + 1; // 다음 페이지 여부 확인 위해 +1
+    int limit = pageRequest.getLimit() + 1; // 다음 페이지 확인용으로 1개 더 가져옴
 
     List<Notification> notifications = (cursorId != null)
         ? notificationRepository.findAllByUserIdAndIdLessThanOrderByIdDesc(userId, cursorId)
@@ -116,6 +118,10 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
         ? notifications.get(notifications.size() - 1).getId().toHexString()
         : null;
 
-    return new CursorPageResponse<>(dtoList, nextCursor, hasNext);
+    long totalElement = notificationRepository.countByUserId(userId); // 전체 알림 개수
+    long size = dtoList.size();                                       // 현재 페이지 개수
+    String hasAfter = Boolean.toString(hasNext);                      // 문자열형 hasNext
+
+    return new CursorPageResponse<>(dtoList, nextCursor, hasAfter, hasNext, size, totalElement);
   }
 }

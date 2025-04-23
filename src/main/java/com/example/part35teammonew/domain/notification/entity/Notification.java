@@ -60,6 +60,7 @@ public class Notification {
   public boolean confirmedRead() {
     if (!this.confirmed) {
       this.confirmed = true;
+      this.updateAt = Instant.now();
       return true;
     }
     return false;
