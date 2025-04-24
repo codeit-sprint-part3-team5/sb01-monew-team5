@@ -28,5 +28,4 @@ public class UserActivityController {
 
     return ResponseEntity.ok(userActivityDto);
   }
-
 }

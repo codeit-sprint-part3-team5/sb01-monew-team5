@@ -16,6 +16,7 @@ public interface UserActivityServiceInterface {
 
   UserActivityDto getUserActivity(UUID id);
 
+
   //유저가 관심사 구독 할떄
   void addInterestView(UUID id, InterestView interestView);
 

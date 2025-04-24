@@ -99,11 +99,11 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   public CursorPageResponse<NotificationDto> getNoticePage(UUID userId,
       CursorPageRequest pageRequest) {
     ObjectId cursorId = pageRequest.getCursorObjectId();
-    int limit = pageRequest.getLimit() + 1; // 다음 페이지 확인용으로 1개 더 가져옴
 
     List<Notification> notifications = (cursorId != null)
-        ? notificationRepository.findAllByUserIdAndIdLessThanOrderByIdDesc(userId, cursorId)
-        : notificationRepository.findAllByUserIdOrderByIdDesc(userId);
+        ? notificationRepository.findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(
+        userId, cursorId)
+        : notificationRepository.findAllByUserIdAndConfirmedIsFalseOrderByIdDesc(userId);
 
     boolean hasNext = notifications.size() > pageRequest.getLimit();
     if (hasNext) {
@@ -118,10 +118,12 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
         ? notifications.get(notifications.size() - 1).getId().toHexString()
         : null;
 
-    long totalElement = notificationRepository.countByUserId(userId); // 전체 알림 개수
-    long size = dtoList.size();                                       // 현재 페이지 개수
-    String hasAfter = Boolean.toString(hasNext);                      // 문자열형 hasNext
+    long totalElement = notificationRepository.countByUserIdAndConfirmedIsFalse(userId);
+    long size = dtoList.size();
+    String hasAfter = Boolean.toString(hasNext);
 
     return new CursorPageResponse<>(dtoList, nextCursor, hasAfter, hasNext, size, totalElement);
   }
+
+
 }

@@ -18,9 +18,14 @@ public interface NotificationRepository extends MongoRepository<Notification, Ob
   void deleteAllByConfirmedIsTrueAndCreatedAtBefore(Instant threshold);
 
 
+  List<Notification> findAllByUserIdAndConfirmedIsFalseOrderByIdDesc(UUID userId);
+
+  List<Notification> findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(UUID userId,
+      ObjectId id);
+
   List<Notification> findAllByUserIdOrderByIdDesc(UUID userId);
 
   List<Notification> findAllByUserIdAndIdLessThanOrderByIdDesc(UUID userId, ObjectId cursor);
 
-  long countByUserId(UUID userId);
+  long countByUserIdAndConfirmedIsFalse(UUID userId);
 }

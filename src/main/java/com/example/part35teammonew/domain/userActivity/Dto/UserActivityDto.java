@@ -6,13 +6,12 @@ import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import org.bson.types.ObjectId;
 
 @Getter
 @Setter
 public class UserActivityDto {
 
-  private ObjectId id;
+  //private ObjectId id;
   private UUID userId;
   private String nickName;
   private String email;

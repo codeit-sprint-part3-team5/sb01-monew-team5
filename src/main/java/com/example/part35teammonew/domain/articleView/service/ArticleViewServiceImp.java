@@ -6,10 +6,10 @@ import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +55,10 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
+  @Transactional
   public List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction) {
-    return List.of();
+    return null;
   }
+
+
 }

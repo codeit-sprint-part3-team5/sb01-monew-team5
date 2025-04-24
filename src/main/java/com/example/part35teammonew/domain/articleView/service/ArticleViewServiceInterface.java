@@ -1,9 +1,9 @@
 package com.example.part35teammonew.domain.articleView.service;
 
 import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
 
 public interface ArticleViewServiceInterface {
 
