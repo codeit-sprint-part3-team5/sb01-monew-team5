@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public record ArticleViewDto(
-    UUID articleId, Set<UUID> readUserIds
+    UUID articleId, Long count, Set<UUID> readUserIds
 ) {
 
 }

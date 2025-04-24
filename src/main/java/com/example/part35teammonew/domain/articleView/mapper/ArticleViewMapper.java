@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 public interface ArticleViewMapper {
 
   @Mapping(source = "articleId", target = "articleId")
+  @Mapping(source = "count", target = "count")
   @Mapping(source = "readUserIds", target = "readUserIds")
   ArticleViewDto toDto(ArticleView articleView);
 

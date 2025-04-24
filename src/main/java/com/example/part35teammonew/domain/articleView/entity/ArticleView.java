@@ -7,17 +7,18 @@ import lombok.Builder;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "ArticleView")
+@CompoundIndex(name = "count_id_desc_idx", def = "{'count': -1, '_id': -1}")
 @Getter
 public class ArticleView {
 
   @Id
   private ObjectId id;
-  @Indexed
   private final UUID articleId;
+  private Long count;
   private Set<UUID> readUserIds;
 
 
@@ -25,6 +26,7 @@ public class ArticleView {
   private ArticleView(UUID articleId) {
     this.articleId = articleId;
     this.readUserIds = new HashSet<>();
+    count = 0L;
   }
 
   public static ArticleView setUpNewArticleView(UUID articleId) {
@@ -36,11 +38,8 @@ public class ArticleView {
   public void addNewReader(UUID readerId) {
     if (!readUserIds.contains(readerId)) {
       readUserIds.add(readerId);
+      count++;
     }
-  }
-
-  public Long getCount() {
-    return (long) readUserIds.size();
   }
 
 }
