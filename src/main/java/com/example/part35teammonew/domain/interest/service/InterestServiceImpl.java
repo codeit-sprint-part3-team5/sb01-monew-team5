@@ -93,6 +93,7 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
+	@Transactional
 	public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
 		Interest interest = interestRepository.findById(interestId)
 			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
@@ -104,6 +105,7 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteInterest(UUID interestId) {
 		Interest interest = interestRepository.findById(interestId)
 			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
@@ -219,7 +221,8 @@ public class InterestServiceImpl implements InterestService {
 		userList.subtractUser(userId);
 		userListRepository.save(userList);
 
-		interest.setSubscriberCount(interest.getSubscriberCount() - 1);
+		long count = interest.getSubscriberCount();
+		interest.setSubscriberCount(Math.max(0, count - 1));
 		interestRepository.save(interest);
 	}
 
