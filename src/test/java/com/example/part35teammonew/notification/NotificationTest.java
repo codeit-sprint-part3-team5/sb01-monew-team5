@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class NotificationTest {
 
   @Test
-  @DisplayName("댓글 알림 생성 확인")
+  @DisplayName("댓글  알림 생성 확인")
   void createCommentNoticeTest() {
     String content = "그르륷";
     UUID resourceId = UUID.randomUUID();
