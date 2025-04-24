@@ -69,7 +69,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional(readOnly = true) // 관심사 구독중인 사람 체크
+  @Transactional(readOnly = true) // 관심사 구독중인 사람 수 체크
   public Long countSubscribedUser(UUID interest) {
     return interestUserListRepository.findByInterest(interest)
         .map(InterestUserList::getUserCount)
