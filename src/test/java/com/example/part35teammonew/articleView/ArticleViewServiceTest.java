@@ -7,6 +7,7 @@ import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceImp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -90,7 +91,7 @@ class ArticleViewServiceTest {
   }
 
   @Test
-  @DisplayName("조회수 동일할 때 ObjectId 기준 내림차순 정렬 검증")
+  @DisplayName("조회수 같음, 내림차순")
   void getArticles_sameCount_sortByObjectIdDescending() {
     UUID articleId1 = UUID.randomUUID();
     UUID articleId2 = UUID.randomUUID();
@@ -109,7 +110,7 @@ class ArticleViewServiceTest {
     articleViewRepository.saveAll(List.of(v1, v2));
 
     List<UUID> actual = articleViewService.getSortByVewCountPageNation(null, Pageable.ofSize(2),
-        "next");
+        "desc");
 
     List<ArticleView> sorted = articleViewRepository.findAll().stream()
         .filter(v -> v.getCount().equals(1L))
@@ -124,7 +125,7 @@ class ArticleViewServiceTest {
   }
 
   @Test
-  @DisplayName("조회수 내림차순 정렬 + limit 적용 확인")
+  @DisplayName("내림차순 + limit")
   void getArticles_sortedByCount_limitApplied() {
     articleViewRepository.deleteAll();
 
@@ -133,26 +134,26 @@ class ArticleViewServiceTest {
     UUID a3 = UUID.randomUUID();
 
     ArticleView v1 = ArticleView.setUpNewArticleView(a1);
-    v1.addNewReader(UUID.randomUUID()); // count = 1
+    v1.addNewReader(UUID.randomUUID()); // 1
 
     ArticleView v2 = ArticleView.setUpNewArticleView(a2);
     v2.addNewReader(UUID.randomUUID());
-    v2.addNewReader(UUID.randomUUID()); // count = 2
+    v2.addNewReader(UUID.randomUUID()); // 2
 
     ArticleView v3 = ArticleView.setUpNewArticleView(a3);
-    // count = 0
+    // 0
 
     articleViewRepository.saveAll(List.of(v1, v2, v3));
 
     List<UUID> result = articleViewService.getSortByVewCountPageNation(null, Pageable.ofSize(2),
-        "next");
+        "desc");
 
     assertThat(result).hasSize(2);
     assertThat(result).containsExactly(v2.getArticleId(), v1.getArticleId());
   }
 
   @Test
-  @DisplayName("커서 값보다 count가 작은 항목만 반환되는지")
+  @DisplayName("커서보다 작은거 반환")
   void getArticles_filteredByCursorCount() {
     articleViewRepository.deleteAll();
 
@@ -161,18 +162,15 @@ class ArticleViewServiceTest {
     UUID a3 = UUID.randomUUID();
 
     ArticleView v1 = ArticleView.setUpNewArticleView(a1);
-    v1.addNewReader(UUID.randomUUID()); // count = 1
+    v1.addNewReader(UUID.randomUUID());
 
     ArticleView v2 = ArticleView.setUpNewArticleView(a2);
     v2.addNewReader(UUID.randomUUID());
-    v2.addNewReader(UUID.randomUUID()); // count = 2
+    v2.addNewReader(UUID.randomUUID());
 
     ArticleView v3 = ArticleView.setUpNewArticleView(a3);
-    // count = 0
-
     articleViewRepository.saveAll(List.of(v1, v2, v3));
 
-    // 커서 count = 1 ⇒ 0인 항목만 나와야 함
     List<UUID> result = articleViewService.getSortByVewCountPageNation(1L, Pageable.ofSize(5),
         "desc");
 
@@ -180,7 +178,7 @@ class ArticleViewServiceTest {
   }
 
   @Test
-  @DisplayName("조회수 오름차순 정렬 + limit 적용 확인")
+  @DisplayName("오름차순 +  limit")
   void getArticles_sortedByCountAscending() {
     articleViewRepository.deleteAll();
 
@@ -189,30 +187,22 @@ class ArticleViewServiceTest {
     UUID a3 = UUID.randomUUID();
 
     ArticleView v1 = ArticleView.setUpNewArticleView(a1);
-    v1.addNewReader(UUID.randomUUID()); // count = 1
+    v1.addNewReader(UUID.randomUUID()); // 1
 
     ArticleView v2 = ArticleView.setUpNewArticleView(a2);
     v2.addNewReader(UUID.randomUUID());
-    v2.addNewReader(UUID.randomUUID()); // count = 2
+    v2.addNewReader(UUID.randomUUID()); // 2
 
-    ArticleView v3 = ArticleView.setUpNewArticleView(a3);
-    // count = 0
+    ArticleView v3 = ArticleView.setUpNewArticleView(a3);//0
 
     articleViewRepository.saveAll(List.of(v1, v2, v3));
 
-    // 실제 결과
     List<UUID> result = articleViewService.getSortByVewCountPageNation(null, Pageable.ofSize(3),
         "asc");
 
-    // 저장된 엔티티들을 count 오름차순, id 오름차순으로 정렬하여 기대값 생성
     List<UUID> expected = articleViewRepository.findAll().stream()
-        .sorted((x, y) -> {
-          int cmp = Long.compare(x.getCount(), y.getCount());
-          if (cmp != 0) {
-            return cmp;
-          }
-          return x.getId().toHexString().compareTo(y.getId().toHexString());
-        })
+        .sorted(Comparator.comparingLong(ArticleView::getCount)
+            .thenComparing(x -> x.getId().toHexString()))
         .map(ArticleView::getArticleId)
         .limit(3)
         .toList();

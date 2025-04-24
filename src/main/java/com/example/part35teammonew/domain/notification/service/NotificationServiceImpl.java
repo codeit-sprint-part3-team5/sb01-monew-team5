@@ -101,7 +101,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
       CursorPageRequest pageRequest) {
     ObjectId cursorId = pageRequest.getCursorObjectId();
 
-    // LocalDateTime → Instant (UTC)
+    // LocalDateTime  Instant로 인달 엔티티가 이거암
     Instant afterInstant = null;
     if (pageRequest.getAfter() != null) {
       afterInstant = pageRequest.getAfter().atZone(ZoneOffset.UTC).toInstant();
@@ -139,9 +139,12 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
         .map(notificationMapper::toDto)
         .toList();
 
-    String nextCursor = hasNext
-        ? notifications.get(notifications.size() - 1).getId().toHexString()
-        : null;
+    String nextCursor;
+    if (hasNext) {
+      nextCursor = notifications.get(notifications.size() - 1).getId().toHexString();
+    } else {
+      nextCursor = null;
+    }
 
     long totalElement = notificationRepository.countByUserIdAndConfirmedIsFalse(userId);
     long size = dtoList.size();

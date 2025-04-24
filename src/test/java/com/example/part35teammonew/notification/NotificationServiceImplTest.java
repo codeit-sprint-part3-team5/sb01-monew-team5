@@ -139,7 +139,7 @@ class NotificationServiceImplTest {
   }
 
   @Test
-  @DisplayName("커서 이후 알림만 조회되는지 확인")
+  @DisplayName("커서 이후 알림만 조회")
   void getNoticePage_respectsCursor() {
     UUID userId = UUID.randomUUID();
     UUID resourceId = UUID.randomUUID();
@@ -153,51 +153,46 @@ class NotificationServiceImplTest {
     Notification n3 = notificationRepository.save(
         Notification.createNewsNotice(userId, "C", resourceId));
 
-    // 첫 페이지: 2개
     var firstPage = notificationService.getNoticePage(userId,
         new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 2));
     assertThat(firstPage.getData()).hasSize(2);
     assertThat(firstPage.isHasNext()).isTrue();
 
-    // 커서 기반 다음 페이지
     var nextPage = notificationService.getNoticePage(userId,
         new CursorPageRequest(firstPage.getNextCursor(), LocalDateTime.now().minusDays(1), 2));
 
     assertThat(nextPage.getData()).hasSize(1);
-    assertThat(nextPage.getData().get(0).content()).isEqualTo("A"); // 가장 오래된 알림
+    assertThat(nextPage.getData().get(0).content()).isEqualTo("A");
   }
 
   @Test
-  @DisplayName("커서 이후 데이터만 반환되는지 확인")
+  @DisplayName("커서 이후 데이터만 반환")
   void getNoticePage_cursorProperlyApplied() {
     UUID userId = UUID.randomUUID();
     UUID resourceId = UUID.randomUUID();
 
     Notification n1 = notificationRepository.save(
-        Notification.createNewsNotice(userId, "알림1", resourceId)); // 오래됨
+        Notification.createNewsNotice(userId, "알림1", resourceId));
     sleep(10);
     Notification n2 = notificationRepository.save(
         Notification.createNewsNotice(userId, "알림2", resourceId));
     sleep(10);
     Notification n3 = notificationRepository.save(
-        Notification.createNewsNotice(userId, "알림3", resourceId)); // 최신
-
-    // 페이지 1 요청 (limit = 2)
+        Notification.createNewsNotice(userId, "알림3", resourceId));
     CursorPageRequest firstPageRequest = new CursorPageRequest(null,
         LocalDateTime.now().minusDays(1), 2);
     var page1 = notificationService.getNoticePage(userId, firstPageRequest);
 
     assertThat(page1.getData()).hasSize(2);
-    assertThat(page1.getData().get(0).content()).isEqualTo("알림3"); // 최신순
+    assertThat(page1.getData().get(0).content()).isEqualTo("알림3");
     assertThat(page1.getData().get(1).content()).isEqualTo("알림2");
 
-    // 페이지 2 요청 (커서 사용)
     CursorPageRequest secondPageRequest = new CursorPageRequest(page1.getNextCursor(),
         LocalDateTime.now().minusDays(1), 2);
     var page2 = notificationService.getNoticePage(userId, secondPageRequest);
 
     assertThat(page2.getData()).hasSize(1);
-    assertThat(page2.getData().get(0).content()).isEqualTo("알림1"); // 커서 이후 정확히 나옴
+    assertThat(page2.getData().get(0).content()).isEqualTo("알림1");
     assertThat(page2.isHasNext()).isFalse();
   }
 

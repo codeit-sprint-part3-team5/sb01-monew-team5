@@ -6,6 +6,7 @@ import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,13 +62,19 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   @Transactional(readOnly = true) //조회순으로 테스트 그리고 같으면 id순으로  direction는 asc 아니면 desc 
   //디폴트는 desc임
   public List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction) {
-    Sort.Order countOrder = direction.equalsIgnoreCase("asc")
-        ? Sort.Order.asc("count")
-        : Sort.Order.desc("count");
+    Sort.Order countOrder;
+    if (direction.equalsIgnoreCase("asc")) {
+      countOrder = Sort.Order.asc("count");
+    } else {
+      countOrder = Sort.Order.desc("count");
+    }
 
-    Sort.Order idOrder = direction.equalsIgnoreCase("asc")
-        ? Sort.Order.asc("_id")
-        : Sort.Order.desc("_id");
+    Sort.Order idOrder;
+    if (direction.equalsIgnoreCase("asc")) {
+      idOrder = Sort.Order.asc("_id"); // MongoDB의 기본 ObjectId 필드
+    } else {
+      idOrder = Sort.Order.desc("_id");
+    }
 
     Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         Sort.by(countOrder, idOrder));
@@ -76,15 +83,22 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
     List<ArticleView> views = page.getContent();
 
     if (cursor != null) {
-      views = views.stream()
-          .filter(view -> {
-            if (direction.equalsIgnoreCase("asc")) {
-              return view.getCount() > cursor;
-            } else {
-              return view.getCount() < cursor;
-            }
-          })
-          .toList();
+      List<ArticleView> filteredViews = new ArrayList<>();
+
+      for (ArticleView view : views) {
+        Long count = view.getCount();
+        if (direction.equalsIgnoreCase("asc")) {
+          if (count > cursor) {
+            filteredViews.add(view);
+          }
+        } else {
+          if (count < cursor) {
+            filteredViews.add(view);
+          }
+        }
+      }
+
+      views = filteredViews;
     }
     return views.stream()
         .map(ArticleView::getArticleId)

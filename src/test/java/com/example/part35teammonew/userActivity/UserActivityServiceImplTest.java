@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("생성 확인")
   void testAddInterestViewSuccess() {
     InterestView interest = InterestView.builder()
         .interestId(UUID.randomUUID())
@@ -64,6 +66,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("없는거 찾기")
   void testAddInterestViewNotFound() {
     InterestView interest = InterestView.builder().interestId(UUID.randomUUID()).build();
     assertThrows(RuntimeException.class,
@@ -71,6 +74,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("구독 해제")
   void testSubtractInterestViewSuccess() {
     InterestView interest = InterestView.builder().interestId(UUID.randomUUID()).build();
     userActivityService.addInterestView(userId, interest);
@@ -80,6 +84,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("ㅇ어븐거 구독 해제")
   void testSubtractInterestViewNotFound() {
     InterestView interest = InterestView.builder().interestId(UUID.randomUUID()).build();
     assertThrows(RuntimeException.class,
@@ -87,6 +92,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("최근 댓들 추가")
   void testAddRecentCommentViewSuccess() {
     RecentCommentView comment = RecentCommentView.builder()
         .id(UUID.randomUUID())
@@ -107,6 +113,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("죄근댓글 없는데 추가")
   void testAddRecentCommentViewNotFound() {
     RecentCommentView comment = RecentCommentView.builder().id(UUID.randomUUID()).build();
     assertThrows(RuntimeException.class,
@@ -114,6 +121,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("대들에 좋아요")
   void testAddLikeCommentViewSuccess() {
     LikeCommentView like = LikeCommentView.builder()
         .id(UUID.randomUUID())
@@ -134,6 +142,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("없는 댓글 좋아요")
   void testAddLikeCommentViewNotFound() {
     LikeCommentView like = LikeCommentView.builder().id(UUID.randomUUID()).build();
     assertThrows(RuntimeException.class,
@@ -141,6 +150,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("기사 봄")
   void testAddArticleInfoViewSuccess() {
     ArticleInfoView article = ArticleInfoView.builder()
         .id(UUID.randomUUID())
@@ -162,6 +172,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("없는 기사 봄")
   void testAddArticleInfoViewNotFound() {
     ArticleInfoView article = ArticleInfoView.builder().id(UUID.randomUUID()).build();
     assertThrows(RuntimeException.class,
@@ -169,6 +180,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("닉네임 업데이트")
   void testUpdateUserInformationSuccess() {
     UserInfoDto dto = new UserInfoDto();
     dto.setNickName("닉네임");
@@ -183,6 +195,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("없는 유저 ㅓ데이트")
   void testUpdateUserInformationNotFound() {
     UUID fakeId = UUID.randomUUID();
     UserInfoDto dto = new UserInfoDto();
@@ -193,6 +206,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("물리적 삭제")
   void testDeleteUserActivitySuccess() {
     userActivityService.deleteUserActivity(userId);
     Optional<UserActivity> result = userActivityRepository.findByUserId(userId);
@@ -200,6 +214,7 @@ public class UserActivityServiceImplTest {
   }
 
   @Test
+  @DisplayName("없는거 물리적 삭제")
   void testDeleteUserActivityWhenUserDoesNotExist() {
     UUID nonExistentId = UUID.randomUUID();
     userActivityService.deleteUserActivity(nonExistentId);
