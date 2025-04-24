@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "ArticleView")
-@CompoundIndex(name = "count_id_desc_idx", def = "{'count': -1, '_id': -1}")
+@CompoundIndex(name = "count_id_desc_idx", def = "{'count': -1, '_id': -1}")//페이지 네이션 애들로 인덱스 삼음
 @Getter
 public class ArticleView {
 

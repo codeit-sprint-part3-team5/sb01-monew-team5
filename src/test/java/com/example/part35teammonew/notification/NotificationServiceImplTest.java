@@ -7,6 +7,7 @@ import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceImpl;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -90,14 +91,16 @@ class NotificationServiceImplTest {
     Notification n3 = notificationRepository.save(
         Notification.createNewsNotice(userId, "알림3", resourceId));
 
-    CursorPageRequest pageRequest = new CursorPageRequest(null, 2);
+    CursorPageRequest pageRequest = new CursorPageRequest(null, LocalDateTime.now().minusDays(1),
+        2);
     var page1 = notificationService.getNoticePage(userId, pageRequest);
 
     assertThat(page1.getData()).hasSize(2);
     assertThat(page1.isHasNext()).isTrue();
     assertThat(page1.getNextCursor()).isNotBlank();
 
-    CursorPageRequest nextPageRequest = new CursorPageRequest(page1.getNextCursor(), 2);
+    CursorPageRequest nextPageRequest = new CursorPageRequest(page1.getNextCursor(),
+        LocalDateTime.now().minusDays(1), 2);
     var page2 = notificationService.getNoticePage(userId, nextPageRequest);
 
     assertThat(page2.getData()).hasSize(1);
@@ -109,7 +112,7 @@ class NotificationServiceImplTest {
   void getNoticePage_empty() {
     UUID userId = UUID.randomUUID();
 
-    CursorPageRequest request = new CursorPageRequest(null, 10);
+    CursorPageRequest request = new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 10);
     var response = notificationService.getNoticePage(userId, request);
 
     assertThat(response.getData()).isEmpty();
@@ -127,7 +130,7 @@ class NotificationServiceImplTest {
     sleep(10);
     notificationRepository.save(Notification.createNewsNotice(userId, "2", resourceId));
 
-    CursorPageRequest request = new CursorPageRequest(null, 2);
+    CursorPageRequest request = new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 2);
     var response = notificationService.getNoticePage(userId, request);
 
     assertThat(response.getData()).hasSize(2);
@@ -151,13 +154,14 @@ class NotificationServiceImplTest {
         Notification.createNewsNotice(userId, "C", resourceId));
 
     // 첫 페이지: 2개
-    var firstPage = notificationService.getNoticePage(userId, new CursorPageRequest(null, 2));
+    var firstPage = notificationService.getNoticePage(userId,
+        new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 2));
     assertThat(firstPage.getData()).hasSize(2);
     assertThat(firstPage.isHasNext()).isTrue();
 
     // 커서 기반 다음 페이지
     var nextPage = notificationService.getNoticePage(userId,
-        new CursorPageRequest(firstPage.getNextCursor(), 2));
+        new CursorPageRequest(firstPage.getNextCursor(), LocalDateTime.now().minusDays(1), 2));
 
     assertThat(nextPage.getData()).hasSize(1);
     assertThat(nextPage.getData().get(0).content()).isEqualTo("A"); // 가장 오래된 알림
@@ -179,7 +183,8 @@ class NotificationServiceImplTest {
         Notification.createNewsNotice(userId, "알림3", resourceId)); // 최신
 
     // 페이지 1 요청 (limit = 2)
-    CursorPageRequest firstPageRequest = new CursorPageRequest(null, 2);
+    CursorPageRequest firstPageRequest = new CursorPageRequest(null,
+        LocalDateTime.now().minusDays(1), 2);
     var page1 = notificationService.getNoticePage(userId, firstPageRequest);
 
     assertThat(page1.getData()).hasSize(2);
@@ -187,7 +192,8 @@ class NotificationServiceImplTest {
     assertThat(page1.getData().get(1).content()).isEqualTo("알림2");
 
     // 페이지 2 요청 (커서 사용)
-    CursorPageRequest secondPageRequest = new CursorPageRequest(page1.getNextCursor(), 2);
+    CursorPageRequest secondPageRequest = new CursorPageRequest(page1.getNextCursor(),
+        LocalDateTime.now().minusDays(1), 2);
     var page2 = notificationService.getNoticePage(userId, secondPageRequest);
 
     assertThat(page2.getData()).hasSize(1);
@@ -205,10 +211,33 @@ class NotificationServiceImplTest {
     notificationRepository.save(Notification.createNewsNotice(user1, "user1 알림", resourceId));
     notificationRepository.save(Notification.createNewsNotice(user2, "user2 알림", resourceId));
 
-    var response = notificationService.getNoticePage(user1, new CursorPageRequest(null, 10));
+    var response = notificationService.getNoticePage(user1,
+        new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 10));
     assertThat(response.getData()).hasSize(1);
     assertThat(response.getData().get(0).content()).isEqualTo("user1 알림");
   }
+
+//  @Test  이거 실행할려면 엔티티 필드 바꾸고 테스트 해야함
+//  @DisplayName("after 조건 확인")
+//  void getNoticePage_afterConditionWorks() {
+//    UUID userId = UUID.randomUUID();
+//    UUID resourceId = UUID.randomUUID();
+//    Notification old = Notification.createNewsNotice(userId, "1111", resourceId);
+//    old.setCreatedAt(LocalDateTime.now().minusDays(1).atZone(ZoneOffset.UTC).toInstant());
+//    notificationRepository.save(old);
+//    
+//    LocalDateTime baseTime = LocalDateTime.now();
+//    
+//    Notification recent = Notification.createNewsNotice(userId, "2222", resourceId);
+//    recent.setCreatedAt(baseTime.plusSeconds(1).atZone(ZoneOffset.UTC).toInstant());
+//    notificationRepository.save(recent);
+//    
+//    CursorPageRequest request = new CursorPageRequest(null, baseTime, 10);
+//    var response = notificationService.getNoticePage(userId, request);
+//
+//    assertThat(response.getData()).hasSize(1);
+//    assertThat(response.getData().get(0).content()).isEqualTo("2222");
+//  }
 
   private void sleep(long millis) {
     try {

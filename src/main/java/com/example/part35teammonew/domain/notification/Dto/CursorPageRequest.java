@@ -1,14 +1,21 @@
 package com.example.part35teammonew.domain.notification.Dto;
 
+import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 
+@Getter
+@Setter
 public class CursorPageRequest {
 
   private final String cursor;
+  private final LocalDateTime after;
   private final int limit;
 
-  public CursorPageRequest(String cursor, int limit) {
+  public CursorPageRequest(String cursor, LocalDateTime after, int limit) {
     this.cursor = cursor;
+    this.after = after;
     this.limit = limit;
   }
 
@@ -23,11 +30,4 @@ public class CursorPageRequest {
     }
   }
 
-  public int getLimit() {
-    return limit;
-  }
-
-  public String getCursor() {
-    return cursor;
-  }
 }

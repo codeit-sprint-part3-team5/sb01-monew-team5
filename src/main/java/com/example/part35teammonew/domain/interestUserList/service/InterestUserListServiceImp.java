@@ -27,7 +27,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional
+  @Transactional//관심사 만들어 질떄 호출
   public InterestUserListDto createInterestList(UUID interest) {
     InterestUserList interestUserList = setUpNewInterestUserList(interest);
     interestUserListRepository.save(interestUserList);
@@ -35,7 +35,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional
+  @Transactional//유저가 관심사 구독하면 작동
   public boolean addSubscribedUser(UUID interestId, UUID userId) {
     return interestUserListRepository.findByInterest(interestId)
         .map(interestUserList -> {
@@ -47,7 +47,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional
+  @Transactional // 유저가 관심사 구독 취소하면 작동
   public boolean subtractSubscribedUser(UUID id, UUID user) {
     return interestUserListRepository.findByInterest(id)
         .map(interestUserList -> {
@@ -59,7 +59,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true) //유저가 구독중인지 확인
   public boolean checkUserSubscribe(UUID interestId, UUID userId) {
     return interestUserListRepository.findByInterest(interestId)
         .map(interestUserList -> {
@@ -69,7 +69,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true) // 관심사 구독중인 사람 체크
   public Long countSubscribedUser(UUID interest) {
     return interestUserListRepository.findByInterest(interest)
         .map(InterestUserList::getUserCount)
@@ -77,7 +77,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
   }
 
   @Override
-  @Transactional
+  @Transactional //관심사 물리적 삭제시
   public void deleteInterestList(UUID interest) {
     interestUserListRepository.deleteByInterest(interest);
 

@@ -56,6 +56,10 @@ public class Notification {
         .resourceId(resourceId)
         .build();
   }
+  //테슽트 용 설정자
+//  public void setCreatedAt(Instant time) {
+//    this.createdAt = time;
+//  }
 
   public boolean confirmedRead() {
     if (!this.confirmed) {

@@ -17,7 +17,7 @@ public class InterestUserList {
   @Id
   private ObjectId id;
   @Indexed
-  private UUID interest;
+  private final UUID interest;
   private Set<UUID> subscribedUser;
 
   @Builder
@@ -45,6 +45,6 @@ public class InterestUserList {
   }
 
   public long getUserCount() {
-    return (long) subscribedUser.size();
+    return subscribedUser.size();
   }
 }

@@ -9,6 +9,7 @@ import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepo
 import java.util.List;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -29,7 +30,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional  //기사가 만들어 질떄 호출
   public ArticleViewDto createArticleView(UUID articleId) {
     ArticleView articleView = setUpNewArticleView(articleId);
     articleViewRepository.save(articleView);
@@ -37,7 +38,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional //유저가 기사 읽을떄 호출
   public boolean addReadUser(UUID articleId, UUID userId) {
     return articleViewRepository.findByArticleId(articleId)
         .map(articleView -> {
@@ -49,7 +50,7 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
-  @Transactional(readOnly = true)
+  @Transactional(readOnly = true) //기사의 조회수 호출
   public Long countReadUser(UUID articleId) {
     return articleViewRepository.findByArticleId(articleId)
         .map(ArticleView::getCount)
@@ -57,7 +58,8 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   }
 
   @Override
-  @Transactional(readOnly = true) //조회순으로 테스트 그리고 같으면 id순으로
+  @Transactional(readOnly = true) //조회순으로 테스트 그리고 같으면 id순으로  direction는 asc 아니면 desc 
+  //디폴트는 desc임
   public List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction) {
     Sort.Order countOrder = direction.equalsIgnoreCase("asc")
         ? Sort.Order.asc("count")
@@ -70,7 +72,8 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
     Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         Sort.by(countOrder, idOrder));
 
-    List<ArticleView> views = articleViewRepository.findAllOrderByCountDesc(sortedPageable);
+    Page<ArticleView> page = articleViewRepository.findAll(sortedPageable);
+    List<ArticleView> views = page.getContent();
 
     if (cursor != null) {
       views = views.stream()
@@ -83,7 +86,6 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
           })
           .toList();
     }
-
     return views.stream()
         .map(ArticleView::getArticleId)
         .toList();

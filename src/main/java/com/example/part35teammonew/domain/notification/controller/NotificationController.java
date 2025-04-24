@@ -4,6 +4,7 @@ import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
 import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
 import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,11 @@ public class NotificationController {
   @GetMapping
   public ResponseEntity<CursorPageResponse<NotificationDto>> getNotifications(
       @RequestParam(value = "cursor", required = false) String cursor,
+      @RequestParam(value = "after", required = false) LocalDateTime after,
       @RequestParam(value = "limit") int limit,
       @RequestHeader("Monew-Request-User-ID") UUID requestUserId
   ) {
-    CursorPageRequest cursorPageRequest = new CursorPageRequest(cursor, limit);
+    CursorPageRequest cursorPageRequest = new CursorPageRequest(cursor, after, limit);
     CursorPageResponse<NotificationDto> result =
         notificationServiceInterface.getNoticePage(requestUserId, cursorPageRequest);
 

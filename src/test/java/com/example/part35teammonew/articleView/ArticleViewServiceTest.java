@@ -174,7 +174,7 @@ class ArticleViewServiceTest {
 
     // 커서 count = 1 ⇒ 0인 항목만 나와야 함
     List<UUID> result = articleViewService.getSortByVewCountPageNation(1L, Pageable.ofSize(5),
-        "next");
+        "desc");
 
     assertThat(result).containsExactly(v3.getArticleId());
   }

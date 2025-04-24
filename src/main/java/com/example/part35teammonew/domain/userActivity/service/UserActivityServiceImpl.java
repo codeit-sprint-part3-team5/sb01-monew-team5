@@ -40,7 +40,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional(readOnly = true)//관심사 정보 찾기
   public UserActivityDto getUserActivity(UUID id) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -48,7 +48,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional //유저가 관심사 구독하면 실행
   public void addInterestView(UUID id, InterestView interestView) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -59,7 +59,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional //유저가 관심사 구독 취소할떄
   public void subtractInterestView(UUID id, InterestView interestView) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -68,7 +68,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional //일단은 닉네임 바꿀떄 실행
   public UserActivityDto updateUserInformation(UUID id, UserInfoDto userInfoDto) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -78,7 +78,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional //유저가 댓글쓰면 실행
   public void addRecentCommentView(UUID id, RecentCommentView recentCommentView) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -87,7 +87,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional// 유저가 좋아요 누르면 실행
   public void addLikeCommentView(UUID id, LikeCommentView likeCommentView) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));
@@ -96,7 +96,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional
+  @Transactional//유저가 기사보면 실행
   public void addArticleInfoView(UUID id, ArticleInfoView articleInfoView) {
     UserActivity userActivity = userActivityRepository.findByUserId(id)
         .orElseThrow(() -> new NoSuchElementException("예외ㅣㅣㅣㅣ"));

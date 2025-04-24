@@ -23,9 +23,11 @@ public interface NotificationRepository extends MongoRepository<Notification, Ob
   List<Notification> findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(UUID userId,
       ObjectId id);
 
-  List<Notification> findAllByUserIdOrderByIdDesc(UUID userId);
+  List<Notification> findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterOrderByIdDesc(UUID userId,
+      Instant after);
 
-  List<Notification> findAllByUserIdAndIdLessThanOrderByIdDesc(UUID userId, ObjectId cursor);
+  List<Notification> findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterAndIdLessThanOrderByIdDesc(
+      UUID userId, Instant after, ObjectId cursor);
 
   long countByUserIdAndConfirmedIsFalse(UUID userId);
 }
