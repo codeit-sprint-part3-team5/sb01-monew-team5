@@ -228,12 +228,16 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public boolean isSubscribed(UUID interestId, UUID userId) {
-		return false;
+		return userListRepository.findByInterest(interestId)
+			.map(list -> list.findUser(userId))
+			.orElse(false);
 	}
 
 	@Override
 	public long countSubscribers(UUID interestId) {
-		return 0;
+		return userListRepository.findByInterest(interestId)
+			.map(InterestUserList::getUserCount)
+			.orElse(0L);
 	}
 
 	//Interest 엔티티 + mongodb 데이터 조합 -> Dto 로 변환
