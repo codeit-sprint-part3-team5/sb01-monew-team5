@@ -1,6 +1,7 @@
 package com.example.part35teammonew.domain.user.controller;
 
 import com.example.part35teammonew.domain.user.dto.UserDto;
+import com.example.part35teammonew.domain.user.dto.UserLoginRequest;
 import com.example.part35teammonew.domain.user.dto.UserRegisterRequest;
 import com.example.part35teammonew.domain.user.dto.UserUpdateRequest;
 import com.example.part35teammonew.domain.user.service.UserService;
@@ -28,6 +29,15 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdUserDto);
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    ResponseEntity<UserDto> login(@RequestBody UserLoginRequest request){
+        UserDto userDto = userService.login(request);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(userDto);
     }
 
     // 닉네임 수정

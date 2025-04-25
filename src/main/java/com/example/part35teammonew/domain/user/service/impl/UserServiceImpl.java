@@ -1,14 +1,16 @@
 package com.example.part35teammonew.domain.user.service.impl;
 
 import com.example.part35teammonew.domain.user.dto.UserDto;
+import com.example.part35teammonew.domain.user.dto.UserLoginRequest;
 import com.example.part35teammonew.domain.user.dto.UserRegisterRequest;
 import com.example.part35teammonew.domain.user.dto.UserUpdateRequest;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 import com.example.part35teammonew.domain.user.service.UserService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -19,23 +21,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 회원가입
     @Override
     public UserDto register(UserRegisterRequest request) {
 
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
         User user = User.builder()
                         .email(request.getEmail())
                         .nickname(request.getNickname())
-                        .password(request.getPassword())
+                        .password(encodedPassword)
                         .build();
-        userRepository.save(user);
+        return UserDto.fromEntity(userRepository.save(user));
+    }
 
-        return UserDto.builder()
-                .email(request.getEmail())
-                .nickname(request.getNickname())
-                .build();
+    // 로그인
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto login(UserLoginRequest request){
+        // 이메일로 사용자 검색 (논리 삭제가 되지 않은 사용자여야 함)
+        User user = userRepository.findByEmailAndIsDeletedFalse(request.getEmail())
+                .orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            throw new RuntimeException("비밀번호가 일치하지 않습니다."); // TODO 커스텀 예외 추가 후 수정 예정
+        }
+
+        return UserDto.fromEntity(user);
     }
 
     // 닉네임 수정
