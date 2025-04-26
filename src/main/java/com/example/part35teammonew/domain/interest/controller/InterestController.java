@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.CursorPageResponse;
+import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
 import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestUpdateRequest;
 import com.example.part35teammonew.domain.interest.service.InterestService;
@@ -63,7 +63,7 @@ public class InterestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<CursorPageResponse<InterestDto>> listInterests(
+	public ResponseEntity<PageResponse<InterestDto>> listInterests(
 		@RequestParam(required = false) String keyword,
 		@RequestParam String orderBy,
 		@RequestParam String direction,
@@ -81,7 +81,7 @@ public class InterestController {
 			limit,
 			userId
 		);
-		CursorPageResponse<InterestDto> result = interestService.listInterests(request);
+		PageResponse<InterestDto> result = interestService.listInterests(request);
 		return ResponseEntity.ok(result);
 	}
 

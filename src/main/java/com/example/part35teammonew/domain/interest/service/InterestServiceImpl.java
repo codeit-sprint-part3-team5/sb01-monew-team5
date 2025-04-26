@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.CursorPageResponse;
+import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
 import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.entity.Interest;
@@ -131,7 +131,7 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
-	public CursorPageResponse<InterestDto> listInterests(InterestPageRequest req) {
+	public PageResponse<InterestDto> listInterests(InterestPageRequest req) {
 		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		Pageable pageable = PageRequest.of(0, req.limit(),
 			Sort.by(direction, req.orderBy()).and(Sort.by(direction, "createdAt")));
@@ -165,7 +165,7 @@ public class InterestServiceImpl implements InterestService {
 				Interest last = interests.get(interests.size() - 1);
 				nextAfter = last.getCreatedAt();
 				if (req.orderBy().equalsIgnoreCase("subscriberCount")) {
-					nextIdAfter = last.getSubscriberCount();
+					long subscriberCount = last.getSubscriberCount();
 				} else if (req.orderBy().equalsIgnoreCase("name")) {
 					nextCursor = last.getName();
 				}
@@ -177,10 +177,10 @@ public class InterestServiceImpl implements InterestService {
 			.map(i -> mapToDtoWithSubscription(i, req.userId()))
 			.toList();
 
-		return new CursorPageResponse<>(
+		return new PageResponse<>(
 			content,
+			nextCursor,
 			nextAfter,
-			nextIdAfter,
 			content.size(),
 			totalElements,
 			hasNext

@@ -20,7 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.CursorPageResponse;
+import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
 import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
@@ -78,7 +78,7 @@ public class InterestGetPageListServiceTest {
 		);
 
 		//when
-		CursorPageResponse<InterestDto> result = interestService.listInterests(request);
+		PageResponse<InterestDto> result = interestService.listInterests(request);
 
 		//then
 
@@ -135,7 +135,7 @@ public class InterestGetPageListServiceTest {
 		);
 
 		//when
-		CursorPageResponse<InterestDto> result = interestService.listInterests(request);
+		PageResponse<InterestDto> result = interestService.listInterests(request);
 
 		//then
 		assertThat(result.content()).hasSize(2);
@@ -202,7 +202,7 @@ public class InterestGetPageListServiceTest {
 		);
 
 		//when
-		CursorPageResponse<InterestDto> result = interestService.listInterests(request);
+		PageResponse<InterestDto> result = interestService.listInterests(request);
 
 		//then
 		assertThat(result.content()).hasSize(3);
