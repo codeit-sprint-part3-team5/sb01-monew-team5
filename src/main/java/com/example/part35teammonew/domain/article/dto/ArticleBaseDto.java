@@ -3,6 +3,7 @@ package com.example.part35teammonew.domain.article.dto;
 import com.example.part35teammonew.domain.article.entity.Article;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Data;
@@ -27,7 +28,11 @@ public class ArticleBaseDto {
   @NotNull
   private LocalDateTime date;
 
-  // 기본 생성자 금지
+  private LocalDateTime createdAt;
+
+  @NotNull
+  private int commentCount;
+
   public ArticleBaseDto(Article article) {
     this.id = article.getId();
     this.title = article.getTitle();
@@ -35,26 +40,29 @@ public class ArticleBaseDto {
     this.link = article.getLink();
     this.source = article.getSource();
     this.date = article.getDate();
+    this.createdAt = article.getCreatedAt();
+    this.commentCount = article.getCommentCount();
   }
 
   // 생성자
-  public ArticleBaseDto(UUID id, String title, String summary, String link, String source,
-      LocalDateTime date) {
+  public ArticleBaseDto(UUID id, String title, String summary, String link, String source, LocalDateTime date, LocalDateTime createdAt, int commentCount) {
     this.id = id;
     this.title = title;
     this.summary = summary;
     this.link = link;
     this.source = source;
     this.date = date;
+    this.createdAt = createdAt;
+    this.commentCount = commentCount;
   }
   // 저장 Dto
   public ArticleBaseDto(String title, String summary, String link, String source,
-      LocalDateTime date) {
+      LocalDateTime date, int commentCount) {
     this.title = title;
     this.summary = summary;
     this.link = link;
     this.source = source;
     this.date = date;
+    this.commentCount = commentCount;
   }
-
 }

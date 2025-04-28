@@ -10,6 +10,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +37,9 @@ class UserActivityTest {
     assertThat(userActivity.getNickName()).isEqualTo("구황작물");
     assertThat(userActivity.getEmail()).isEqualTo("감자@고구마.com");
     assertThat(userActivity.getSubscriptions()).isEmpty();
-    assertThat(userActivity.recentcomments).isEmpty();
-    assertThat(userActivity.likeComment).isEmpty();
-    assertThat(userActivity.articleViews).isEmpty();
+    assertThat(userActivity.getRecentcomments()).isEmpty();
+    assertThat(userActivity.getLikeComment()).isEmpty();
+    assertThat(userActivity.getArticleViews()).isEmpty();
   }
 
   @Test
@@ -77,13 +78,13 @@ class UserActivityTest {
       RecentCommentView comment = RecentCommentView.builder()
           .id(UUID.randomUUID())
           .content("댓글" + i)
-          .createdAt(Instant.now())
+          .createdAt(LocalDateTime.now())
           .build();
       userActivity.updateComments(comment);
     }
 
-    assertThat(userActivity.recentcomments).hasSize(10);
-    assertThat(userActivity.recentcomments.peek().getContent()).isEqualTo("댓글2");
+    assertThat(userActivity.getRecentcomments()).hasSize(10);
+    assertThat(userActivity.getRecentcomments().peek().getContent()).isEqualTo("댓글2");
   }
 
   @Test
@@ -92,13 +93,13 @@ class UserActivityTest {
     for (int i = 0; i < 20; i++) {
       LikeCommentView like = LikeCommentView.builder()
           .commentContent("댓글 " + i)
-          .createdAt(Instant.now())
+          .createdAt(LocalDateTime.now())
           .build();
       userActivity.updateCommentLikes(like);
     }
 
-    assertThat(userActivity.likeComment).hasSize(10);
-    assertThat(userActivity.likeComment.peek().getCommentContent()).isEqualTo("댓글 10");
+    assertThat(userActivity.getLikeComment()).hasSize(10);
+    assertThat(userActivity.getLikeComment().peek().getCommentContent()).isEqualTo("댓글 10");
   }
 
   @Test
@@ -113,7 +114,7 @@ class UserActivityTest {
       userActivity.updateArticleViews(view);
     }
 
-    assertThat(userActivity.articleViews).hasSize(10);
-    assertThat(userActivity.articleViews.peek().getArticleTitle()).isEqualTo("기사 1");
+    assertThat(userActivity.getArticleViews()).hasSize(10);
+    assertThat(userActivity.getArticleViews().peek().getArticleTitle()).isEqualTo("기사 1");
   }
 }

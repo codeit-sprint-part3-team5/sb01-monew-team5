@@ -29,7 +29,8 @@ public class Notification {
   private final UUID resourceId;
 
   @Builder
-  private Notification(String content, NotificationType type, UUID resourceId) {
+  private Notification(UUID userId, String content, NotificationType type, UUID resourceId) {
+    this.userId = userId;
     this.createdAt = Instant.now();
     this.updateAt = Instant.EPOCH;
     this.confirmed = false;
@@ -38,20 +39,35 @@ public class Notification {
     this.resourceId = resourceId;
   }
 
-  public static Notification createCommentNotice(String content, UUID resourceId) {
+  public static Notification createCommentNotice(UUID userId, String content, UUID resourceId) {
     return Notification.builder()
+        .userId(userId)
         .content(content)
         .type(NotificationType.COMMENT)
         .resourceId(resourceId)
         .build();
   }
 
-  public static Notification createNewsNotice(String content, UUID resourceId) {
+  public static Notification createNewsNotice(UUID userId, String content, UUID resourceId) {
     return Notification.builder()
+        .userId(userId)
         .content(content)
         .type(NotificationType.NEWS)
         .resourceId(resourceId)
         .build();
+  }
+  //테슽트 용 설정자
+//  public void setCreatedAt(Instant time) {
+//    this.createdAt = time;
+//  }
+
+  public boolean confirmedRead() {
+    if (!this.confirmed) {
+      this.confirmed = true;
+      this.updateAt = Instant.now();
+      return true;
+    }
+    return false;
   }
 
 }

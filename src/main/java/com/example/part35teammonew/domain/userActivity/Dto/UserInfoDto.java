@@ -1,7 +1,15 @@
 package com.example.part35teammonew.domain.userActivity.Dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class UserInfoDto {
 
   private String nickName;
-  private String email;
+
+  public UserInfoDto(String nickName){
+    this.nickName=nickName;
+  }
 }
