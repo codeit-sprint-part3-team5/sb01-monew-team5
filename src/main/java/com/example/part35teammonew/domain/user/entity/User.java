@@ -69,7 +69,7 @@ public class User {
     this.nickname = nickname;
   }
 
-  public void delete() {
+  public void deleteLogical() {
     this.isDeleted = true;
     this.deletedAt = LocalDateTime.now();
   }
