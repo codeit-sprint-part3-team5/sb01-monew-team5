@@ -34,7 +34,7 @@ public interface UserActivityServiceInterface {
   void addLikeCommentView(UUID id, LikeCommentView likeCommentView);//해결
 
   //유저가 기사 볼떄마다
-  void addArticleInfoView(UUID id, ArticleInfoView articleInfoView);
+  void addArticleInfoView(UUID id, ArticleInfoView articleInfoView); // 해결
 
   void deleteUserActivity(UUID id); //물리 삭제  ,해결
 

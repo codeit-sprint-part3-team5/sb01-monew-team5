@@ -8,10 +8,9 @@ import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 import com.example.part35teammonew.domain.user.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.annotation.Transactional;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

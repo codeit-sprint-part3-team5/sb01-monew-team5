@@ -11,6 +11,9 @@ import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.article.service.ArticleService;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
+import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,21 +42,34 @@ public class ArticleController {
   private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
   private final Job backupJob;
+  private final ArticleViewServiceInterface articleViewServiceInterface;
+  private final UserActivityServiceInterface userActivityServiceInterface;
+  private final ArticleInfoViewMapper articleInfoViewMapper;
 
   @PostMapping("/api/articles/{articleId}/article-views")
-  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader String monewRequestUserId) {
+  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) { //,
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
+
+    articleViewServiceInterface.addReadUser(articleId,UUID.fromString(userId));
+
+    articleEnrollmentResponse.setId(articleId);
+    articleEnrollmentResponse.setViewdBy(articleId);
+    articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt().toLocalDate());
     articleEnrollmentResponse.setArticleId(articleId);
-    articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
-    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
-    articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt());
-    articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
-    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
     articleEnrollmentResponse.setSourceUrl(articleBaseDto.getLink());
+    articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
+    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
+    articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
     articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount());
-    articleEnrollmentResponse.setViewdBy(UUID.fromString(monewRequestUserId));
+    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
+    System.out.println("userId = " + userId);
+    System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
+
+    userActivityServiceInterface.addArticleInfoView(UUID.fromString(userId),
+        articleInfoViewMapper.toDto(articleEnrollmentResponse,UUID.fromString(userId)) );
+
     //monewRequestUserId의 역할?
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
@@ -68,7 +84,7 @@ public class ArticleController {
       @RequestParam(required = false) String cursor,
       @RequestParam int limit,
       @RequestParam(required = false) String interestId,
-      @RequestParam(required = false, name = "monew_Request_User_ID") String monewRequestUserId
+      @RequestHeader("Monew-Request-User-ID") String userId
   ) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
 

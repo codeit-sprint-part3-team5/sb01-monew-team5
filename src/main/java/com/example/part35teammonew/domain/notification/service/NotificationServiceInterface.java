@@ -11,7 +11,7 @@ public interface NotificationServiceInterface {
 
   NotificationDto addNewsNotice(UUID userId, String content, UUID resourceId);//뉴스 알림 추가할떄
 
-  NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId);//댓글 관련 알림 추가할떄
+  NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId);//댓글 관련 알림 추가할떄 했음
 
   boolean confirmedReadNotice(ObjectId id, UUID userId);//알림 아이디로 읽음 처리하기, 유저 아이디로로 교차 검증
 
