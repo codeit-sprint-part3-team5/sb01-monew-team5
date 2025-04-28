@@ -36,12 +36,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final CommentMapper commentMapper;
-//<<<<<<< HEAD
   private final NotificationServiceInterface notificationServiceInterface;
-//=======
   private final UserActivityServiceInterface userActivityServiceInterface;
   private final LikeCommentMapper likeCommentMapper;
-//>>>>>>> 35d8652d231b0a352e6f9a60d2dc3e761df62df5
 
   @Override
   @Transactional

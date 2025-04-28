@@ -47,7 +47,7 @@ public class ArticleController {
   private final ArticleInfoViewMapper articleInfoViewMapper;
 
   @PostMapping("/api/articles/{articleId}/article-views")
-  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) { //,
+  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) {
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
 
