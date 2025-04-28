@@ -1,12 +1,8 @@
 package com.example.part35teammonew.domain.interest.service;
 
-import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
-import com.example.part35teammonew.domain.userActivity.maper.InterestViewMapper;
-import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -17,15 +13,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
-import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
-import com.example.part35teammonew.exeception.AlreadySubscribedException;
+import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
+import com.example.part35teammonew.domain.userActivity.maper.InterestViewMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import com.example.part35teammonew.exeception.DuplicateInterestNameException;
 import com.example.part35teammonew.exeception.InterestNotFoundException;
 
@@ -106,16 +102,15 @@ public class InterestServiceImpl implements InterestService {
 
 		interest.setKeywords(String.join(",", newKeywords));
 		Interest saved = interestRepository.save(interest);
-		InterestDto interestDto=InterestDto.toDto(interest);
+		InterestDto interestDto = InterestDto.toDto(interest);
 
 		//여기서 구독중인 모든 유저 어기
-		List<UUID> userListNowSub=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
+		List<UUID> userListNowSub = interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
 		//구독중인 모든 유저 활동내역 변경
-		for(UUID userId:userListNowSub){
-			userActivityServiceInterface.subtractInterestView(userId,interestViewMapper.toDto(interestDto));
-			userActivityServiceInterface.addInterestView(userId,interestViewMapper.toDto(interestDto));
+		for (UUID userId : userListNowSub) {
+			userActivityServiceInterface.subtractInterestView(userId, interestViewMapper.toDto(interestDto));
+			userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
 		}
-
 
 		return InterestDto.toDto(saved);
 	}
@@ -130,27 +125,30 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public InterestDto getInterestById(UUID interestId, UUID userId) {
-//		Interest interest = interestRepository.findById(interestId)
-//			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
-//
-////		InterestUserList list = userListRepository.findByInterest(interestId)
-////			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-//
-//		long subscriberCount = list.getUserCount();
-//		boolean subscribedByMe = userId != null && list.findUser(userId);
-//
-//		interest.setSubscriberCount(subscriberCount);
-//		interest.setSubscribedMe(subscribedByMe);
-//
-//		return InterestDto.toDto(interest);
+		//		Interest interest = interestRepository.findById(interestId)
+		//			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+		//
+		////		InterestUserList list = userListRepository.findByInterest(interestId)
+		////			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
+		//
+		//		long subscriberCount = list.getUserCount();
+		//		boolean subscribedByMe = userId != null && list.findUser(userId);
+		//
+		//		interest.setSubscriberCount(subscriberCount);
+		//		interest.setSubscribedMe(subscribedByMe);
+		//
+		//		return InterestDto.toDto(interest);
 		return null;
 	}
 
 	@Override
 	public PageResponse<InterestDto> listInterests(InterestPageRequest req) {
 		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-		Pageable pageable = PageRequest.of(0, req.limit(),
-			Sort.by(direction, req.orderBy()).and(Sort.by(direction, "createdAt")));
+		String orderBy = normalizeOrderBy(req.orderBy());
+
+		Sort sort = Sort.by(direction, orderBy).and(Sort.by(direction, "createdAt"));
+
+		Pageable pageable = PageRequest.of(0, req.limit(), sort);
 
 		List<Interest> interests;
 		LocalDateTime nextAfter = null;
@@ -208,11 +206,11 @@ public class InterestServiceImpl implements InterestService {
 		Interest interest = interestRepository.findById(interestId).orElseThrow(
 			() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
-		if(interestUserListServiceInterface.addSubscribedUser(interestId,userId)){
+		if (interestUserListServiceInterface.addSubscribedUser(interestId, userId)) {
 			interest.setSubscriberCount(interest.getSubscriberCount() + 1);
-			InterestDto interestDto=InterestDto.toDto(interest);
-			userActivityServiceInterface.addInterestView(userId,interestViewMapper.toDto(interestDto));
-		}else{
+			InterestDto interestDto = InterestDto.toDto(interest);
+			userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
+		} else {
 			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , user id 오류");
 		}
 		interestRepository.save(interest);
@@ -223,12 +221,12 @@ public class InterestServiceImpl implements InterestService {
 		Interest interest = interestRepository.findById(interestId)
 			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
-		if(interestUserListServiceInterface.subtractSubscribedUser(interestId,userId)){
+		if (interestUserListServiceInterface.subtractSubscribedUser(interestId, userId)) {
 			long count = interest.getSubscriberCount();
 			interest.setSubscriberCount(Math.max(0, count - 1));
-			InterestDto interestDto=InterestDto.toDto(interest);
-			userActivityServiceInterface.subtractInterestView(userId,interestViewMapper.toDto(interestDto));
-		}else{
+			InterestDto interestDto = InterestDto.toDto(interest);
+			userActivityServiceInterface.subtractInterestView(userId, interestViewMapper.toDto(interestDto));
+		} else {
 			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , userId 오류");
 		}
 
@@ -247,9 +245,9 @@ public class InterestServiceImpl implements InterestService {
 
 	//Interest 엔티티 + mongodb 데이터 조합 -> Dto 로 변환
 	private InterestDto mapToDtoWithSubscription(Interest entity, UUID userId) {
-		UUID interestId=entity.getId();
+		UUID interestId = entity.getId();
 
-		boolean subscribedByMe = interestUserListServiceInterface.checkUserSubscribe(interestId,userId);
+		boolean subscribedByMe = interestUserListServiceInterface.checkUserSubscribe(interestId, userId);
 
 		long subscriberCount = interestUserListServiceInterface.countSubscribedUser(interestId);
 
@@ -265,4 +263,17 @@ public class InterestServiceImpl implements InterestService {
 			.subscribedByMe(subscribedByMe)
 			.build();
 	}
+
+	private String normalizeOrderBy(String orderBy) {
+		if (orderBy == null) {
+			throw new IllegalArgumentException("정렬 기준이 누락되었습니다.");
+		}
+		orderBy = orderBy.replace("\"", "").trim(); // 쌍따옴표, 공백 제거
+
+		if (orderBy.equalsIgnoreCase("name") || orderBy.equalsIgnoreCase("subscriberCount")) {
+			return orderBy;
+		}
+		throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + orderBy);
+	}
+
 }
