@@ -9,4 +9,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface UserActivityRepository extends MongoRepository<UserActivity, ObjectId> {
 
   Optional<UserActivity> findByUserId(UUID userId);
+
+  void deleteByUserId(UUID id);
 }
