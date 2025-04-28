@@ -24,7 +24,7 @@ public class ArticleInfoView {
   private String articleSummary;
 
   private int articleCommentCount;
-  private int articleViewCount;
+  private Long articleViewCount;
 
   @Override
   public boolean equals(Object o) {

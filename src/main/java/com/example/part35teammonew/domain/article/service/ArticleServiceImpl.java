@@ -332,8 +332,8 @@ public class ArticleServiceImpl implements ArticleService {
         Long cursor = req.getCursor() != null ? Long.parseLong(req.getCursor()) : 0L;
         Long nextCursor = req.getCursor() != null ? Long.parseLong(req.getCursor())+1 : 0;
         //articles = req.getDirection() == Direction.ASC ? articleRepository.findByViewCursorAsc(cursor, pageable) : articleRepository.findByViewCursorDesc(cursor, pageable);
-        List<UUID> sortByVewCountPageNation = articleViewServiceInterface.getSortByViewCountPageNation(cursor, pageable, req.getDirection().toString());
-        LocalDateTime nextAfter = findById( articleViewServiceInterface.getSortByViewCountPageNation(nextCursor, pageable, req.getDirection().toString()).get(0)).getDate();
+        List<UUID> sortByVewCountPageNation = articleViewServiceInterface.getSortByVewCountPageNation(cursor, pageable, req.getDirection().toString());
+        LocalDateTime nextAfter = findById( articleViewServiceInterface.getSortByVewCountPageNation(nextCursor, pageable, req.getDirection().toString()).get(0)).getDate();
         response.setArticles(findByIds(sortByVewCountPageNation));
         response.setNextAfter(nextAfter);
         response.setNextCursor(String.valueOf(nextCursor));

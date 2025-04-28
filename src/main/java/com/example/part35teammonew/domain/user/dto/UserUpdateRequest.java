@@ -11,7 +11,6 @@ import lombok.Getter;
 public class UserUpdateRequest {
 
     @NotBlank(message = "닉네임은 필수값입니다.")
-    @Size(min = 2, max = 16, message = "닉네임은 2자 이상 16자 이하여야 합니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{2,16}$", message = "닉네임은 2~16자의 한글, 영어 또는 숫자만 사용 가능합니다.")
+    @Size(min = 6, message = "비밀번호는 6자 이상이어야 합니다.")
     String nickname;
 }

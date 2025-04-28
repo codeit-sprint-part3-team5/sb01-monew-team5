@@ -14,6 +14,5 @@ public interface ArticleViewServiceInterface {
 
   Long countReadUser(UUID articleId);// 조회수 읽기
 
-  List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable,
-      String direction);//조회수 기반 페이지네이션
+  List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction);//조회수 기반 페이지네이션
 }
