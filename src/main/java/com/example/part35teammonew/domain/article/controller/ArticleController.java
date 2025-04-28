@@ -58,11 +58,91 @@ public class ArticleController {
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
   @GetMapping("/api/articles")
-  public ResponseEntity<ArticlesResponse> articles(@RequestBody ArticlesRequestDto articlesRequestDto) {
+  public ResponseEntity<ArticlesResponse> articles(
+      @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) String[] sourceIn,
+      @RequestParam(required = false) String publishDateFrom,
+      @RequestParam(required = false) String publishDateTo,
+      @RequestParam String orderBy,
+      @RequestParam String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam int limit,
+      @RequestParam(required = false) String interestId,
+      @RequestParam(required = false, name = "monew_Request_User_ID") String monewRequestUserId
+  ) {
+    ArticlesResponse articlesResponse = new ArticlesResponse();
+
+    SortField sortField = SortField.valueOf(orderBy);
+    Direction sortDirection = Direction.valueOf(direction);
+
+    System.out.println("sortDirection = " + sortDirection);
+    System.out.println("sortDirection = " + sortDirection);
+    System.out.println("limit = " + limit);
+
+    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection);
+
+    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
+    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
+    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
+    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
+    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+
+
+    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
+    System.out.println("byCursorPaging = " + byCursorPaging);
+    System.out.println("byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
+
+    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
+    System.out.println("bySourceAndDateAndInterests = " + bySourceAndDateAndInterests);
+    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
+
+    List<ArticleBaseDto> result = new ArrayList<>();
+    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
+      if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
+        result.add(bySourceAndDateAndInterest);
+      }
+    }
+
+    System.out.println("result = " + result);
+    System.out.println("result = " + result.size());
+
+
+    if(publishDateFrom != null){
+      String onlyDate = publishDateFrom.substring(0, 10);
+      LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+      System.out.println("DateFrom = " + DateFrom);
+      System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+      if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
+        articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
+      }else {
+        articlesResponse.setNextAfter("false");
+      }
+    }else {
+      articlesResponse.setNextAfter("false");
+    }
+
+    if(publishDateTo != null){
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+      LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
+      if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
+        articlesResponse.setHasNext("true");
+      }else {
+        articlesResponse.setHasNext("false");
+      }
+    }else {
+      articlesResponse.setHasNext("false");
+    }
+    articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
+    articlesResponse.setContent(result);
+    articlesResponse.setSize(limit); //필요성 의문 //몇 개씩 보기라는 게 없음
+
+    return ResponseEntity.ok(articlesResponse);
+  }
+  @GetMapping("/api/articles2")
+  public ResponseEntity<ArticlesResponse> articles2(@RequestBody ArticlesRequestDto articlesRequestDto) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
 
     String keyword = articlesRequestDto.getKeyword();
-    System.out.println("keyword = " + keyword);
     SortField sortField = SortField.valueOf(articlesRequestDto.getOrderBy());
     Direction direction = Direction.valueOf(articlesRequestDto.getDirection());
     String cursor = articlesRequestDto.getCursor();
@@ -71,7 +151,6 @@ public class ArticleController {
     String publishDateTo = articlesRequestDto.getPublishDateTo();
     String[] sourceIn = articlesRequestDto.getSourceIn();
     String monewRequestUserId = articlesRequestDto.getMonew_Request_User_ID();
-    System.out.println("monewRequestUserId = " + monewRequestUserId);
 
     ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, direction);
 
