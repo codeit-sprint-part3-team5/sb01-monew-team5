@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class Article {
     this.source = articleBaseDto.getSource();
     this.date = articleBaseDto.getDate();
     this.createdAt = LocalDateTime.now();
-    this.commentCount = 0;
+    this.commentCount = articleBaseDto.getCommentCount();
   }
   public Article update(ArticleBaseDto articleUpdateDto) {
     if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
@@ -84,8 +85,16 @@ public class Article {
     if(articleUpdateDto.getLink() != null) { this.link = articleUpdateDto.getLink(); }
     if(articleUpdateDto.getSource() != null) { this.source = articleUpdateDto.getSource(); }
     if(articleUpdateDto.getDate() != null) { this.date = articleUpdateDto.getDate(); }
+    if(articleUpdateDto.getCommentCount() > 0) { this.commentCount = articleUpdateDto.getCommentCount(); }
     return this;
   }
+  public void logicalDelete(LocalDateTime logicalDeleted) {
+    this.deletedAt = logicalDeleted;
+  }
+  public boolean isNotLogicallyDeleted() {
+    return this.getDeletedAt() == null;
+  }
+
 
   @Override
   public String toString() {

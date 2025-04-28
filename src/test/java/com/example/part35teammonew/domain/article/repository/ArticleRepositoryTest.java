@@ -2,6 +2,7 @@ package com.example.part35teammonew.domain.article.repository;
 
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.entity.Article;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +27,7 @@ class ArticleRepositoryTest {
         "summary",
         "link",
         "source",
-        LocalDateTime.now()
+        LocalDateTime.now(),null, 0
     );
     return new Article(dto);
   }
@@ -67,7 +68,7 @@ class ArticleRepositoryTest {
     articleRepository.save(article);
 
     // 수정
-    article.update(new ArticleBaseDto(UUID.randomUUID(),"updated title", "updated summary", "updated link", "updated source", LocalDateTime.now()));
+    article.update(new ArticleBaseDto(UUID.randomUUID(),"updated title", "updated summary", "updated link", "updated source", LocalDateTime.now(),null, 0));
     articleRepository.save(article);
 
     Optional<Article> updated = articleRepository.findById(article.getId());
