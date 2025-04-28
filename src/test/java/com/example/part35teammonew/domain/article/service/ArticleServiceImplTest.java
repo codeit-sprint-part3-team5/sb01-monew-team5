@@ -9,7 +9,7 @@ import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInt
 import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse;
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
-import com.example.part35teammonew.domain.articleView.service.ArticleViewService;
+import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import java.time.LocalDate;
@@ -33,7 +33,7 @@ class ArticleServiceImplTest {
   @Autowired
   private InterestRepository interestRepository;
   @Autowired
-  private ArticleViewService articleViewService;
+  private ArticleViewServiceInterface articleViewService;
 
   private ArticleBaseDto createArticleBaseDto(String title) {
     ArticleBaseDto dto = new ArticleBaseDto(title, "summary", "link", "source",

@@ -163,7 +163,7 @@ public class UserActivityServiceImplTest {
         .articlePublishedDate(LocalDateTime.now())
         .articleSummary("요약")
         .articleCommentCount(2)
-        .articleViewCount(100)
+        .articleViewCount(100L)
         .build();
 
     userActivityService.addArticleInfoView(userId, article);

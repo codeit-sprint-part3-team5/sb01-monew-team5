@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.interest.service;
 
+import com.example.part35teammonew.exeception.InterestNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,7 +41,7 @@ public class InterestUpdateServiceTest {
 		given(interestRepository.findById(id)).willReturn(Optional.empty());
 
 		assertThatThrownBy(() -> interestService.updateKeywords(id, List.of("A", "B")))
-			.isInstanceOf(EntityNotFoundException.class)
+			.isInstanceOf(InterestNotFoundException.class)
 			.hasMessageContaining("관심사를 찾을 수 없습니다: id 오류");
 
 		verify(interestRepository, never()).save(any());

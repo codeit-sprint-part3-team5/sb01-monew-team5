@@ -33,7 +33,7 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
 			" WHERE lower(i.name)    LIKE lower(concat('%', :search, '%'))" +
 			"    OR lower(i.keywords) LIKE lower(concat('%', :search, '%'))"
 	)
-	Page<Interest> searchByNameOrKeyword(@Param("keyword") String search, Pageable pageable);
+	Page<Interest> searchByNameOrKeyword(@Param("search") String search, Pageable pageable);
 
 	/**
 	 2) NAME 기준

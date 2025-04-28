@@ -19,7 +19,4 @@ public interface UserService {
     // 회원 물리 삭제
     void deletePhysical(UUID userId);
 
-    // 로그인 (JWT 토큰 반환)
-//  UserDto login(UserLoginRequest request); TODO 아직 구현체에 구현 전이라 일단 주석 처리
-
 }

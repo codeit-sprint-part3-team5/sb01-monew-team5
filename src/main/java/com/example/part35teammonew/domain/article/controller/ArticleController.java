@@ -3,7 +3,6 @@ package com.example.part35teammonew.domain.article.controller;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
 import com.example.part35teammonew.domain.article.dto.ArticleEnrollmentResponse;
-import com.example.part35teammonew.domain.article.dto.ArticleRestoreRequestDto;
 import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInterestsRequest;
 import com.example.part35teammonew.domain.article.dto.ArticlesRequestDto;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
@@ -11,7 +10,7 @@ import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.article.service.ArticleService;
-import com.example.part35teammonew.domain.articleView.service.ArticleViewService;
+import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +22,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ArticleController {
   private final ArticleService articleService;
-  private final ArticleViewService articleViewService;
+  private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
   private final Job backupJob;
 
@@ -51,11 +49,11 @@ public class ArticleController {
     articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
-    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser());
+    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
     articleEnrollmentResponse.setSourceUrl(articleBaseDto.getLink());
     articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount());
-    //articleEnrollmentResponse.setViewdBy(articleViewService.getViewedIds);
+    articleEnrollmentResponse.setViewdBy(UUID.fromString(monewRequestUserId));
     //monewRequestUserId의 역할?
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
