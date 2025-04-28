@@ -4,12 +4,16 @@ import com.example.part35teammonew.domain.article.api.NewsSearch;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
+import com.example.part35teammonew.domain.interest.service.InterestService;
+import java.io.File;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,22 +21,16 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
-import org.springframework.batch.item.data.RepositoryItemReader;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemWriter;
-import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -43,6 +41,10 @@ public class BatchConfig {
   private final PlatformTransactionManager platformTransactionManager;
   private final ArticleRepository articleRepository;
   private final NewsSearch newsSearch;
+  private final InterestService interestService;
+
+  //private final S3UploadArticle s3UploadArticle;
+
 
   @Bean
   public Job articleJob() {
@@ -52,56 +54,20 @@ public class BatchConfig {
 
   @Bean
   public Step articleStep() {
-    System.out.println("articleStep");
+    System.out.println("BatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("articleStep", jobRepository).<Article, Article>chunk(10,
             platformTransactionManager)
         .reader(articleReader())
         .processor(articleProcessor())
-        .writer(articleWriter())
+        .writer(articleWriterWithDBAndFileSync())
         .build();
   }
 
   @Bean
   @StepScope
   public ItemReader<Article> articleReader() {
-    return new ItemReader<>() {
-      private Queue<Article> queue = new LinkedList<>();
-      private int page = 0;
-
-      @Override
-      public Article read() throws Exception {
-        if (!queue.isEmpty()) {
-          return queue.poll();
-        }
-
-        // 다 꺼냈다면 다음 뉴스 API 호출
-        if (page >= 10) { // 최대 100개까지만 읽기 (10페이지 x 10개)
-          return null;
-        }
-
-        page++;
-        //키워드 파라미터로 받도록 수정 필요
-        String json = newsSearch.getNews("금융", 10, (page - 1) * 10 + 1, "date");
-        JSONObject jsonObject = new JSONObject(json);
-        JSONArray items = jsonObject.getJSONArray("items");
-
-        for (int i = 0; i < items.length(); i++) {
-          JSONObject item = items.getJSONObject(i);
-          String title = item.getString("title").replaceAll("<.*?>", "");
-          String summary = item.getString("description").replaceAll("<.*?>", "");
-          String link = item.getString("link");
-          //item이라는 JSON 객체에서 "originallink"라는 키가 존재하면 → 그 값을 쓰고, 없으면 "null"라는 기본값을 쓰겠다는 뜻
-          String source = item.optString("originallink", "null");
-          String pubDate = item.getString("pubDate");
-          Article article = new Article(
-              new ArticleBaseDto(title, summary, link, source, parsePubDate(pubDate)));
-          queue.add(article);
-        }
-
-        return queue.poll(); 
-      }
-    };
+    return new SharedArticleReader(newsSearch, interestService);
   }
 
 
@@ -111,18 +77,92 @@ public class BatchConfig {
     return article ->
         articleRepository.findByTitleAndDate(article.getTitle(), article.getDate()) != null ? null : article;
   }
-
   @Bean
-  public RepositoryItemWriter<Article> articleWriter() {
-    //S3 저장 필요
+  public RepositoryItemWriter<Article> articleWriterWithDB() {
+
     return new RepositoryItemWriterBuilder<Article>().repository(articleRepository)
         .methodName("save").build();
-    //어떤 레포지토리로 어떤 메소드를 날릴 것 인지?
   }
 
-  private LocalDateTime parsePubDate(String pubDate) {
-    DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
-    return ZonedDateTime.parse(pubDate, formatter).toLocalDateTime();
+  @Bean
+  public ItemWriter<Article> articleWriterWithDBAndFileSync() {
+    return chunk -> {
+      List<? extends Article> articles = chunk.getItems();
+      if (articles.isEmpty()) return;
+
+      String today = LocalDate.now().toString();
+      File file = new File("articles_" + today + ".json");
+
+      Set<String> existingKeys = new HashSet<>();
+      JSONArray jsonArray = new JSONArray();
+
+      // 1️⃣ 기존 JSON 파일 읽기
+      if (file.exists()) {
+        String content = Files.readString(file.toPath());
+        jsonArray = new JSONArray(content);
+        for (int i = 0; i < jsonArray.length(); i++) {
+          JSONObject obj = jsonArray.getJSONObject(i);
+          String key = obj.getString("title") + "|" + obj.getString("date");
+          existingKeys.add(key);
+        }
+      }
+
+      // 2️⃣ DB에 저장할 기사 및 JSON에 추가할 기사 추리기
+      List<Article> newArticlesForDB = new LinkedList<>();
+      for (Article article : articles) {
+        String key = article.getTitle() + "|" + article.getDate().toString();
+        if (!existingKeys.contains(key)) {
+          // JSON에 추가
+          JSONObject json = new JSONObject();
+          json.put("id", article.getId());
+          json.put("title", article.getTitle());
+          json.put("summary", article.getSummary());
+          json.put("link", article.getLink());
+          json.put("source", article.getSource());
+          json.put("date", article.getDate().toString());
+          json.put("commentCount", article.getCommentCount());
+          jsonArray.put(json);
+
+          // DB 저장용
+          newArticlesForDB.add(article);
+          existingKeys.add(key);
+        }
+      }
+
+      // 3️⃣ 파일 덮어쓰기
+      try (FileWriter writer = new FileWriter(file)) {
+        writer.write(jsonArray.toString(2));
+      }
+
+      // 4️⃣ DB 저장
+      List<Article> fullSyncList = new LinkedList<>();
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject obj = jsonArray.getJSONObject(i);
+        Article article = new Article(
+            new ArticleBaseDto(
+                null,
+                obj.getString("title"),
+                obj.getString("summary"),
+                obj.getString("link"),
+                obj.getString("source"),
+                LocalDateTime.parse(obj.getString("date")),
+                null,
+                obj.getInt("commentCount")
+            )
+        );
+        fullSyncList.add(article);
+      }
+      for (Article article : fullSyncList) {
+        if(articleRepository.findByTitleAndDate(article.getTitle(), article.getDate()) == null) {
+          articleRepository.save(article);
+        }
+      }
+      //articleRepository.saveAll(newArticlesForDB);
+
+      System.out.println("✅ 저장 완료: DB " + newArticlesForDB.size() + "건, JSON 누적 " + jsonArray.length() + "건");
+    };
   }
+
+
 
 }
