@@ -1,6 +1,7 @@
 package com.example.part35teammonew.domain.userActivity.Dto;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +16,7 @@ public class UserActivityDto {
   private UUID userId;
   private String nickName;
   private String email;
-  private Instant createdAt;
+  private LocalDateTime createdAt;
   private Set<InterestView> subscriptions;
   private LinkedList<RecentCommentView> recentcomments;
   private LinkedList<LikeCommentView> likeComment;

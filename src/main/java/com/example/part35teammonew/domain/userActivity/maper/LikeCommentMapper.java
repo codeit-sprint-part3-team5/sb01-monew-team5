@@ -14,7 +14,7 @@ public class LikeCommentMapper {
         .id(comment.getId())
         .createdAt(comment.getCreatedAt())
         .articleId(comment.getArticleId())
-        //.articleTitle(comment.getArticleTitle)
+        .articleTitle(comment.getArticleTitle())
         .commentUserId(comment.getUserId())
         .commentUserNickname(comment.getUserNickname())
         .commentContent(comment.getContent())

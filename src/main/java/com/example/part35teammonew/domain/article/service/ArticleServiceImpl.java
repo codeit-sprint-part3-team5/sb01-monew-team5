@@ -52,6 +52,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     Article article = new Article(dto);
     Article saved = articleRepository.save(article);
+    articleViewServiceInterface.createArticleView(article.getId()); //아티클 뷰 만듬
     return saved.getId();
   }
 

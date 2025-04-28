@@ -12,6 +12,8 @@ import com.example.part35teammonew.domain.comment.repository.CommentRepository;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 
+import com.example.part35teammonew.domain.userActivity.maper.LikeCommentMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import com.example.part35teammonew.exeception.comment.CommentLikeConflict;
 import com.example.part35teammonew.exeception.comment.CommentLikeNotFound;
 import com.example.part35teammonew.exeception.comment.CommentNotFound;
@@ -33,6 +35,8 @@ public class CommentLikeServiceImpl implements CommentLikeService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final CommentMapper commentMapper;
+  private final UserActivityServiceInterface userActivityServiceInterface;
+  private final LikeCommentMapper likeCommentMapper;
 
   @Override
   @Transactional
@@ -85,6 +89,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         .commentId(comment.getId())
         .createdAt(savedLike.getCreatedAt())
         .build();
+
+    userActivityServiceInterface.addLikeCommentView(commentId, likeCommentMapper.toDto(
+        commentMapper.toCommentDto(comment,hasLiked(comment.getId(),requestUserId)),response));
 
     log.info("댓글 좋아요 추가 성공: commentId={}, userId={}, likeId={}",
         commentId, requestUserId, savedLike.getId());
