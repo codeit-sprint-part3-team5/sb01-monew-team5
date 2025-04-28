@@ -52,7 +52,15 @@ public class SecurityConfig {
                 "/favicon.ico",
                 "/api/users",
                 "/api/users/{userId}",
-                "/api/users/{userId}/hard"
+                "/api/users/{userId}/hard",
+                // 임시 TODO 추후 이것들 지우기
+                "/api/articles",
+                "/api/articles/restore",
+                "/api/articles/{articleId}/article-views",
+                "/api/articles/{articleId}",
+                "/api/articles/{articleId}/hard",
+                "/{interestId}",
+                "/{interestId}/subscriptions"
             ).permitAll()
             .anyRequest().authenticated()
         )
