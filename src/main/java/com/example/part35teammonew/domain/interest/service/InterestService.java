@@ -3,11 +3,10 @@ package com.example.part35teammonew.domain.interest.service;
 import java.util.List;
 import java.util.UUID;
 
-import org.springframework.data.domain.Page;
-
-import com.example.part35teammonew.domain.interest.Enum.SortBy;
-import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
-import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 
 public interface InterestService {
 
@@ -47,7 +46,8 @@ public interface InterestService {
 	 */
 	InterestDto getInterestById(UUID interestId, UUID userId);
 
-	Page<InterestDto> listInterests(String search, String cursorValue, SortBy sortBy, int size, UUID userId);
+
+	PageResponse<InterestDto> listInterests(InterestPageRequest req);
 
 	/**
 	 * 관심사 구독

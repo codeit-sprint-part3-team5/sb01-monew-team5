@@ -8,11 +8,12 @@ import org.springframework.data.domain.Pageable;
 
 public interface ArticleViewServiceInterface {
 
-  ArticleViewDto createArticleView(UUID articleId);
+  ArticleViewDto createArticleView(UUID articleId);//기사 만들어 질때
 
-  boolean addReadUser(UUID userId);
+  boolean addReadUser(UUID articleId, UUID userId);//유저가 기사 읽을때
 
-  Long countReadUser();
+  Long countReadUser(UUID articleId);// 조회수 읽기
 
-  List<UUID> getSortByViewCountPageNation(Long cursor, Pageable pageable, String direction);
+  List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable,
+      String direction);//조회수 기반 페이지네이션
 }

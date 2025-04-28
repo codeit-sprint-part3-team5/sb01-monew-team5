@@ -1,4 +1,4 @@
-package com.example.part35teammonew.domain.interest.dto;
+package com.example.part35teammonew.domain.interest.dto.request;
 
 import java.util.List;
 

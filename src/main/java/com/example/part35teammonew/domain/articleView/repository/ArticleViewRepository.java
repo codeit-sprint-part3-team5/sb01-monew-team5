@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+
 public interface ArticleViewRepository extends MongoRepository<ArticleView, ObjectId> {
 
   Optional<ArticleView> findByArticleId(UUID articleId);
