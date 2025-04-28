@@ -51,7 +51,18 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     Article article = new Article(dto);
-    Article saved = articleRepository.save(article);
+    Article saved = articleRepository.save(article);//저장
+    articleViewServiceInterface.createArticleView(article.getId());//뷰테이블 만듬
+    //관심사, 키워드 추출
+    //interestService.getInterests();
+    //title.contains()//
+    //Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+
+    //관심사, 키워드를 구독중인 유저 얼아내기
+    //Set<UUID> 유저아이디: 구독중인 유저들
+
+    //찾은 유저에게 알람보내기
+
     return saved.getId();
   }
 
