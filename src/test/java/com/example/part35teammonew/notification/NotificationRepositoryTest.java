@@ -7,6 +7,8 @@ import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,6 @@ public class NotificationRepositoryTest {
 
   @Autowired
   private NotificationRepository noticeRepository;
-
 
   @Test
   @DisplayName("댓글 생성 및 저장 테스트 ")

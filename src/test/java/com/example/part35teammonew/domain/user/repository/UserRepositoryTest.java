@@ -69,7 +69,7 @@ class UserRepositoryTest {
         User user = userRepository.save(User.create("del@example.com", "delNick", "pw"));
 
         // when
-        user.delete();
+        user.deleteLogical();
         userRepository.save(user);
 
         // then
