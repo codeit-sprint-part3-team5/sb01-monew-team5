@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
     // 회원가입
-    @PostMapping
+    @PostMapping(consumes = "application/json", produces = "application/json")
     ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserRegisterRequest request){
         UserDto createdUserDto = userService.register(request);
         return ResponseEntity
