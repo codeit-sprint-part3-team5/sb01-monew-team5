@@ -113,9 +113,15 @@ public class ArticleServiceImpl implements ArticleService {
     String startDate = articleSourceAndDateAndInterestsRequest.getPublishDateFrom();
     String endDate = articleSourceAndDateAndInterestsRequest.getPublishDateTo();
     String interests = articleSourceAndDateAndInterestsRequest.getKeyword();
-
+    System.out.println("startDate = " + startDate);
     if (sources == null && startDate == null && endDate == null) {
-      throw new IllegalArgumentException("소스와 날짜 중 하나의 파라미터는 채워져야 합니다.");
+      ArticleSourceAndDateAndInterestsRequest request = new ArticleSourceAndDateAndInterestsRequest();
+      request.setSourceIn(sources);
+      request.setPublishDateFrom(LocalDateTime.now().toString());
+      request.setPublishDateTo(endDate);
+      request.setKeyword(interests);
+      return findBySourceAndDateAndInterests(request);
+      //throw new IllegalArgumentException("소스와 날짜 중 하나의 파라미터는 채워져야 합니다.");
     }
     List<Article> articles = new ArrayList<>();
     if (sources != null && startDate == null && endDate == null) {
@@ -292,8 +298,14 @@ public class ArticleServiceImpl implements ArticleService {
     Pageable pageable = PageRequest.of(0, req.getSize()+1);
 
     switch (req.getSortField()) {
-      case DATE -> {
-        LocalDateTime cursor = req.getCursor() != null ? LocalDateTime.parse(req.getCursor()) : LocalDateTime.now();
+      case publishDate -> {
+        LocalDateTime cursor;
+        if(req.getCursor().contains("T")){
+          cursor = req.getCursor() != null ? LocalDateTime.parse(req.getCursor()) : LocalDateTime.now();
+        }else {
+          cursor = LocalDateTime.parse(req.getCursor()+"T"+LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
+        }
+        System.out.println("cursor = " + cursor);
         articles = req.getDirection() == Direction.ASC
             ? articleRepository.findByDateCursorAsc(cursor, pageable)
             : articleRepository.findByDateCursorDesc(cursor, pageable);
@@ -303,6 +315,7 @@ public class ArticleServiceImpl implements ArticleService {
         }else {
           nextCursor = articles.get(articles.size()-1).getDate();
         }
+        System.out.println("nextCursor = " + nextCursor);
         /*List<Article> articleList =
             req.getDirection() == Direction.ASC ? articleRepository.findByDateCursorAsc(nextCursor,
                 pageable) : articleRepository.findByDateCursorDesc(nextCursor, pageable);
