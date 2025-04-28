@@ -23,7 +23,7 @@ import java.util.UUID;
     CommentDto updateComment(UUID commentId, CommentUpdateRequest request, UUID requestUserId);
 
     //댓글 논리 삭제
-    boolean deleteComment(UUID commentId);
+    boolean deleteComment(UUID commentId, UUID requestUserId);
 
     //댓글 물리 삭제
     boolean hardDeleteComment(UUID commentId);
