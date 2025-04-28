@@ -30,6 +30,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.postgresql:postgresql'
     implementation 'org.json:json:20240303'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -40,7 +44,16 @@ dependencies {
     implementation 'org.json:json:20240303'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     implementation 'org.springframework.batch:spring-batch-test'
+
     implementation group: 'org.apache.commons', name: 'commons-text', version: '1.10.0'
+
+    // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
+    //JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
 }
 

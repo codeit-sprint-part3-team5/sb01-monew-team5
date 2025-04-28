@@ -1,21 +1,25 @@
 package com.example.part35teammonew.domain.user.service;
 
 import com.example.part35teammonew.domain.user.dto.UserDto;
-import com.example.part35teammonew.domain.user.entity.User;
+import com.example.part35teammonew.domain.user.dto.UserRegisterRequest;
+import com.example.part35teammonew.domain.user.dto.UserUpdateRequest;
 import java.util.UUID;
 
 public interface UserService {
 
     // 회원가입
-    UserDto create(User user);
+    UserDto register(UserRegisterRequest request);
 
     // 닉네임 수정
-    UserDto update(UUID userId, String nickname);
+    UserDto update(UUID userId, UserUpdateRequest request);
 
-    // 회원 삭제 (물리 삭제 여부 false -> 논리 삭제)
-    void delete(UUID userId, boolean isPhysical);
+    // 회원 논리 삭제
+    void deleteLogical(UUID userId);
+
+    // 회원 물리 삭제
+    void deletePhysical(UUID userId);
 
     // 로그인 (JWT 토큰 반환)
-    String login(User user);
+//  UserDto login(UserLoginRequest request); TODO 아직 구현체에 구현 전이라 일단 주석 처리
 
 }

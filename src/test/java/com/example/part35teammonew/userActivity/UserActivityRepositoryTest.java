@@ -9,6 +9,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
@@ -79,7 +80,7 @@ class UserActivityRepositoryTest {
     RecentCommentView comment = RecentCommentView.builder()
         .id(UUID.randomUUID())
         .content("테스트")
-        .createdAt(Instant.now())
+        .createdAt(LocalDateTime.now())
         .build();
 
     activity.updateComments(comment);
@@ -88,8 +89,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().recentcomments).hasSize(1);
-    assertThat(result.get().recentcomments.peek().getContent()).isEqualTo("테스트");
+    assertThat(result.get().getRecentcomments()).hasSize(1);
+    assertThat(result.get().getRecentcomments().peek().getContent()).isEqualTo("테스트");
   }
 
   @Test
@@ -102,7 +103,7 @@ class UserActivityRepositoryTest {
 
     LikeCommentView like = LikeCommentView.builder()
         .commentContent("테스트트트틑")
-        .createdAt(Instant.now())
+        .createdAt(LocalDateTime.now())
         .build();
 
     activity.updateCommentLikes(like);
@@ -111,8 +112,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().likeComment).hasSize(1);
-    assertThat(result.get().likeComment.peek().getCommentContent()).isEqualTo("테스트트트틑");
+    assertThat(result.get().getLikeComment()).hasSize(1);
+    assertThat(result.get().getLikeComment().peek().getCommentContent()).isEqualTo("테스트트트틑");
   }
 
   @Test
@@ -135,8 +136,8 @@ class UserActivityRepositoryTest {
     Optional<UserActivity> result = repository.findByUserId(userId);
 
     assertThat(result).isPresent();
-    assertThat(result.get().articleViews).hasSize(1);
-    assertThat(result.get().articleViews.peek().getArticleTitle()).isEqualTo("기사사사");
+    assertThat(result.get().getArticleViews()).hasSize(1);
+    assertThat(result.get().getArticleViews().peek().getArticleTitle()).isEqualTo("기사사사");
   }
 
   @Test

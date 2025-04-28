@@ -4,6 +4,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "UserActivity")
@@ -22,14 +24,15 @@ public class UserActivity {
 
   @Id
   private ObjectId id;
-  private final UUID userId;
-  private String nickName;
-  private String email;
-  private Instant createdAt;
-  private Set<InterestView> subscriptions;
-  public LinkedList<RecentCommentView> recentcomments;
-  public LinkedList<LikeCommentView> likeComment;
-  public LinkedList<ArticleInfoView> articleViews;
+  @Indexed
+  private final UUID userId; //이거로 인덱스
+  private String nickName; //애는 변경 됨
+  private String email; //일단 병경 되는 기능은 없지만 혹시 모르니 final로 안함
+  private final Instant createdAt;
+  private Set<InterestView> subscriptions; //이거 포함 밑에 세개는 final하면 테스트가 안됨
+  private LinkedList<RecentCommentView> recentcomments;
+  private LinkedList<LikeCommentView> likeComment;
+  private LinkedList<ArticleInfoView> articleViews;
 
   @Builder
   private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {
@@ -61,6 +64,14 @@ public class UserActivity {
     }
   }
 
+  public void subtractSubscriptions(InterestView interest) {
+    if (subscriptions.contains(interest)) {
+      subscriptions.remove(interest);
+    } else {
+      throw new AlreadySubscribedException("구독되지 않은 관심사ㅏ입니다.: " + interest.getInterestName());
+    }
+  }
+
   public void updateComments(RecentCommentView comment) {
     if (recentcomments.size() >= 10) {
       recentcomments.poll();
@@ -80,6 +91,10 @@ public class UserActivity {
       articleViews.poll();
     }
     articleViews.add(article);
+  }
+
+  public void updateUserInfo(UserInfoDto userInfoDto) {
+    this.nickName = userInfoDto.getNickName();
   }
 
 }

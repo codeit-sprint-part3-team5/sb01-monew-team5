@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "interestUserList")
@@ -15,7 +16,8 @@ public class InterestUserList {
 
   @Id
   private ObjectId id;
-  private UUID interest;
+  @Indexed
+  private final UUID interest;
   private Set<UUID> subscribedUser;
 
   @Builder
@@ -43,6 +45,6 @@ public class InterestUserList {
   }
 
   public long getUserCount() {
-    return (long) subscribedUser.size();
+    return subscribedUser.size();
   }
 }
