@@ -20,7 +20,7 @@ public interface NotificationServiceInterface {
   boolean deleteOldConfirmedNotice();// 일주일 지난거 삭제, 따로 실행하는 서비스 있음
 
   //페이지 내이션 일단 안 읽은거만 내보냄, 그다음 시간 등으로 페이지네이션
-  CursorPageResponse<NotificationDto> getNoticePage(UUID userId, CursorPageRequest pageRequest);
+  CursorPageResponse<NotificationDto> getNoticePage( UUID userId, CursorPageRequest pageRequest);
 
 
 }

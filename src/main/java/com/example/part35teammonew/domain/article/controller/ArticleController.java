@@ -84,7 +84,7 @@ public class ArticleController {
       @RequestParam(required = false) String cursor,
       @RequestParam int limit,
       @RequestParam(required = false) String interestId,
-      @RequestParam(required = false, name = "monew_Request_User_ID") String monewRequestUserId
+      @RequestHeader("Monew-Request-User-ID") String userId
   ) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
 

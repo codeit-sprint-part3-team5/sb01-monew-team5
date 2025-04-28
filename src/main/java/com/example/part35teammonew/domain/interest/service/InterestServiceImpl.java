@@ -1,5 +1,8 @@
 package com.example.part35teammonew.domain.interest.service;
 
+import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
+import com.example.part35teammonew.domain.userActivity.maper.InterestViewMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +36,10 @@ import lombok.RequiredArgsConstructor;
 public class InterestServiceImpl implements InterestService {
 
 	private final InterestRepository interestRepository;
-	private final InterestUserListRepository userListRepository;
 	private static final LevenshteinDistance DISTANCE = LevenshteinDistance.getDefaultInstance();
+	private final InterestUserListServiceInterface interestUserListServiceInterface;
+	private final UserActivityServiceInterface userActivityServiceInterface;
+	private final InterestViewMapper interestViewMapper;
 
 	@Override
 	public boolean isNameTooSimilar(String name) {
@@ -79,6 +84,7 @@ public class InterestServiceImpl implements InterestService {
 
 		//저장
 		Interest savedInterest = interestRepository.save(toSave);
+		interestUserListServiceInterface.createInterestList(savedInterest.getId());
 
 		//DTO 변환 todo: 나중에 mapper 클래스 생성하면 리팩토링
 		List<String> keywordsList = request.getKeywords();
@@ -100,6 +106,16 @@ public class InterestServiceImpl implements InterestService {
 
 		interest.setKeywords(String.join(",", newKeywords));
 		Interest saved = interestRepository.save(interest);
+		InterestDto interestDto=InterestDto.toDto(interest);
+
+		//여기서 구독중인 모든 유저 어기
+		List<UUID> userListNowSub=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
+		//구독중인 모든 유저 활동내역 변경
+		for(UUID userId:userListNowSub){
+			userActivityServiceInterface.subtractInterestView(userId,interestViewMapper.toDto(interestDto));
+			userActivityServiceInterface.addInterestView(userId,interestViewMapper.toDto(interestDto));
+		}
+
 
 		return InterestDto.toDto(saved);
 	}
@@ -114,20 +130,20 @@ public class InterestServiceImpl implements InterestService {
 
 	@Override
 	public InterestDto getInterestById(UUID interestId, UUID userId) {
-		Interest interest = interestRepository.findById(interestId)
-			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
-
-		InterestUserList list = userListRepository.findByInterest(interestId)
-			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-
-		long subscriberCount = list.getUserCount();
-		boolean subscribedByMe = userId != null && list.findUser(userId);
-
-		interest.setSubscriberCount(subscriberCount);
-		interest.setSubscribedMe(subscribedByMe);
-
-		return InterestDto.toDto(interest);
-
+//		Interest interest = interestRepository.findById(interestId)
+//			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+//
+////		InterestUserList list = userListRepository.findByInterest(interestId)
+////			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
+//
+//		long subscriberCount = list.getUserCount();
+//		boolean subscribedByMe = userId != null && list.findUser(userId);
+//
+//		interest.setSubscriberCount(subscriberCount);
+//		interest.setSubscribedMe(subscribedByMe);
+//
+//		return InterestDto.toDto(interest);
+		return null;
 	}
 
 	@Override
@@ -192,17 +208,13 @@ public class InterestServiceImpl implements InterestService {
 		Interest interest = interestRepository.findById(interestId).orElseThrow(
 			() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
-		InterestUserList list = userListRepository.findByInterest(interestId)
-			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-
-		if (list.findUser(userId)) {
-			throw new AlreadySubscribedException("이미 구독중 입니다.");
+		if(interestUserListServiceInterface.addSubscribedUser(interestId,userId)){
+			interest.setSubscriberCount(interest.getSubscriberCount() + 1);
+			InterestDto interestDto=InterestDto.toDto(interest);
+			userActivityServiceInterface.addInterestView(userId,interestViewMapper.toDto(interestDto));
+		}else{
+			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , user id 오류");
 		}
-
-		list.addUser(userId);
-		userListRepository.save(list);
-
-		interest.setSubscriberCount(interest.getSubscriberCount() + 1);
 		interestRepository.save(interest);
 	}
 
@@ -211,46 +223,35 @@ public class InterestServiceImpl implements InterestService {
 		Interest interest = interestRepository.findById(interestId)
 			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
-		InterestUserList userList = userListRepository.findByInterest(interestId)
-			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-
-		if (!userList.findUser(userId)) {
-			throw new IllegalStateException("사용자가 구독중이 아닙니다.");
+		if(interestUserListServiceInterface.subtractSubscribedUser(interestId,userId)){
+			long count = interest.getSubscriberCount();
+			interest.setSubscriberCount(Math.max(0, count - 1));
+			InterestDto interestDto=InterestDto.toDto(interest);
+			userActivityServiceInterface.subtractInterestView(userId,interestViewMapper.toDto(interestDto));
+		}else{
+			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , userId 오류");
 		}
 
-		userList.subtractUser(userId);
-		userListRepository.save(userList);
-
-		long count = interest.getSubscriberCount();
-		interest.setSubscriberCount(Math.max(0, count - 1));
 		interestRepository.save(interest);
 	}
 
 	@Override
 	public boolean isSubscribed(UUID interestId, UUID userId) {
-		return userListRepository.findByInterest(interestId)
-			.map(list -> list.findUser(userId))
-			.orElse(false);
+		return interestUserListServiceInterface.checkUserSubscribe(interestId, userId);
 	}
 
 	@Override
 	public long countSubscribers(UUID interestId) {
-		return userListRepository.findByInterest(interestId)
-			.map(InterestUserList::getUserCount)
-			.orElse(0L);
+		return interestUserListServiceInterface.countSubscribedUser(interestId);
 	}
 
 	//Interest 엔티티 + mongodb 데이터 조합 -> Dto 로 변환
 	private InterestDto mapToDtoWithSubscription(Interest entity, UUID userId) {
-		Optional<InterestUserList> userList = userListRepository.findByInterest(entity.getId());
+		UUID interestId=entity.getId();
 
-		boolean subscribedByMe = userList
-			.map(list -> list.findUser(userId))
-			.orElse(false);
+		boolean subscribedByMe = interestUserListServiceInterface.checkUserSubscribe(interestId,userId);
 
-		long subscriberCount = userList
-			.map(InterestUserList::getUserCount)
-			.orElse(0L);
+		long subscriberCount = interestUserListServiceInterface.countSubscribedUser(interestId);
 
 		List<String> keywordList = entity.getKeywords() != null
 			? Arrays.stream(entity.getKeywords().split(",")).map(String::strip).toList()

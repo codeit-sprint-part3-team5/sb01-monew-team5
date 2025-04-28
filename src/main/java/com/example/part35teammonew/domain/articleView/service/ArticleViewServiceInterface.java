@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface ArticleViewServiceInterface {
 
-  ArticleViewDto createArticleView(UUID articleId);//기사 만들어 질때
+  ArticleViewDto createArticleView(UUID articleId);//기사 만들어 질때 해결
 
-  boolean addReadUser(UUID articleId, UUID userId);//유저가 기사 읽을때
+  boolean addReadUser(UUID articleId, UUID userId);//유저가 기사 읽을때, //뭔가 문제 생김
 
   Long countReadUser(UUID articleId);// 조회수 읽기
 

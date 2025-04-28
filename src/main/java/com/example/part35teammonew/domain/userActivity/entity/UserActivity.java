@@ -7,6 +7,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
 import com.example.part35teammonew.exeception.AlreadySubscribedException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -28,14 +29,14 @@ public class UserActivity {
   private final UUID userId; //이거로 인덱스
   private String nickName; //애는 변경 됨
   private String email; //일단 병경 되는 기능은 없지만 혹시 모르니 final로 안함
-  private final Instant createdAt;
+  private final LocalDateTime createdAt;
   private Set<InterestView> subscriptions; //이거 포함 밑에 세개는 final하면 테스트가 안됨
   private LinkedList<RecentCommentView> recentcomments;
   private LinkedList<LikeCommentView> likeComment;
   private LinkedList<ArticleInfoView> articleViews;
 
   @Builder
-  private UserActivity(Instant createdAt, UUID userId, String nickName, String email) {
+  private UserActivity(LocalDateTime createdAt, UUID userId, String nickName, String email) {
     this.userId = userId;
     this.nickName = nickName;
     this.email = email;
@@ -46,7 +47,7 @@ public class UserActivity {
     this.articleViews = new LinkedList<>();
   }
 
-  public static UserActivity setUpNewUserActivity(Instant createdAt, UUID userId, String nickName,
+  public static UserActivity setUpNewUserActivity(LocalDateTime createdAt, UUID userId, String nickName,
       String email) {
     return UserActivity.builder()
         .createdAt(createdAt)

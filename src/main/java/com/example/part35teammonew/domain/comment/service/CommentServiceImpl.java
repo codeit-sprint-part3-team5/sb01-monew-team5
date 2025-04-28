@@ -11,6 +11,8 @@ import com.example.part35teammonew.domain.comment.mapper.CommentMapper;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
+import com.example.part35teammonew.domain.userActivity.maper.RecentCommentMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import com.example.part35teammonew.exeception.comment.CommentDeleteUnauthorized;
 import com.example.part35teammonew.exeception.comment.CommentNotFound;
 import com.example.part35teammonew.exeception.comment.CommentUpdateUnauthorized;
@@ -38,6 +40,8 @@ public class CommentServiceImpl implements CommentService {
   private final UserRepository userRepository;
   private final CommentLikeService commentLikeService;
   private final CommentMapper commentMapper;
+  private final UserActivityServiceInterface userActivityServiceInterface;
+  private final RecentCommentMapper recentCommentMapper;
   private static final int DEFAULT_LIMIT = 50; //api 명세상 50임
 
   @Override
@@ -77,6 +81,9 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentMapper.toComment(request, user, article);
 
     Comment savedComment = commentRepository.save(comment);
+
+    userActivityServiceInterface.addRecentCommentView(requestUserId,recentCommentMapper.toDto(comment));
+
     if (savedComment == null) {
       log.error("댓글 저장 실패: 저장된 댓글이 null입니다");
       throw new RuntimeException("댓글 저장에 실패했습니다");
