@@ -9,6 +9,7 @@ import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
+import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import jakarta.annotation.Nullable;
 import java.io.File;
 import java.nio.file.Files;
@@ -39,6 +40,7 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleRepository articleRepository;
   private final ArticleViewServiceInterface articleViewServiceInterface;
   private final S3UploadArticle s3UploadArticle;
+  private final NotificationServiceInterface notificationServiceInterface;
 
   // 기사 저장
   @Override
@@ -62,7 +64,6 @@ public class ArticleServiceImpl implements ArticleService {
     //Set<UUID> 유저아이디: 구독중인 유저들
 
     //찾은 유저에게 알람보내기
-
     return saved.getId();
   }
 
