@@ -6,6 +6,9 @@ import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListD
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import com.example.part35teammonew.domain.interestUserList.mapper.InterestUserListMapper;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,6 +69,14 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
           return interestUserList.findUser(userId);
         })
         .orElse(false);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<UUID> getAllUserNowSubscribe(UUID interestId) {
+    return interestUserListRepository.findByInterest(interestId)
+        .map(interestUserList -> interestUserList.getSubscribedUser().stream().toList())
+        .orElse(List.of());
   }
 
   @Override

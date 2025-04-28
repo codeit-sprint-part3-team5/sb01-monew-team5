@@ -6,6 +6,8 @@ import com.example.part35teammonew.domain.user.dto.UserUpdateRequest;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 import com.example.part35teammonew.domain.user.service.UserService;
+import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final UserActivityServiceInterface userActivityServiceInterface;
 
     // 회원가입
     @Override
@@ -34,6 +37,8 @@ public class UserServiceImpl implements UserService {
             .password(encryptedPassword)
             .build();
         User savedUser = userRepository.save(user); // repository save된 버전 = DB에 저장된 버전을 return해야 반환값에 id랑 createdAt이 채워진다
+        userActivityServiceInterface.createUserActivity(savedUser.getCreatedAt(),savedUser.getId(),savedUser.getNickname(),savedUser.getEmail());// 유저 생성에 맞춰 유저 활동내역 생성
+        
 
         return UserDto.fromEntity(savedUser);
     }
@@ -45,6 +50,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
             .orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
         user.updateNickname(request.getNickname());
+        userActivityServiceInterface.updateUserInformation(userId,new UserInfoDto(request.getNickname()));
         return UserDto.fromEntity(user);
     }
 
@@ -62,6 +68,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public void deletePhysical(UUID userId){
+        
         userRepository.deleteById(userId);
+        userActivityServiceInterface.deleteUserActivity(userId);//삭제할떄 물리적 삭제
+        
     }
 }

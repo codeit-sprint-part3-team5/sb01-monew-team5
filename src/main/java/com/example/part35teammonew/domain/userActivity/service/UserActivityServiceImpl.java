@@ -10,6 +10,7 @@ import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.maper.UserActivityMapper;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
 
   @Override
   @Transactional
-  public UserActivityDto createUserActivity(Instant createdAt, UUID userId, String nickName,
+  public UserActivityDto createUserActivity(LocalDateTime createdAt, UUID userId, String nickName,
       String email) {
     UserActivity userActivity = UserActivity.setUpNewUserActivity(createdAt, userId, nickName,
         email);
