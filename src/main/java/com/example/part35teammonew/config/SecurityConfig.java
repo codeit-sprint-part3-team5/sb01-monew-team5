@@ -45,7 +45,15 @@ public class SecurityConfig {
         )
 
         .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-            .requestMatchers("/api/users", "/api/users/{userId}", "/api/users/{userId}/hard").permitAll()
+            .requestMatchers(
+                "/",
+                "/index.html",
+                "/assets/**",
+                "/favicon.ico",
+                "/api/users",
+                "/api/users/{userId}",
+                "/api/users/{userId}/hard"
+            ).permitAll()
             .anyRequest().authenticated()
         )
 
