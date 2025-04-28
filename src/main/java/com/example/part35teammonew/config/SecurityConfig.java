@@ -39,7 +39,21 @@ public class SecurityConfig {
                                 "/api/users/{userId}",
                                 "/api/users/{userId}/hard",
                                 "/api/articles",
-                                "/api/"
+                                "/api/articles2",
+                                "/api/articles/restore",
+                                "/api/articles/{articleId}/article-views",
+                                "/api/articles/{articleId}",
+                                "/api/articles/{articleId}/hard",
+                                "/api/comments/{commentId}/comment-likes",
+                                "/api/interests",
+                                "/api/interests/{interestsId}",
+                                "/api/interests/{interestId}/subscriptions",
+                                "api/comments",
+                                "api/comments/{commentId}",
+                                "/api/comments/{commentId}/hard",
+                                "/api/user-activities/{userId}",
+                                "/api/notifications/{notificationId}",
+                                "/api/notifications"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
