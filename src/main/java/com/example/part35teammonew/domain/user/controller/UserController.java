@@ -37,6 +37,7 @@ public class UserController {
         UserDto userDto = userService.login(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
+                .header("Monew-Request-User-ID", userDto.getId().toString())
                 .body(userDto);
     }
 

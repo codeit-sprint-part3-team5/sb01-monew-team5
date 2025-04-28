@@ -14,11 +14,11 @@ public class UserActivityDto {
 
   //private ObjectId id;
   private UUID userId;
-  private String nickName;
   private String email;
+  private String nickName;
   private LocalDateTime createdAt;
   private Set<InterestView> subscriptions;
-  private LinkedList<RecentCommentView> recentcomments;
-  private LinkedList<LikeCommentView> likeComment;
+  private LinkedList<RecentCommentView> comments;
+  private LinkedList<LikeCommentView> commentLikes;
   private LinkedList<ArticleInfoView> articleViews;
 }
