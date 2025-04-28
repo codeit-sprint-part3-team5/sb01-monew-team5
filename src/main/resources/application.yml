@@ -14,13 +14,6 @@ spring:
       ddl-auto: create
     show-sql: true
 
-jwt:
-  header: Authorization
-  #HS512 알고리즘을 사용할 것이기 때문에 512bit, 즉 64byte 이상의 secret key를 사용해야 한다.
-  #[Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes('yg-tech-spring-boot-jwt-monew-secret-sb01-part3-tech-spring-boot-jwt-monew-secret'))
-  secret: eWctdGVjaC1zcHJpbmctYm9vdC1qd3QtbW9uZXctc2VjcmV0LXNiMDEtcGFydDMtdGVjaC1zcHJpbmctYm9vdC1qd3QtbW9uZXctc2VjcmV0
-  token-validity-in-seconds: 86400
-
 logging:
   level:
     root: INFO
