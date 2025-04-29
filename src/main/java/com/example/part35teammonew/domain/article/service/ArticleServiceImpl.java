@@ -33,7 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -64,14 +64,14 @@ public class ArticleServiceImpl implements ArticleService {
     //관심사, 키워드 추출
     String articleTitle= article.getTitle();
     UUID articleId=article.getId();
-    List<Pair<String,UUID>> getInterest=interestService.getInterestsList();
+    List<Pair<String,UUID>> getInterest=interestService.getInterestList();
     Set<UUID> containedId =new HashSet<>();
     Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
 
-    //title.contains()//
+    //title.contains()// 안돼면 확인
     for(Pair<String,UUID> pair:getInterest){
-      if(pair.getFirst().contains(articleTitle)){
-        containedId.add(pair.getSecond());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+      if(pair.getLeft().contains(articleTitle)){
+        containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
       }
     }
 
