@@ -11,6 +11,8 @@ import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.article.service.ArticleService;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
+import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
+import com.example.part35teammonew.domain.comment.service.CommentService;
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
@@ -46,6 +48,8 @@ public class ArticleController {
   private final ArticleViewServiceInterface articleViewServiceInterface;
   private final UserActivityServiceInterface userActivityServiceInterface;
   private final ArticleInfoViewMapper articleInfoViewMapper;
+  private final CommentService commentService;
+  
 
   @PostMapping("/api/articles/{articleId}/article-views")
   public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) {
@@ -62,7 +66,7 @@ public class ArticleController {
     articleViewServiceInterface.addReadUser(articleId, requestUserId);
 
     articleEnrollmentResponse.setId(articleId);
-    articleEnrollmentResponse.setViewdBy(articleId);
+    articleEnrollmentResponse.setViewedBy(articleId);
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt().toLocalDate());
     articleEnrollmentResponse.setArticleId(articleId);
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
@@ -70,8 +74,15 @@ public class ArticleController {
     articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
     articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
-    articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount());
-    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
+
+    CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null,
+        null, null);
+    System.out.println("comments.getSize() = " + comments.getSize());
+    //articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount()); //기사 코멘트 읽기 여기서 문제인가?
+    //articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
+    articleEnrollmentResponse.setArticleCommentCount(100);
+    //articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
+    articleEnrollmentResponse.setArticleViewCount(100L);
     System.out.println("userId = " + userId);
     System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
 
