@@ -18,8 +18,10 @@ public class ArticleCursorRequest {
   public ArticleCursorRequest(String cursor, SortField sortField, int limit, Direction direction) {
     if(cursor != null){
       this.cursor = cursor;
-    }else {
-      this.cursor = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }else if(sortField == SortField.publishDate) {
+      this.cursor = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }else{
+      this.cursor = "0";
     }
     if(limit == 0){
       throw new IllegalArgumentException("limit is 0");

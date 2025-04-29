@@ -4,6 +4,7 @@ import com.example.part35teammonew.domain.article.api.NewsSearch;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
+import com.example.part35teammonew.domain.article.service.ArticleService;
 import com.example.part35teammonew.domain.interest.service.InterestService;
 import java.io.File;
 import java.io.FileWriter;
@@ -40,6 +41,7 @@ public class BatchConfig {
   private final JobRepository jobRepository;
   private final PlatformTransactionManager platformTransactionManager;
   private final ArticleRepository articleRepository;
+  private final ArticleService articleService;
   private final NewsSearch newsSearch;
   private final InterestService interestService;
 
@@ -155,7 +157,7 @@ public class BatchConfig {
       }
       for (Article article : fullSyncList) {
         if(articleRepository.findByTitleAndDate(article.getTitle(), article.getDate()) == null) {
-          articleRepository.save(article);
+          articleService.save(new ArticleBaseDto(article));
         }
       }
       //articleRepository.saveAll(newArticlesForDB);

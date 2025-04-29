@@ -77,7 +77,9 @@ public class CommentServiceImpl implements CommentService {
           log.debug("존재하지 않는 게시글: articleId={}", request.getArticleId());
           return new IllegalArgumentException("존재하지 않는 게시글입니다"); //todo 기사 커스텀 예외로 수정
         });
-
+    //
+    article.setCommentCount( article.getCommentCount() + 1);
+    //
     Comment comment = commentMapper.toComment(request, user, article);
 
     Comment savedComment = commentRepository.save(comment);
@@ -147,6 +149,10 @@ public class CommentServiceImpl implements CommentService {
       throw new CommentDeleteUnauthorized("댓글 작성자만 삭제할 수 있습니다");
     }
 
+    //기사 CommentCount 감소
+    Article article = comment.getArticle();
+    article.setCommentCount( article.getCommentCount() - 1);
+
     // 댓글 논리 삭제 처리
     comment.delete();
 
@@ -168,6 +174,10 @@ public class CommentServiceImpl implements CommentService {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
           return new CommentNotFound("존재하지 않는 댓글입니다");
         });
+
+    //기사 CommentCount 감소 ( 논리 삭제 후 물리 삭제 시 -2 ? )
+    Article article = comment.getArticle();
+    article.setCommentCount( article.getCommentCount() - 1);
 
     // 댓글 물리 삭제
     commentRepository.delete(comment);

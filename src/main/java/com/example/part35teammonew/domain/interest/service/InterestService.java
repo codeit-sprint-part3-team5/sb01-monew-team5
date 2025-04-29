@@ -3,6 +3,8 @@ package com.example.part35teammonew.domain.interest.service;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
 import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
@@ -39,12 +41,10 @@ public interface InterestService {
 	void deleteInterest(UUID interestId);
 
 	/**
-	 * 관심사 단건 조회
-	 * @param interestId 관심사 id
-	 * @param userId 현재 user id
-	 * @return id, 관심사 이름, 키워드 리스트, 구독자 수, 구독 여부
+	 * 관심사 전체 조회
+	 * @return String = keyword or 관심사 이름 , uuid = 관심사 id
 	 */
-	InterestDto getInterestById(UUID interestId, UUID userId);
+	List<Pair<String, UUID>> getInterestList();
 
 
 	PageResponse<InterestDto> listInterests(InterestPageRequest req);

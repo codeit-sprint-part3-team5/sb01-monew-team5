@@ -22,13 +22,13 @@ class UserActivityTest {
   private UUID userId;
   private Instant createdAt;
 
-  @BeforeEach
+  /*@BeforeEach
   void setUp() {
     userId = UUID.randomUUID();
     createdAt = Instant.now();
     userActivity = UserActivity.setUpNewUserActivity(createdAt, userId, "구황작물",
         "감자@고구마.com");
-  }
+  }*/
 
   @Test
   @DisplayName("생성시 제대로 되어있는지 확인")
