@@ -7,6 +7,7 @@ import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse
 import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
+import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import com.example.part35teammonew.domain.interest.service.InterestService;
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
@@ -59,7 +60,10 @@ public class ArticleServiceImpl implements ArticleService {
 
     Article article = new Article(dto);
     Article saved = articleRepository.save(article);//저장
-    articleViewServiceInterface.createArticleView(article.getId());//뷰테이블 만듬
+
+    ArticleViewDto articleViewDto=articleViewServiceInterface.createArticleView(saved.getId());//뷰테이블 만듬
+
+
 
     //관심사, 키워드 추출
     String articleTitle= article.getTitle();
@@ -85,6 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
     for (UUID userId : targetUserID){
       notificationServiceInterface.addNewsNotice(userId,"관심있는 뉴스 등록",articleId);
     }
+
     return saved.getId();
   }
 
