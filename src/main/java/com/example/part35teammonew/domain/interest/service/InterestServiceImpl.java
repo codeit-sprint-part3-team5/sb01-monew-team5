@@ -1,10 +1,14 @@
 package com.example.part35teammonew.domain.interest.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -124,21 +128,25 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
-	public InterestDto getInterestById(UUID interestId, UUID userId) {
-		//		Interest interest = interestRepository.findById(interestId)
-		//			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
-		//
-		////		InterestUserList list = userListRepository.findByInterest(interestId)
-		////			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-		//
-		//		long subscriberCount = list.getUserCount();
-		//		boolean subscribedByMe = userId != null && list.findUser(userId);
-		//
-		//		interest.setSubscriberCount(subscriberCount);
-		//		interest.setSubscribedMe(subscribedByMe);
-		//
-		//		return InterestDto.toDto(interest);
-		return null;
+	public List<Pair<String, UUID>> getInterestList() {
+		List<Interest> interestList = interestRepository.findAll();
+
+		return interestList.stream()
+			.flatMap(interest -> {
+				if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
+					throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
+				}
+				List<String> keywords = Stream.of(interest.getKeywords().split(","))
+					.map(String::trim)
+					.toList();
+
+				// 이름  키워드를 하나의 스트림으로
+				return Stream.concat(
+					Stream.of(interest.getName().strip()),
+					keywords.stream()
+				).map(value -> Pair.of(value, interest.getId()));
+			})
+			.toList();
 	}
 
 	@Override
