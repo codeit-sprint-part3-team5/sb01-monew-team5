@@ -9,6 +9,7 @@ import com.example.part35teammonew.domain.comment.entity.CommentLike;
 import com.example.part35teammonew.domain.comment.mapper.CommentMapper;
 import com.example.part35teammonew.domain.comment.repository.CommentLikeRepository;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
+import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 
@@ -35,6 +36,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
   private final UserRepository userRepository;
   private final ArticleRepository articleRepository;
   private final CommentMapper commentMapper;
+  private final NotificationServiceInterface notificationServiceInterface;
   private final UserActivityServiceInterface userActivityServiceInterface;
   private final LikeCommentMapper likeCommentMapper;
 
@@ -95,6 +97,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     log.info("댓글 좋아요 추가 성공: commentId={}, userId={}, likeId={}",
         commentId, requestUserId, savedLike.getId());
+    notificationServiceInterface.addCommentNotice(requestUserId, "댓글에 좋아요가 달렸습니다", commentId);//좋아요 알림 생성
 
     return response;
   }

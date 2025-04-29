@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-28T11:15:08+0900",
+    date = "2025-04-28T18:20:30+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
 )
 @Component
@@ -28,21 +28,21 @@ public class UserActivityMapperImpl implements UserActivityMapper {
 
         UserActivityDto userActivityDto = new UserActivityDto();
 
+        LinkedList<RecentCommentView> linkedList = userActivity.getRecentcomments();
+        if ( linkedList != null ) {
+            userActivityDto.setComments( new LinkedList<RecentCommentView>( linkedList ) );
+        }
+        LinkedList<LikeCommentView> linkedList1 = userActivity.getLikeComment();
+        if ( linkedList1 != null ) {
+            userActivityDto.setCommentLikes( new LinkedList<LikeCommentView>( linkedList1 ) );
+        }
         userActivityDto.setUserId( userActivity.getUserId() );
-        userActivityDto.setNickName( userActivity.getNickName() );
         userActivityDto.setEmail( userActivity.getEmail() );
+        userActivityDto.setNickName( userActivity.getNickName() );
         userActivityDto.setCreatedAt( userActivity.getCreatedAt() );
         Set<InterestView> set = userActivity.getSubscriptions();
         if ( set != null ) {
             userActivityDto.setSubscriptions( new LinkedHashSet<InterestView>( set ) );
-        }
-        LinkedList<RecentCommentView> linkedList = userActivity.getRecentcomments();
-        if ( linkedList != null ) {
-            userActivityDto.setRecentcomments( new LinkedList<RecentCommentView>( linkedList ) );
-        }
-        LinkedList<LikeCommentView> linkedList1 = userActivity.getLikeComment();
-        if ( linkedList1 != null ) {
-            userActivityDto.setLikeComment( new LinkedList<LikeCommentView>( linkedList1 ) );
         }
         LinkedList<ArticleInfoView> linkedList2 = userActivity.getArticleViews();
         if ( linkedList2 != null ) {
