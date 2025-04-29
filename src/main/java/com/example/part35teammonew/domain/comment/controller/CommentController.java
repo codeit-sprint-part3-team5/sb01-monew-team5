@@ -69,28 +69,20 @@ public class CommentController {
     return ResponseEntity.ok(response);
   }
 
-  //댓글 생성
   @PostMapping
   public ResponseEntity<CommentDto> createComment(
-      @Valid @RequestBody CommentCreateRequest request, //CommentCreateRequest(articleId, userId, content)
-      @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID requestUserId) { // 다른 엔드포인트에서는 요청자 ID가 필수적이지만
-    //댓글 생성시에는 딱히 언급이 없어서 일단 추가하지만 필수는 아니도록 함.
+      @Valid @RequestBody CommentCreateRequest request) { //CommentCreateRequest(articleId, userId, content)
+    //헤더 제외함 (api상 생성에는 필요없음)
 
-    // Monew-Request-User-ID 헤더에 요청자 정보 없으면 요청 본문의 사용자 ID 사용
-    final UUID finalUserId;
-    if (requestUserId != null) {
-      finalUserId = requestUserId;
-    } else {
-      finalUserId = request.getUserId();
-    }
+    log.info("댓글 생성 요청: articleId={}, userId={}",
+        request.getArticleId(), request.getUserId());
 
-    log.info("댓글 생성 요청: articleId={}, userId={}, requestUserId={}",
-        request.getArticleId(), request.getUserId(), finalUserId);
-
-    CommentDto createdComment = commentService.createComment(request, finalUserId);
+    // 요청 본문의 userId를 직접 사용
+    UUID userId = request.getUserId();
+    CommentDto createdComment = commentService.createComment(request, userId);
 
     log.debug("댓글 생성 완료: commentId={}, articleId={}, userId={}",
-        createdComment.getId(), request.getArticleId(), finalUserId);
+        createdComment.getId(), request.getArticleId(), userId);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
