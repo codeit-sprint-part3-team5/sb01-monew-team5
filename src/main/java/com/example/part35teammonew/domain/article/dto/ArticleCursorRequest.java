@@ -25,6 +25,8 @@ public class ArticleCursorRequest {
     }
     if( cursor == null && sortField == SortField.publishDate && direction == Direction.ASC ){
       this.cursor = LocalDateTime.of(1970,1,1,0,0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }else if(cursor == null && sortField == SortField.commentCount && direction == Direction.DESC){
+      this.cursor = String.valueOf(Integer.MAX_VALUE);
     }
     if(limit == 0){
       throw new IllegalArgumentException("limit is 0");
