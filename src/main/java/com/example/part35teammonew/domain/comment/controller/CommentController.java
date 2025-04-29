@@ -72,6 +72,7 @@ public class CommentController {
   @PostMapping
   public ResponseEntity<CommentDto> createComment(
       @Valid @RequestBody CommentCreateRequest request) { //CommentCreateRequest(articleId, userId, content)
+    //헤더 제외함 (api상 생성에는 필요없음)
 
     log.info("댓글 생성 요청: articleId={}, userId={}",
         request.getArticleId(), request.getUserId());
