@@ -53,14 +53,23 @@ public class SecurityConfig {
                 "/api/users",
                 "/api/users/{userId}",
                 "/api/users/{userId}/hard",
-                // 임시 TODO 추후 이것들 지우기
                 "/api/articles",
+                "/api/articles2",
                 "/api/articles/restore",
                 "/api/articles/{articleId}/article-views",
                 "/api/articles/{articleId}",
                 "/api/articles/{articleId}/hard",
-                "/{interestId}",
-                "/{interestId}/subscriptions"
+                "/api/comments/{commentId}/comment-likes",
+                "/api/interests",
+                "/api/interests/{interestsId}",
+                "/api/interests/{interestId}/subscriptions",
+                "api/comments",
+                "api/comments/{commentId}",
+                "/api/comments/{commentId}/hard",
+                "/api/user-activities/**",
+                "/api/notifications/{notificationId}",
+                "/api/notifications"
+
             ).permitAll()
             .anyRequest().authenticated()
         )
