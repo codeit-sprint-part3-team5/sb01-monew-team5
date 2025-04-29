@@ -6,38 +6,19 @@ on:
     workflow_dispatch:
 
 jobs:
-  test:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'temurin'
 
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
-
-      - name: Run tests with coverage
-        run: ./gradlew test jacocoTestReport
-
-      - name: Enforce 80% coverage threshold
-        run: |
-          COVERAGE=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[0-9]+" build/reports/jacoco/test/jacocoTestReport.xml)
-          TOTAL=$(grep -oPm1 "(?<=missed=\")[0-9]+(?=\".*covered=\")" build/reports/jacoco/test/jacocoTestReport.xml)
-          if [ -z "$COVERAGE" ] || [ -z "$TOTAL" ]; then
-            echo "Could not read coverage data."
-            exit 1
-          fi
-          PERCENT=$(echo "scale=2; (1 - ($COVERAGE / ($COVERAGE + $TOTAL))) * 100" | bc)
-          echo "Coverage: $PERCENT%"
-          if (( $(echo "$PERCENT < 80" | bc -l) )); then
-            echo "X : Coverage below 80%"
-            exit 1
-          fi
-
-
+      - name: Run tests with coverage check
+        run: ./gradlew check
