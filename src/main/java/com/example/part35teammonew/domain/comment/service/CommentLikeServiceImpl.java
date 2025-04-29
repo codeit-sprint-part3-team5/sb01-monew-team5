@@ -92,12 +92,12 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         .createdAt(savedLike.getCreatedAt())
         .build();
 
-    userActivityServiceInterface.addLikeCommentView(commentId, likeCommentMapper.toDto(
+    userActivityServiceInterface.addLikeCommentView(comment.getUser().getId(), likeCommentMapper.toDto(
         commentMapper.toCommentDto(comment,hasLiked(comment.getId(),requestUserId)),response));
 
     log.info("댓글 좋아요 추가 성공: commentId={}, userId={}, likeId={}",
         commentId, requestUserId, savedLike.getId());
-    notificationServiceInterface.addCommentNotice(requestUserId, "댓글에 좋아요가 달렸습니다", commentId);//좋아요 알림 생성
+    notificationServiceInterface.addCommentNotice(comment.getUser().getId(), "댓글에 좋아요가 달렸습니다", commentId);//좋아요 알림 생성
 
     return response;
   }

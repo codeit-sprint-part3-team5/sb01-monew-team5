@@ -88,12 +88,17 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
   }
 
   @Override
-  @Transactional// 유저가 좋아요 누르면 실행
+  @Transactional
   public void addLikeCommentView(UUID id, LikeCommentView likeCommentView) {
-    UserActivity userActivity = userActivityRepository.findByUserId(id)
-        .orElseThrow(() -> new NoSuchElementException("유저가 좋아요 누르면 실행 예외ㅣㅣㅣㅣ"));
-    userActivity.updateCommentLikes(likeCommentView);
-    userActivityRepository.save(userActivity);
+    try {
+      UserActivity userActivity = userActivityRepository.findByUserId(id)
+          .orElseThrow(() -> new NoSuchElementException("유저가 없음"));
+
+      userActivity.updateCommentLikes(likeCommentView);
+      userActivityRepository.save(userActivity);
+    } catch (Exception e) {
+      System.err.println("사용자 활동 업데이트 중 오류 발생: " + e.getMessage());
+    }
   }
 
   @Override

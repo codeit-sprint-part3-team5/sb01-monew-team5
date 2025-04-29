@@ -17,6 +17,7 @@ import com.example.part35teammonew.domain.userActivity.service.UserActivityServi
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +52,14 @@ public class ArticleController {
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
 
-    articleViewServiceInterface.addReadUser(articleId,UUID.fromString(userId));
+    UUID requestUserId = null;
+    try {
+      requestUserId = UUID.fromString(userId);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("유효하지 않은 사용자 ID 형식입니다");
+    }
+
+    articleViewServiceInterface.addReadUser(articleId, requestUserId);
 
     articleEnrollmentResponse.setId(articleId);
     articleEnrollmentResponse.setViewdBy(articleId);
@@ -67,12 +75,12 @@ public class ArticleController {
     System.out.println("userId = " + userId);
     System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
 
-    userActivityServiceInterface.addArticleInfoView(UUID.fromString(userId),
-        articleInfoViewMapper.toDto(articleEnrollmentResponse,UUID.fromString(userId)) );
+    userActivityServiceInterface.addArticleInfoView(requestUserId,
+        articleInfoViewMapper.toDto(articleEnrollmentResponse, requestUserId));
 
-    //monewRequestUserId의 역할?
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
+
   @GetMapping("/api/articles")
   public ResponseEntity<ArticlesResponse> articles(
       @RequestParam(required = false) String keyword,
@@ -88,12 +96,62 @@ public class ArticleController {
   ) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
 
-    SortField sortField = SortField.valueOf(orderBy);
-    Direction sortDirection = Direction.valueOf(direction);
+    // 유효한 파라미터인지 검증
+    SortField sortField;
+    try {
+      sortField = SortField.valueOf(orderBy);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("유효하지 않은 정렬 필드입니다: " + orderBy);
+    }
+
+    Direction sortDirection;
+    try {
+      sortDirection = Direction.valueOf(direction);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("유효하지 않은 정렬 방향입니다: " + direction);
+    }
 
     System.out.println("sortDirection = " + sortDirection);
-    System.out.println("sortDirection = " + sortDirection);
     System.out.println("limit = " + limit);
+
+    // 커서 정규화 - ISO 형식으로 변환 시도
+    if (cursor != null && cursor.contains("T")) {
+      try {
+        // ISO 형식 체크
+        LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+      } catch (DateTimeParseException e) {
+        // 형식이 잘못된 경우, 표준 ISO 형식으로 변환 시도
+        try {
+          // 시간 부분 추출
+          String[] parts = cursor.split("T");
+          if (parts.length == 2) {
+            String date = parts[0];
+            String time = parts[1];
+
+            // 시간 부분에 한 자리 시간이 있다면 두 자리로 변환
+            if (time.length() < 8) {
+              String[] timeParts = time.split(":");
+              if (timeParts.length >= 2) {
+                time = String.format("%02d:%02d",
+                    Integer.parseInt(timeParts[0]),
+                    Integer.parseInt(timeParts[1]));
+
+                if (timeParts.length > 2) {
+                  time += ":" + timeParts[2];
+                } else {
+                  time += ":00";
+                }
+              }
+            }
+
+            cursor = date + "T" + time;
+          }
+        } catch (Exception ex) {
+          // 변환 실패 시 현재 시간 사용
+          cursor = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        }
+      }
+    }
 
     ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection);
 
@@ -102,7 +160,6 @@ public class ArticleController {
     if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
     if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
     if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
-
 
     findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
     System.out.println("byCursorPaging = " + byCursorPaging);
@@ -122,15 +179,18 @@ public class ArticleController {
     System.out.println("result = " + result);
     System.out.println("result = " + result.size());
 
-
     if(publishDateFrom != null){
-      String onlyDate = publishDateFrom.substring(0, 10);
-      LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-      System.out.println("DateFrom = " + DateFrom);
-      System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-      if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
-        articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
-      }else {
+      try {
+        String onlyDate = publishDateFrom.substring(0, 10);
+        LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        System.out.println("DateFrom = " + DateFrom);
+        System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+        if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
+          articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
+        }else {
+          articlesResponse.setNextAfter("false");
+        }
+      } catch (Exception e) {
         articlesResponse.setNextAfter("false");
       }
     }else {
@@ -138,22 +198,28 @@ public class ArticleController {
     }
 
     if(publishDateTo != null){
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
-      if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
-        articlesResponse.setHasNext("true");
-      }else {
+      try {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
+        if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
+          articlesResponse.setHasNext("true");
+        }else {
+          articlesResponse.setHasNext("false");
+        }
+      } catch (Exception e) {
         articlesResponse.setHasNext("false");
       }
     }else {
       articlesResponse.setHasNext("false");
     }
+
     articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
     articlesResponse.setContent(result);
-    articlesResponse.setSize(limit); //필요성 의문 //몇 개씩 보기라는 게 없음
+    articlesResponse.setSize(limit);
 
     return ResponseEntity.ok(articlesResponse);
   }
+
   @GetMapping("/api/articles2")
   public ResponseEntity<ArticlesResponse> articles2(@RequestBody ArticlesRequestDto articlesRequestDto) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
@@ -168,6 +234,17 @@ public class ArticleController {
     String[] sourceIn = articlesRequestDto.getSourceIn();
     String monewRequestUserId = articlesRequestDto.getMonew_Request_User_ID();
 
+    // 커서 정규화
+    if (cursor != null && cursor.contains("T")) {
+      try {
+        // ISO 형식 체크
+        LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+      } catch (DateTimeParseException e) {
+        // 형식이 잘못된 경우, 현재 시간 ISO 형식 사용
+        cursor = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+      }
+    }
+
     ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, direction);
 
     ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
@@ -175,7 +252,6 @@ public class ArticleController {
     if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
     if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
     if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
-
 
     findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
     System.out.println("byCursorPaging = " + byCursorPaging);
@@ -195,15 +271,18 @@ public class ArticleController {
     System.out.println("result = " + result);
     System.out.println("result = " + result.size());
 
-
     if(publishDateFrom != null){
-      String onlyDate = publishDateFrom.substring(0, 10);
-      LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-      System.out.println("DateFrom = " + DateFrom);
-      System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-      if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
-        articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
-      }else {
+      try {
+        String onlyDate = publishDateFrom.substring(0, 10);
+        LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+        System.out.println("DateFrom = " + DateFrom);
+        System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+        if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
+          articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
+        }else {
+          articlesResponse.setNextAfter("false");
+        }
+      } catch (Exception e) {
         articlesResponse.setNextAfter("false");
       }
     }else {
@@ -211,24 +290,24 @@ public class ArticleController {
     }
 
     if(publishDateTo != null){
-      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-      LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
-      /*String onlyDate = publishDateTo.substring(0, 10); // "2025-04-24"
-      LocalDateTime localDate = LocalDate.parse(onlyDate,
-          DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).atStartOfDay();
-      System.out.println("publishDateTo = " + publishDateTo);
-      System.out.println("localDate = " + localDate);*/
-      if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
-        articlesResponse.setHasNext("true");
-      }else {
+      try {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
+        if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
+          articlesResponse.setHasNext("true");
+        }else {
+          articlesResponse.setHasNext("false");
+        }
+      } catch (Exception e) {
         articlesResponse.setHasNext("false");
       }
     }else {
       articlesResponse.setHasNext("false");
     }
+
     articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
     articlesResponse.setContent(result);
-    articlesResponse.setSize(limit); //필요성 의문 //몇 개씩 보기라는 게 없음
+    articlesResponse.setSize(limit);
 
     return ResponseEntity.ok(articlesResponse);
   }
@@ -254,6 +333,7 @@ public class ArticleController {
     articleService.deleteLogical(articleId);
     return ResponseEntity.noContent().build();
   }
+
   @DeleteMapping("/api/articles/{articleId}/hard")
   public ResponseEntity<Void> articlesDeleteHard(@PathVariable UUID articleId) {
     articleService.deletePhysical(articleId);

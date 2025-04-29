@@ -1,5 +1,4 @@
 package com.example.part35teammonew.domain.article.service;
-
 import com.example.part35teammonew.domain.article.batch.S3UploadArticle;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
@@ -9,6 +8,8 @@ import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
+import com.example.part35teammonew.domain.interest.service.InterestService;
+import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import jakarta.annotation.Nullable;
 import java.io.File;
@@ -16,6 +17,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,6 +44,8 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleViewServiceInterface articleViewServiceInterface;
   private final S3UploadArticle s3UploadArticle;
   private final NotificationServiceInterface notificationServiceInterface;
+  private final InterestService interestService;
+  private final InterestUserListServiceInterface interestUserListServiceInterface;
 
   // 기사 저장
   @Override
@@ -55,15 +60,31 @@ public class ArticleServiceImpl implements ArticleService {
     Article article = new Article(dto);
     Article saved = articleRepository.save(article);//저장
     articleViewServiceInterface.createArticleView(article.getId());//뷰테이블 만듬
+
     //관심사, 키워드 추출
-    //interestService.getInterests();
-    //title.contains()//
-    //Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+    String articleTitle= article.getTitle();
+    UUID articleId=article.getId();
+    List<Pair<String,UUID>> getInterest=interestService.getInterestList();
+    Set<UUID> containedId =new HashSet<>();
+    Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
+
+    //title.contains()// 안돼면 확인
+    for(Pair<String,UUID> pair:getInterest){
+      if(pair.getLeft().contains(articleTitle)){
+        containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+      }
+    }
 
     //관심사, 키워드를 구독중인 유저 얼아내기
-    //Set<UUID> 유저아이디: 구독중인 유저들
+    for (UUID interestId : containedId) {
+      List<UUID> findUser=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
+      targetUserID.addAll(findUser);
+    }
 
     //찾은 유저에게 알람보내기
+    for (UUID userId : targetUserID){
+      notificationServiceInterface.addNewsNotice(userId,"관심있는 뉴스 등록",articleId);
+    }
     return saved.getId();
   }
 
@@ -312,34 +333,45 @@ public class ArticleServiceImpl implements ArticleService {
     switch (req.getSortField()) {
       case publishDate -> {
         LocalDateTime cursor;
-        if(req.getCursor().contains("T")){
-          cursor = req.getCursor() != null ? LocalDateTime.parse(req.getCursor()) : LocalDateTime.now();
-        }else {
-          cursor = LocalDateTime.parse(req.getCursor()+"T"+LocalDateTime.now().getHour()+":"+LocalDateTime.now().getMinute());
-        }
-        System.out.println("cursor = " + cursor);
-        articles = req.getDirection() == Direction.ASC
-            ? articleRepository.findByDateCursorAsc(cursor, pageable)
-            : articleRepository.findByDateCursorDesc(cursor, pageable);
-        LocalDateTime nextCursor;
-        if(req.getDirection() == Direction.ASC){
-          nextCursor = articles.get(0).getDate();
-        }else {
-          nextCursor = articles.get(articles.size()-1).getDate();
-        }
-        System.out.println("nextCursor = " + nextCursor);
-        /*List<Article> articleList =
-            req.getDirection() == Direction.ASC ? articleRepository.findByDateCursorAsc(nextCursor,
-                pageable) : articleRepository.findByDateCursorDesc(nextCursor, pageable);
-                response.setNextAfter(articleList.isEmpty() ?null:articleList.get(0).getDate());
-        response.setNextCursor(nextCursor.toString());
-        */
-        if(articles.size() < req.getSize()){
+        try {
+          // 표준 ISO 형식 사용
+          if(req.getCursor().contains("T")){
+            cursor = LocalDateTime.parse(req.getCursor(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+          } else {
+            // 날짜만 있는 경우 현재 시간을 포함한 ISO 형식으로 변환
+            cursor = LocalDateTime.parse(req.getCursor() + "T00:00:00");
+          }
+          System.out.println("cursor = " + cursor);
+          articles = req.getDirection() == Direction.ASC
+              ? articleRepository.findByDateCursorAsc(cursor, pageable)
+              : articleRepository.findByDateCursorDesc(cursor, pageable);
+          LocalDateTime nextCursor;
+          if(articles.isEmpty()) {
+            nextCursor = LocalDateTime.now();
+          } else if(req.getDirection() == Direction.ASC){
+            nextCursor = articles.get(0).getDate();
+          } else {
+            nextCursor = articles.get(articles.size()-1).getDate();
+          }
+          System.out.println("nextCursor = " + nextCursor);
+
+          if(articles.size() < req.getSize()){
+            response.setNextAfter(null);
+          } else {
+            response.setNextAfter(articles.get(articles.size()-1).getDate());
+          }
+          // 표준 ISO 형식으로 반환
+          response.setNextCursor(nextCursor.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        } catch (DateTimeParseException e) {
+          System.err.println("날짜 변환 오류: " + e.getMessage());
+          // 오류 발생 시 현재 시간 사용
+          cursor = LocalDateTime.now();
+          articles = req.getDirection() == Direction.ASC
+              ? articleRepository.findByDateCursorAsc(cursor, pageable)
+              : articleRepository.findByDateCursorDesc(cursor, pageable);
+          response.setNextCursor(cursor.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
           response.setNextAfter(null);
-        }else {
-          response.setNextAfter(articles.get(articles.size()-1).getDate());
         }
-        response.setNextCursor(nextCursor.toString());
       }
       case COMMENT_COUNT -> {
         int cursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) : 0;
@@ -347,27 +379,51 @@ public class ArticleServiceImpl implements ArticleService {
         articles = req.getDirection() == Direction.ASC
             ? articleRepository.findByCommentCursorAsc(cursor, pageable)
             : articleRepository.findByCommentCursorDesc(cursor, pageable);
-        Article nextArticle = req.getDirection() == Direction.ASC
-            ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
-            : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
-        response.setNextAfter(nextArticle.getDate());
-        response.setNextCursor(String.valueOf(nextCursor));
+
+        if(articles.isEmpty()) {
+          response.setNextAfter(null);
+          response.setNextCursor("0");
+        } else {
+          Article nextArticle = req.getDirection() == Direction.ASC
+              ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
+              ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
+              : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty()
+              ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
+
+          response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
+          response.setNextCursor(String.valueOf(nextCursor));
+        }
       }
       case VIEW_COUNT -> {
         Long cursor = req.getCursor() != null ? Long.parseLong(req.getCursor()) : 0L;
         Long nextCursor = req.getCursor() != null ? Long.parseLong(req.getCursor())+1 : 0;
         //articles = req.getDirection() == Direction.ASC ? articleRepository.findByViewCursorAsc(cursor, pageable) : articleRepository.findByViewCursorDesc(cursor, pageable);
         List<UUID> sortByVewCountPageNation = articleViewServiceInterface.getSortByVewCountPageNation(cursor, pageable, req.getDirection().toString());
-        LocalDateTime nextAfter = findById( articleViewServiceInterface.getSortByVewCountPageNation(nextCursor, pageable, req.getDirection().toString()).get(0)).getDate();
-        response.setArticles(findByIds(sortByVewCountPageNation));
-        response.setNextAfter(nextAfter);
-        response.setNextCursor(String.valueOf(nextCursor));
+
+        if(sortByVewCountPageNation.isEmpty()) {
+          response.setArticles(List.of());
+          response.setNextAfter(null);
+          response.setNextCursor("0");
+        } else {
+          List<UUID> nextPageIds = articleViewServiceInterface.getSortByVewCountPageNation(nextCursor, pageable, req.getDirection().toString());
+          LocalDateTime nextAfter = nextPageIds.isEmpty() ? null : findById(nextPageIds.get(0)).getDate();
+
+          response.setArticles(findByIds(sortByVewCountPageNation));
+          response.setNextAfter(nextAfter);
+          response.setNextCursor(String.valueOf(nextCursor));
+        }
+
         response.setLimit(req.getSize());
         return response;
       }
       default -> throw new IllegalArgumentException("정렬 조건이 잘못되었습니다.");
     }
-    response.setArticles(articles.stream().filter(Article::isNotLogicallyDeleted).map(ArticleBaseDto::new).toList());
+
+    if(articles == null || articles.isEmpty()) {
+      response.setArticles(List.of());
+    } else {
+      response.setArticles(articles.stream().filter(Article::isNotLogicallyDeleted).map(ArticleBaseDto::new).toList());
+    }
     response.setLimit(req.getSize());
     return response;
   }
