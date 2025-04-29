@@ -328,12 +328,7 @@ public class ArticleServiceImpl implements ArticleService {
           nextCursor = articles.get(articles.size()-1).getDate();
         }
         System.out.println("nextCursor = " + nextCursor);
-        /*List<Article> articleList =
-            req.getDirection() == Direction.ASC ? articleRepository.findByDateCursorAsc(nextCursor,
-                pageable) : articleRepository.findByDateCursorDesc(nextCursor, pageable);
-                response.setNextAfter(articleList.isEmpty() ?null:articleList.get(0).getDate());
-        response.setNextCursor(nextCursor.toString());
-        */
+
         if(articles.size() < req.getSize()){
           response.setNextAfter(null);
         }else {
