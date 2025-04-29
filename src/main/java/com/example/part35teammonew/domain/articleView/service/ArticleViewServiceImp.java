@@ -34,8 +34,8 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   @Transactional  //기사가 만들어 질떄 호출
   public ArticleViewDto createArticleView(UUID articleId) {
     ArticleView articleView = setUpNewArticleView(articleId);
-    articleViewRepository.save(articleView);
-    return articleViewMapper.toDto(articleView);
+    ArticleView saved = articleViewRepository.save(articleView);
+    return articleViewMapper.toDto(saved);
   }
 
   @Override

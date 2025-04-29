@@ -40,29 +40,41 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
 	 */
 	@Query("""
 		SELECT i FROM Interest i
-		 WHERE (:cursor IS NULL
-		    OR i.name > :cursor
-		    OR (i.name = :cursor AND i.createdAt > :after))
-		 ORDER BY i.name   ASC, i.createdAt ASC
+			WHERE (:lastName IS NULL OR i.name > :lastName)
 		""")
 	List<Interest> findByNameAfter(
-		@Param("cursor") String nameCursor,
+		@Param("lastName") String lastName,
 		@Param("after") LocalDateTime after,
 		Pageable pageable
 	);
+
+	@Query("""
+		SELECT i FROM Interest i
+			WHERE (:lastName IS NULL OR i.name < :lastName)
+		""")
+	List<Interest> findByNameBefore(@Param("lastName") String lastName,
+		@Param("after") LocalDateTime after,
+		Pageable pageable);
 
 	/**
 	 * SUBSCRIBER_COUNT 기준
 	 */
 	@Query("""
 		SELECT i FROM Interest i
-		 WHERE (:cursor IS NULL
-		    OR i.subscriberCount > :cursor
-		    OR (i.subscriberCount = :cursor AND i.createdAt > :after))
-		 ORDER BY i.subscriberCount DESC, i.createdAt DESC
+		    WHERE (:lastCount IS NULL OR i.subscriberCount > :lastCount)
 		""")
 	List<Interest> findBySubscriberCountAfter(
-		@Param("cursor") Long countCursor,
+		@Param("lastCount") Long lastCount,
+		@Param("after") LocalDateTime after,
+		Pageable pageable
+	);
+
+	@Query("""
+		SELECT i FROM Interest i
+			WHERE (:lastCount IS NULL OR i.subscriberCount < :lastCount)
+		""")
+	List<Interest> findBySubscriberCountBefore(
+		@Param("lastCount") Long lastCount,
 		@Param("after") LocalDateTime after,
 		Pageable pageable
 	);

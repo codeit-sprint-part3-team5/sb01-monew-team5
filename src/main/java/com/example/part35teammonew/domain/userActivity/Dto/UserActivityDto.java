@@ -15,7 +15,7 @@ public class UserActivityDto {
   //private ObjectId id;
   private UUID userId;
   private String email;
-  private String nickName;
+  private String nickname;
   private LocalDateTime createdAt;
   private Set<InterestView> subscriptions;
   private LinkedList<RecentCommentView> comments;
