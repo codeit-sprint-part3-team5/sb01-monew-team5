@@ -4,25 +4,25 @@ import java.util.List;
 
 public class CursorPageResponse<T> {
 
-  private final List<T> data;
+  private final List<T> content;
   private final String nextCursor;
   private final String hasAfter;
-  private final boolean hasNext;
   private final Long size;
-  private final Long totalElement;
+  private final Long totalElements;
+  private final boolean hasNext;
 
   public CursorPageResponse(List<T> data, String nextCursor, String hasAfter, boolean hasNext,
       Long size, Long totalElement) {
-    this.data = data;
+    this.content = data;
     this.nextCursor = nextCursor;
     this.hasAfter = hasAfter;
     this.hasNext = hasNext;
     this.size = size;
-    this.totalElement = totalElement;
+    this.totalElements = totalElement;
   }
 
-  public List<T> getData() {
-    return data;
+  public List<T> getContent() {
+    return content;
   }
 
   public String getNextCursor() {
@@ -41,7 +41,7 @@ public class CursorPageResponse<T> {
     return size;
   }
 
-  public Long getTotalElement() {
-    return totalElement;
+  public Long getTotalElements() {
+    return totalElements;
   }
 }

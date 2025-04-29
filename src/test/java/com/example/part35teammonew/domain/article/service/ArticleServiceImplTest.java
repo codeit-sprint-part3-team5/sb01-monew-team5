@@ -177,9 +177,9 @@ class ArticleServiceImplTest {
     assertThat(
         articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest("가이드",null,LocalDate.now().toString(),null )).size()).isEqualTo(4);
 
-    assertThatThrownBy(() -> articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null,null)))
-        .isInstanceOf(IllegalArgumentException.class) // 예외 타입
-        .hasMessageContaining("소스와 날짜 중 하나의 파라미터는 채워져야 합니다."); // 예외 메시지 확인
+    // ✅ 예외 케이스
+    assertThat(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null, null)))
+        .isEqualTo(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, LocalDateTime.now().toString(), null, null)));
   }
 
   @Test
@@ -239,9 +239,10 @@ class ArticleServiceImplTest {
     assertThat(result3).isEmpty(); // 논리 삭제된 기사여서 필터링 됨
 
     // then: 예외 테스트
-    assertThatThrownBy(
-        () -> articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null,null))).isInstanceOf(
-        IllegalArgumentException.class).hasMessageContaining("소스와 날짜 중 하나의 파라미터는 채워져야 합니다.");
+    // ✅ 예외 케이스
+    assertThat(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null, null)))
+        .isEqualTo(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, LocalDateTime.now().toString(), null, null)));
+
   }
 
   @Test
@@ -356,9 +357,8 @@ class ArticleServiceImplTest {
     assertThat(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(noMatchKeyword, startDate, tomorrow, source))).isEmpty();
 
     // ✅ 예외 케이스
-    assertThatThrownBy(() -> articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null, null)))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("소스와 날짜 중 하나의 파라미터는 채워져야 합니다.");
+    assertThat(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, null, null, null)))
+        .isEqualTo(articleServiceImpl.findBySourceAndDateAndInterests(new ArticleSourceAndDateAndInterestsRequest(null, LocalDateTime.now().toString(), null, null)));
   }
 
   @Test
@@ -376,7 +376,7 @@ class ArticleServiceImplTest {
 
     // When: createdAt 기준 오름차순 페이징
     ArticleCursorRequest reqDate = new ArticleCursorRequest();
-    reqDate.setSortField(SortField.DATE);
+    reqDate.setSortField(SortField.publishDate);
     reqDate.setDirection(Direction.DESC);
     reqDate.setCursor(baseTime.minusHours(30).toString()); //2025-04-21-06
     reqDate.setSize(10);

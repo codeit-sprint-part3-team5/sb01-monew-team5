@@ -10,6 +10,7 @@ public interface UserActivityMapper {
 
   @Mapping(source = "recentcomments", target = "comments")
   @Mapping(source = "likeComment", target = "commentLikes")
+  @Mapping(source = "nickName", target = "nickname")
   UserActivityDto toDto(UserActivity userActivity);
 
 }

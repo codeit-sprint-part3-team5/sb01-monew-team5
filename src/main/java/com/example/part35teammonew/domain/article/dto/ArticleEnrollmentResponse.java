@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class ArticleEnrollmentResponse {
   //Vaildation 필요
   private UUID id;
-  private UUID viewdBy;
+  private UUID viewedBy;
   private LocalDate createdAt;
   private UUID articleId;
   private String source;
@@ -22,11 +22,11 @@ public class ArticleEnrollmentResponse {
   private int articleCommentCount;
   private Long articleViewCount;
 
-  public ArticleEnrollmentResponse(UUID id, UUID viewdBy, LocalDate createdAt, UUID articleId,
+  public ArticleEnrollmentResponse(UUID id, UUID viewedBy, LocalDate createdAt, UUID articleId,
       String source, String sourceUrl, String articleTitle, LocalDateTime articlePublishedDate,
       String articleSummary, int articleCommentCount, Long articleViewCount) {
     this.id = id;
-    this.viewdBy = viewdBy;
+    this.viewedBy = viewedBy;
     this.createdAt = createdAt;
     this.articleId = articleId;
     this.source = source;

@@ -1,10 +1,14 @@
 package com.example.part35teammonew.domain.interest.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -124,69 +128,88 @@ public class InterestServiceImpl implements InterestService {
 	}
 
 	@Override
-	public InterestDto getInterestById(UUID interestId, UUID userId) {
-		//		Interest interest = interestRepository.findById(interestId)
-		//			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
-		//
-		////		InterestUserList list = userListRepository.findByInterest(interestId)
-		////			.orElseGet(() -> InterestUserList.setUpNewInterestUserList(interestId));
-		//
-		//		long subscriberCount = list.getUserCount();
-		//		boolean subscribedByMe = userId != null && list.findUser(userId);
-		//
-		//		interest.setSubscriberCount(subscriberCount);
-		//		interest.setSubscribedMe(subscribedByMe);
-		//
-		//		return InterestDto.toDto(interest);
-		return null;
+	public List<Pair<String, UUID>> getInterestList() {
+		List<Interest> interestList = interestRepository.findAll();
+
+		return interestList.stream()
+			.flatMap(interest -> {
+				if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
+					throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
+				}
+				List<String> keywords = Stream.of(interest.getKeywords().split(","))
+					.map(String::trim)
+					.toList();
+
+				// 이름  키워드를 하나의 스트림으로
+				return Stream.concat(
+					Stream.of(interest.getName().strip()),
+					keywords.stream()
+				).map(value -> Pair.of(value, interest.getId()));
+			})
+			.toList();
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public PageResponse<InterestDto> listInterests(InterestPageRequest req) {
 		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		String orderBy = normalizeOrderBy(req.orderBy());
 
-		Sort sort = Sort.by(direction, orderBy).and(Sort.by(direction, "createdAt"));
+		Sort sort = Sort.by(
+			new Sort.Order(direction, orderBy),
+			new Sort.Order(direction, "createdAt")
+		);
 
 		Pageable pageable = PageRequest.of(0, req.limit(), sort);
 
 		List<Interest> interests;
 		LocalDateTime nextAfter = null;
-		Long nextIdAfter = null;
 		String nextCursor = null;
 		boolean hasNext = false;
 		long totalElements = interestRepository.count();
 
-		//  검색어 기반 조회
-		if (req.keyword() != null && !req.keyword().isBlank()) {
+		boolean isSearching = req.keyword() != null && !req.keyword().isBlank();
+
+		if (isSearching) {
 			Page<Interest> page = interestRepository.searchByNameOrKeyword(req.keyword(), pageable);
 			interests = page.getContent();
 			totalElements = page.getTotalElements();
 			hasNext = page.hasNext();
 		} else {
-			//  커서 기반 조회
-			if (req.orderBy().equalsIgnoreCase("name")) {
-				interests = interestRepository.findByNameAfter(req.cursor(), req.after(), pageable);
-			} else if (req.orderBy().equalsIgnoreCase("subscriberCount")) {
-				Long countCursor = req.cursor() != null ? Long.parseLong(req.cursor()) : null;
-				interests = interestRepository.findBySubscriberCountAfter(countCursor, req.after(), pageable);
+			String rawCursor = req.cursor();
+			boolean isBlankCursor = rawCursor == null || rawCursor.isBlank();
+			String nameCursor = isBlankCursor ? null : rawCursor;
+			Long countCursor = (isBlankCursor || !orderBy.equals("subscriberCount")) ? null : Long.parseLong(rawCursor);
+
+			if (orderBy.equalsIgnoreCase("name")) {
+				if (direction == Sort.Direction.ASC) {
+					interests = interestRepository.findByNameAfter(nameCursor, req.after(), pageable);
+				} else {
+					interests = interestRepository.findByNameBefore(nameCursor, req.after(), pageable);
+				}
+			} else if (orderBy.equalsIgnoreCase("subscriberCount")) {
+				if (direction == Sort.Direction.ASC) {
+					interests = interestRepository.findBySubscriberCountAfter(countCursor, req.after(), pageable);
+				} else {
+					interests = interestRepository.findBySubscriberCountBefore(countCursor, req.after(), pageable);
+				}
 			} else {
 				throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
 			}
+
 			hasNext = interests.size() == req.limit();
 
 			if (hasNext && !interests.isEmpty()) {
 				Interest last = interests.get(interests.size() - 1);
 				nextAfter = last.getCreatedAt();
-				if (req.orderBy().equalsIgnoreCase("subscriberCount")) {
-					long subscriberCount = last.getSubscriberCount();
-				} else if (req.orderBy().equalsIgnoreCase("name")) {
+				if (orderBy.equalsIgnoreCase("subscriberCount")) {
+					nextCursor = String.valueOf(last.getSubscriberCount());
+				} else if (orderBy.equalsIgnoreCase("name")) {
 					nextCursor = last.getName();
 				}
 			}
 		}
 
-		// 3. DTO 변환 (구독 정보 포함)
 		List<InterestDto> content = interests.stream()
 			.map(i -> mapToDtoWithSubscription(i, req.userId()))
 			.toList();
