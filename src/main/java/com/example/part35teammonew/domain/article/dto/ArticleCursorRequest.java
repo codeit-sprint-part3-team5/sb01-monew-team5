@@ -19,7 +19,7 @@ public class ArticleCursorRequest {
     if(cursor != null){
       this.cursor = cursor;
     }else {
-      this.cursor = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      this.cursor = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
     }
     if(limit == 0){
       throw new IllegalArgumentException("limit is 0");
