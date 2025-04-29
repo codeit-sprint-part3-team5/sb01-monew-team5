@@ -4,7 +4,6 @@ import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
 import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
 import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
-import com.example.part35teammonew.domain.notification.mapper.NotificationMapper;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -24,12 +23,9 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
 
   private final NotificationRepository notificationRepository;
-  private final NotificationMapper notificationMapper;
 
-  public NotificationServiceImpl(@Autowired NotificationRepository notificationRepository
-      , @Autowired NotificationMapper notificationMapper) {
+  public NotificationServiceImpl(@Autowired NotificationRepository notificationRepository) {
     this.notificationRepository = notificationRepository;
-    this.notificationMapper = notificationMapper;
   }
 
   @Transactional
@@ -37,7 +33,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   public NotificationDto addNewsNotice(UUID userId, String content, UUID resourceId) {
     Notification notification = Notification.createNewsNotice(userId, content, resourceId);
     notificationRepository.save(notification);
-    return notificationMapper.toDto(notification);
+    return new NotificationDto(notification);
   }
 
   @Transactional
@@ -45,7 +41,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   public NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId) {
     Notification notification = Notification.createCommentNotice(userId, content, resourceId);
     notificationRepository.save(notification);
-    return notificationMapper.toDto(notification);
+    return new NotificationDto(notification);
   }
 
   @Transactional
@@ -136,7 +132,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     }
 
     List<NotificationDto> dtoList = notifications.stream()
-        .map(notificationMapper::toDto)
+        .map(NotificationDto::new)
         .toList();
 
     String nextCursor;
