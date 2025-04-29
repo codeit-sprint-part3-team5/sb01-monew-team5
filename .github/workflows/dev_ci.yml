@@ -2,7 +2,7 @@ name: CI PR Test & Coverage 80 Check
 
 on:
   pull_request:
-    branches: dev
+    branches: pipeline/github-action
     workflow_dispatch:
 
 jobs:
