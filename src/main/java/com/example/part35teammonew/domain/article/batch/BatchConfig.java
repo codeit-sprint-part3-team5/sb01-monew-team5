@@ -44,7 +44,6 @@ public class BatchConfig {
   private final ArticleService articleService;
   private final NewsSearch newsSearch;
   private final InterestService interestService;
-  private final ArticleService articleService;
   //private final S3UploadArticle s3UploadArticle;
 
 
