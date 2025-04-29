@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-28T18:20:30+0900",
+    date = "2025-04-29T13:30:24+0900",
     comments = "version: 1.5.3.Final, compiler: javac, environment: Java 17.0.12 (Oracle Corporation)"
 )
 @Component
@@ -36,9 +36,9 @@ public class UserActivityMapperImpl implements UserActivityMapper {
         if ( linkedList1 != null ) {
             userActivityDto.setCommentLikes( new LinkedList<LikeCommentView>( linkedList1 ) );
         }
+        userActivityDto.setNickname( userActivity.getNickName() );
         userActivityDto.setUserId( userActivity.getUserId() );
         userActivityDto.setEmail( userActivity.getEmail() );
-        userActivityDto.setNickName( userActivity.getNickName() );
         userActivityDto.setCreatedAt( userActivity.getCreatedAt() );
         Set<InterestView> set = userActivity.getSubscriptions();
         if ( set != null ) {

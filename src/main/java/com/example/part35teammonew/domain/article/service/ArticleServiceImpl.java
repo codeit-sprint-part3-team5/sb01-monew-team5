@@ -351,13 +351,16 @@ public class ArticleServiceImpl implements ArticleService {
               ? articleRepository.findByDateCursorAsc(cursor, pageable)
               : articleRepository.findByDateCursorDesc(cursor, pageable);
           LocalDateTime nextCursor;
+          System.out.println("articles.size() = " + articles.size());
+
           if(articles.isEmpty()) {
             nextCursor = LocalDateTime.now();
           } else if(req.getDirection() == Direction.ASC){
-            nextCursor = articles.get(0).getDate();
+            nextCursor = articles.get(articles.size()-1).getDate();
           } else {
             nextCursor = articles.get(articles.size()-1).getDate();
           }
+
           System.out.println("nextCursor = " + nextCursor);
 
           if(articles.size() < req.getSize()){
@@ -378,13 +381,18 @@ public class ArticleServiceImpl implements ArticleService {
           response.setNextAfter(null);
         }
       }
-      case COMMENT_COUNT -> {
+      case commentCount -> {
+        System.out.println(" commentCount ");
+        System.out.println("req.getCursor() = " + req.getCursor());
         int cursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) : 0;
-        int nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor())+1 : 0;
+        //int nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor())+1 : 0;
+        System.out.println("cursor = " + cursor);
         articles = req.getDirection() == Direction.ASC
             ? articleRepository.findByCommentCursorAsc(cursor, pageable)
             : articleRepository.findByCommentCursorDesc(cursor, pageable);
+        System.out.println("articles.size() = " + articles.size());
 
+        int nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor())+articles.size() : 0;
         if(articles.isEmpty()) {
           response.setNextAfter(null);
           response.setNextCursor("0");
@@ -399,7 +407,7 @@ public class ArticleServiceImpl implements ArticleService {
           response.setNextCursor(String.valueOf(nextCursor));
         }
       }
-      case VIEW_COUNT -> {
+      case viewCount -> {
         Long cursor = req.getCursor() != null ? Long.parseLong(req.getCursor()) : 0L;
         Long nextCursor = req.getCursor() != null ? Long.parseLong(req.getCursor())+1 : 0;
         //articles = req.getDirection() == Direction.ASC ? articleRepository.findByViewCursorAsc(cursor, pageable) : articleRepository.findByViewCursorDesc(cursor, pageable);

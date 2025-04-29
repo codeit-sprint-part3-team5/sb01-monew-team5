@@ -41,6 +41,7 @@ public class BatchConfig {
   private final JobRepository jobRepository;
   private final PlatformTransactionManager platformTransactionManager;
   private final ArticleRepository articleRepository;
+  private final ArticleService articleService;
   private final NewsSearch newsSearch;
   private final InterestService interestService;
   private final ArticleService articleService;
