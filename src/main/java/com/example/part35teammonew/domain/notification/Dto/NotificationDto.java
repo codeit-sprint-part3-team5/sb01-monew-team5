@@ -1,19 +1,34 @@
 package com.example.part35teammonew.domain.notification.Dto;
 
 import com.example.part35teammonew.domain.notification.Enum.NotificationType;
+import com.example.part35teammonew.domain.notification.entity.Notification;
 import java.time.Instant;
 import java.util.UUID;
-import org.bson.types.ObjectId;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-public record NotificationDto(
-    ObjectId id
-    , UUID userId
-    , Instant createdAt
-    , Instant updateAt
-    , boolean confirmed
-    , String content
-    , NotificationType type
-    , UUID resourceId
-) {
 
+@Setter
+@Getter
+public class NotificationDto{
+    private  String  id;
+    private  Instant createdAt;
+    private  Instant updatedAt;
+    private  boolean confirmed;
+    private  UUID userId;
+    private  String content;
+    private  NotificationType resourceType;
+    private  UUID resourceId;
+
+  public NotificationDto(Notification notification) {
+    this.id = notification.getId().toHexString(); // <-- 여기 주목
+    this.userId = notification.getUserId();
+    this.createdAt = notification.getCreatedAt();
+    this.updatedAt = notification.getUpdateAt();
+    this.confirmed = notification.isConfirmed();
+    this.content = notification.getContent();
+    this.resourceType = notification.getType();
+    this.resourceId = notification.getResourceId();
+  }
 }
