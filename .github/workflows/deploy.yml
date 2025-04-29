@@ -1,8 +1,8 @@
-name: AWS OIDC
+name: Deploy to AWS with OIDC
 
 on:
   push:
-    branches: pipeline/github-action
+    branches: main
     workflow_dispatch:
 
 jobs:
