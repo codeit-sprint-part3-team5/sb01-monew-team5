@@ -33,6 +33,8 @@ public class ArticleBaseDto {
   @NotNull
   private int commentCount;
 
+  Long viewCount;
+
   public ArticleBaseDto(Article article) {
     this.id = article.getId();
     this.title = article.getTitle();
@@ -45,7 +47,7 @@ public class ArticleBaseDto {
   }
 
   // 생성자
-  public ArticleBaseDto(UUID id, String title, String summary, String link, String source, LocalDateTime date, LocalDateTime createdAt, int commentCount) {
+  public ArticleBaseDto(UUID id, String title, String summary, String link, String source, LocalDateTime date, LocalDateTime createdAt, int commentCount, Long viewCount) {
     this.id = id;
     this.title = title;
     this.summary = summary;
@@ -54,6 +56,7 @@ public class ArticleBaseDto {
     this.date = date;
     this.createdAt = createdAt;
     this.commentCount = commentCount;
+    this.viewCount = viewCount;
   }
   // 저장 Dto
   public ArticleBaseDto(String title, String summary, String link, String source,

@@ -46,7 +46,7 @@ public class SharedArticleReader implements ItemReader<Article> {
       String pubDate = item.getString("pubDate");
 
       Article article = new Article(
-          new ArticleBaseDto(null, title, summary, link, source, parsePubDate(pubDate),null, 0));
+          new ArticleBaseDto(null, title, summary, link, source, parsePubDate(pubDate),null, 0, null));
       queue.add(article);
     }
 

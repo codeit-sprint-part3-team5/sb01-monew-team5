@@ -4,7 +4,6 @@ import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
 import com.example.part35teammonew.domain.article.dto.ArticleEnrollmentResponse;
 import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInterestsRequest;
-import com.example.part35teammonew.domain.article.dto.ArticlesRequestDto;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
 import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse;
 import com.example.part35teammonew.domain.article.entity.Direction;
@@ -13,7 +12,6 @@ import com.example.part35teammonew.domain.article.service.ArticleService;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
 import com.example.part35teammonew.domain.comment.service.CommentService;
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import java.time.LocalDate;
@@ -50,7 +48,7 @@ public class ArticleController {
   private final UserActivityServiceInterface userActivityServiceInterface;
   private final ArticleInfoViewMapper articleInfoViewMapper;
   private final CommentService commentService;
-  
+
 
   @PostMapping("/api/articles/{articleId}/article-views")
   public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) {
@@ -80,10 +78,11 @@ public class ArticleController {
         null, null);
     System.out.println("comments.getSize() = " + comments.getSize());
     //articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount()); //기사 코멘트 읽기 여기서 문제인가?
-    //articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
-    articleEnrollmentResponse.setArticleCommentCount(100);
-    //articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
-    articleEnrollmentResponse.setArticleViewCount(100L);
+    articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
+
+    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
+    //articleEnrollmentResponse.setArticleViewCount(100L);
+
     System.out.println("userId = " + userId);
     System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
 
@@ -184,6 +183,9 @@ public class ArticleController {
     List<ArticleBaseDto> result = new ArrayList<>();
     for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
       if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
+        //ViewCount 조정
+        bySourceAndDateAndInterest.setViewCount(articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
+        //
         result.add(bySourceAndDateAndInterest);
       }
     }
