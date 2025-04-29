@@ -8,6 +8,8 @@ import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
+import com.example.part35teammonew.domain.interest.service.InterestService;
+import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import jakarta.annotation.Nullable;
 import java.io.File;
@@ -31,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,6 +44,8 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleViewServiceInterface articleViewServiceInterface;
   private final S3UploadArticle s3UploadArticle;
   private final NotificationServiceInterface notificationServiceInterface;
+  private final InterestService interestService;
+  private final InterestUserListServiceInterface interestUserListServiceInterface;
 
   // 기사 저장
   @Override
@@ -55,15 +60,31 @@ public class ArticleServiceImpl implements ArticleService {
     Article article = new Article(dto);
     Article saved = articleRepository.save(article);//저장
     articleViewServiceInterface.createArticleView(article.getId());//뷰테이블 만듬
+
     //관심사, 키워드 추출
-    //interestService.getInterests();
+    String articleTitle= article.getTitle();
+    UUID articleId=article.getId();
+    List<Pair<String,UUID>> getInterest=interestService.getInterestsList();
+    Set<UUID> containedId =new HashSet<>();
+    Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
+
     //title.contains()//
-    //Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+    for(Pair<String,UUID> pair:getInterest){
+      if(pair.getFirst().contains(articleTitle)){
+        containedId.add(pair.getSecond());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
+      }
+    }
 
     //관심사, 키워드를 구독중인 유저 얼아내기
-    //Set<UUID> 유저아이디: 구독중인 유저들
+    for (UUID interestId : containedId) {
+      List<UUID> findUser=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
+      targetUserID.addAll(findUser);
+    }
 
     //찾은 유저에게 알람보내기
+    for (UUID userId : targetUserID){
+      notificationServiceInterface.addNewsNotice(userId,"관심있는 뉴스 등록",articleId);
+    }
     return saved.getId();
   }
 
