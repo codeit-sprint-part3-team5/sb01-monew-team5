@@ -177,14 +177,8 @@ public class ArticleServiceImpl implements ArticleService {
       LocalDateTime startDateTime = LocalDate.parse(startDate.substring(0, 10),
           DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
       LocalDateTime endDateTime = LocalDate.now().plusDays(1).atStartOfDay(); //오늘보다 하루 뒤
-      System.out.println("startDateTime = " + startDateTime);
-      System.out.println("endDateTime = " + endDateTime);
 
       articles = articleRepository.findByStartEndDate(startDateTime, endDateTime);
-
-      for (Article article : articles) {
-        System.out.println("findByStartEndDate_article = " + article);
-      }
       System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate == null && endDate != null) { //endDate만 존재
