@@ -11,5 +11,4 @@ public class ArticlesResponse {
   String nextCursor;
   int size;
   int totalElements;
-
 }
