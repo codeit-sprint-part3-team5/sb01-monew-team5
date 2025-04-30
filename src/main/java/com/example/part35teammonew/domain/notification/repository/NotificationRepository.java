@@ -2,6 +2,7 @@ package com.example.part35teammonew.domain.notification.repository;
 
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,18 +17,6 @@ public interface NotificationRepository extends MongoRepository<Notification, Ob
   List<Notification> findAllByUserIdAndConfirmedIsFalse(UUID userId);
 
   void deleteAllByConfirmedIsTrueAndCreatedAtBefore(Instant threshold);
-
-
-  List<Notification> findAllByUserIdAndConfirmedIsFalseOrderByIdDesc(UUID userId);
-
-  List<Notification> findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(UUID userId,
-      ObjectId id);
-
-  List<Notification> findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterOrderByIdDesc(UUID userId,
-      Instant after);
-
-  List<Notification> findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterAndIdLessThanOrderByIdDesc(
-      UUID userId, Instant after, ObjectId cursor);
 
   long countByUserIdAndConfirmedIsFalse(UUID userId);
 }

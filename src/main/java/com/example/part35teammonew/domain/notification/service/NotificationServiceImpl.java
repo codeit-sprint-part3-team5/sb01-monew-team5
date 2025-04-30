@@ -6,7 +6,6 @@ import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +13,10 @@ import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,15 +26,18 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
 
   private final NotificationRepository notificationRepository;
+  private final MongoTemplate mongoTemplate;
 
-  public NotificationServiceImpl(@Autowired NotificationRepository notificationRepository) {
+  public NotificationServiceImpl(@Autowired NotificationRepository notificationRepository,
+      MongoTemplate mongoTemplate) {
     this.notificationRepository = notificationRepository;
+    this.mongoTemplate = mongoTemplate;
   }
 
   @Transactional
   @Override//뉴스 알림 추가할떄
   public NotificationDto addNewsNotice(UUID userId, String content, UUID resourceId) {
-    Notification notification = Notification.createNewsNotice(userId, content, resourceId);
+    Notification notification = Notification.createNewsNotice(userId, content, resourceId,Instant.now());
     notificationRepository.save(notification);
     return new NotificationDto(notification);
   }
@@ -39,7 +45,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
   @Transactional
   @Override//댓글 관련 알림 추가할떄
   public NotificationDto addCommentNotice(UUID userId, String content, UUID resourceId) {
-    Notification notification = Notification.createCommentNotice(userId, content, resourceId);
+    Notification notification = Notification.createCommentNotice(userId, content, resourceId,Instant.now());
     notificationRepository.save(notification);
     return new NotificationDto(notification);
   }
@@ -91,63 +97,68 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return true;
   }
 
-  @Override//페이지 내이션 일단 안 읽은거만 내보냄, 그다음 시간 등으로 페이지네이션
   @Transactional(readOnly = true)
-  public CursorPageResponse<NotificationDto> getNoticePage(UUID userId,
-      CursorPageRequest pageRequest) {
-    ObjectId cursorId = pageRequest.getCursorObjectId();
+  @Override
+  public CursorPageResponse<NotificationDto> getNoticePage(UUID userId, CursorPageRequest pageRequest) {
+    Instant cursor = pageRequest.getCursor();
+    Instant after = pageRequest.getAfter();
+    int limit = pageRequest.getLimit();
 
-    // LocalDateTime  Instant로 인달 엔티티가 이거암
-    Instant afterInstant = null;
-    if (pageRequest.getAfter() != null) {
-      afterInstant = pageRequest.getAfter().atZone(ZoneOffset.UTC).toInstant();
-    }
+    Sort.Direction sortDirection = Sort.Direction.ASC;
+    Query query = new Query();
+    Criteria criteria = Criteria.where("userId").is(userId).and("confirmed").is(false);
 
-    List<Notification> notifications;
-
-    if (afterInstant != null) {
-      if (cursorId != null) {
-        notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterAndIdLessThanOrderByIdDesc(
-                userId, afterInstant, cursorId);
-      } else {
-        notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterOrderByIdDesc(
-                userId, afterInstant);
-      }
+    if (cursor != null && after != null && cursor.equals(after)) {
+      criteria = criteria.and("createdAt").gt(cursor);
     } else {
-      if (cursorId != null) {
-        notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(
-                userId, cursorId);
-      } else {
-        notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseOrderByIdDesc(userId);
+      if (cursor != null) {
+        criteria = criteria.and("createdAt").gt(cursor);
+      }
+      if (after != null) {
+        criteria = criteria.and("createdAt").gt(after);
       }
     }
 
-    boolean hasNext = notifications.size() > pageRequest.getLimit();
+    query.addCriteria(criteria);
+    query.with(Sort.by(sortDirection, "createdAt"));
+    query.limit(limit + 1);
+
+    List<Notification> results = mongoTemplate.find(query, Notification.class);
+
+    boolean hasNext = results.size() > limit;
+    String nextCursor = null;
+    String nextAfter = null;
+
     if (hasNext) {
-      notifications = notifications.subList(0, pageRequest.getLimit());
+      Notification last = results.get(limit);
+      nextCursor = last.getCreatedAt().toString();
+      results = results.subList(0, limit);
+      nextAfter = results.get(results.size() - 1).getCreatedAt().toString();
+    } else if (!results.isEmpty()) {
+      nextCursor = null;
+      nextAfter = null;
     }
 
-    List<NotificationDto> dtoList = notifications.stream()
+    List<NotificationDto> dtoList = results.stream()
         .map(NotificationDto::new)
         .toList();
 
-    String nextCursor;
-    if (hasNext) {
-      nextCursor = notifications.get(notifications.size() - 1).getId().toHexString();
-    } else {
-      nextCursor = null;
-    }
-
-    long totalElement = notificationRepository.countByUserIdAndConfirmedIsFalse(userId);
+    long total = notificationRepository.countByUserIdAndConfirmedIsFalse(userId);
     long size = dtoList.size();
 
-    return new CursorPageResponse<>(dtoList, nextCursor, Boolean.toString(hasNext), hasNext, size,
-        totalElement);
+    return new CursorPageResponse<>(
+        dtoList,
+        nextCursor,
+        nextAfter,
+        hasNext,
+        size,
+        total
+    );
   }
 
-
 }
+
+
+
+
+

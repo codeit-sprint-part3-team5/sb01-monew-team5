@@ -69,11 +69,12 @@ public class UserActivity {
     if (subscriptions.contains(interest)) {
       subscriptions.remove(interest);
     } else {
-      throw new AlreadySubscribedException("구독되지 않은 관심사ㅏ입니다.: " + interest.getInterestName());
+      throw new AlreadySubscribedException("구독되지 않은 관심사입니다.: " + interest.getInterestName());
     }
   }
 
   public void updateComments(RecentCommentView comment) {
+
     if (recentcomments.size() >= 10) {
       recentcomments.poll();
     }
@@ -81,6 +82,9 @@ public class UserActivity {
   }
 
   public void updateCommentLikes(LikeCommentView comment) {
+    if (likeComment.stream().anyMatch(existing -> existing.getId().equals(comment.getId()))) {
+      return;
+    }
     if (likeComment.size() >= 10) {
       likeComment.poll();
     }
@@ -88,6 +92,9 @@ public class UserActivity {
   }
 
   public void updateArticleViews(ArticleInfoView article) {
+    if(articleViews.stream().anyMatch(existing -> existing.getId().equals(article.getArticleId()))){
+      return;
+    }
     if (articleViews.size() >= 10) {
       articleViews.poll();
     }
