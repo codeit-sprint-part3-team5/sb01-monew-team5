@@ -490,25 +490,29 @@ public class ArticleServiceImpl implements ArticleService {
         System.out.println("articles.size() = " + articles.size());
 
         int nextCursor = 0;
-        if (req.getDirection() == Direction.ASC) {
-          nextCursor =
-              req.getCursor() != null ? Integer.parseInt(req.getCursor()) + articles.size() : 0;
-        } else if (req.getDirection() == Direction.DESC) {
-          nextCursor =
-              req.getCursor() != null ? articles.get(articles.size() - 1).getCommentCount() : 0;
-        }
-        if (articles.isEmpty()) {
-          response.setNextAfter(null);
-          response.setNextCursor("0");
-        } else {
-          Article nextArticle = req.getDirection() == Direction.ASC
-              ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
-              ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
-              : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty()
-                  ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
 
-          response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
+        if (req.getDirection() == Direction.ASC && !articles.isEmpty()) {
+          nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) + articles.size() : 0;
+          response.setNextAfter(articles.get(articles.size()-1).getDate());
+        } else if (req.getDirection() == Direction.DESC && !articles.isEmpty()) {
+          nextCursor = req.getCursor() != null ? articles.get(articles.size() - 1).getCommentCount() : 0;
+          response.setNextAfter(articles.get(0).getDate());
+        }else {
+          System.out.println(" setNextAfter null 설정 ");
+          response.setNextAfter(null);
+        }
+        
+        if (articles.isEmpty() || articles.size() < req.getSize()) {
+          response.setHasNext("false");
           response.setNextCursor(String.valueOf(nextCursor));
+        } else {
+          Article nextArticle = req.getDirection() == Direction.ASC ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
+              ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
+              : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty() ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
+          System.out.println("nextArticle = " + nextArticle);
+          response.setHasNext("true");
+          response.setNextCursor(String.valueOf(nextCursor));
+          //response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
         }
         response.setArticles(articles.stream().filter(Article::isNotLogicallyDeleted).map(ArticleBaseDto::new).toList());
         response.setLimit(req.getSize());

@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class ArticleController {
+
   private final ArticleService articleService;
   private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
@@ -51,7 +52,8 @@ public class ArticleController {
 
 
   @PostMapping("/api/articles/{articleId}/article-views")
-  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) {
+  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(
+      @PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId) {
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
 
@@ -122,27 +124,33 @@ public class ArticleController {
       throw new IllegalArgumentException("유효하지 않은 정렬 방향입니다: " + direction);
     }
 
-
     ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
-    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
-    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
-    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
-    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+    if (sourceIn != null) {
+      articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
+    }
+    if (publishDateFrom != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
+    }
+    if (publishDateTo != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
+    }
+    if (keyword != null) {
+      articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+    }
 
-    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
+    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(
+        articleSourceAndDateAndInterestsRequest);
     for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
       String title = bySourceAndDateAndInterest.getTitle();
       System.out.println("title = " + title);
       LocalDateTime publishDate = bySourceAndDateAndInterest.getPublishDate();
       System.out.println("publishDate = " + publishDate);
     }
-    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
-
-
-
+    System.out.println(
+        "bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
 
     // 커서 정규화 - ISO 형식으로 변환 시도
-    if (sortField==SortField.publishDate && cursor != null && cursor.contains("T")) {
+    if (sortField == SortField.publishDate && cursor != null && cursor.contains("T")) {
       try {
         // ISO 형식 체크
         LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -179,9 +187,12 @@ public class ArticleController {
         }
       }
     }
-    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection, bySourceAndDateAndInterests);
-    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
-    System.out.println("byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
+    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit,
+        sortDirection, bySourceAndDateAndInterests);
+    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(
+        articleCursorRequest);
+    System.out.println(
+        "byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
 
     /*// 표준 ISO 형식 사용
     System.out.println("이번 탐색에 사용할_cursor = " + cursor);
@@ -260,77 +271,53 @@ public class ArticleController {
       articlesResponse.setNextCursor(newNextCursor.toString());
     }*/
 
-
-
     List<ArticleBaseDto> result = new ArrayList<>();
     List<ArticleBaseDto> articles = byCursorPaging.getArticles();
 
     for (ArticleBaseDto bySourceAndDateAndInterest : articles) {
-      //if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
-        //ViewCount 조정
-        bySourceAndDateAndInterest.setViewCount(articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
-        //
-        result.add(bySourceAndDateAndInterest);
-      //}
+      //ViewCount 조정
+      bySourceAndDateAndInterest.setViewCount(
+          articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
+      //
+      result.add(bySourceAndDateAndInterest);
     }
     //result = sorting(result,direction,sortField);
 
     System.out.println("result = " + result);
     System.out.println("result.size() = " + result.size());
-    /*
-    if(publishDateFrom != null){
-      try {
-        String onlyDate = publishDateFrom.substring(0, 10);
-        LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        System.out.println("DateFrom = " + DateFrom);
-        System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-        if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
-          articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
-        }else {
-          articlesResponse.setNextAfter("false");
-        }
-      } catch (Exception e) {
-        articlesResponse.setNextAfter("false");
-      }
-    }else {
-      articlesResponse.setNextAfter("false");
-    }
 
-    if(publishDateTo != null){
-      try {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
-        if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
-          articlesResponse.setHasNext("true");
-        }else {
-          articlesResponse.setHasNext("false");
-        }
-      } catch (Exception e) {
-        articlesResponse.setHasNext("false");
-      }
-    }else {
-      articlesResponse.setHasNext("false");
-    }
-*/
     LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
     String nextCursor = byCursorPaging.getNextCursor();
-    if(!byCursorPaging.getHasNext().equals("false")) {
+
+    System.out.println("byCursorPaging.getHasNext() = " + byCursorPaging.getHasNext());
+    System.out.println("byCursorPaging.getNextCursor() = " + byCursorPaging.getNextCursor());
+    System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+
+    if (byCursorPaging.getHasNext().equals("true")) {
       articlesResponse.setHasNext("true");
       articlesResponse.setNextAfter(newNextAfter.toString());
       articlesResponse.setNextCursor(nextCursor);
-    }else {
+    } else {
       articlesResponse.setHasNext("false");
+      articlesResponse.setNextAfter(newNextAfter.toString());
       articlesResponse.setNextCursor(nextCursor);
     }
+    if( sortField != SortField.publishDate){
+      result = sorting(result, direction, sortField);
+    }
     articlesResponse.setContent(result);
-    articlesResponse.setSize(limit);
+    System.out.println(
+        "articlesResponse.getContent().size() = " + articlesResponse.getContent().size());
 
+    articlesResponse.setSize(limit);
     return ResponseEntity.ok(articlesResponse);
   }
 
   private List<ArticleBaseDto> sorting(List<ArticleBaseDto> result, String direction,
       SortField sortField) {
-    if (result == null || result.isEmpty()) return result;
+    if (result == null || result.isEmpty()) {
+      return result;
+    }
     Comparator<ArticleBaseDto> comparator;
     switch (sortField) {
       case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getPublishDate);

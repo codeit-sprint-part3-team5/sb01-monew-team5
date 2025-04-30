@@ -38,15 +38,19 @@ public class Article {
   private UUID id;
 
   @NotNull
+  @Column(length = 500)
   private String title;
 
   @NotNull
+  @Column(length = 2000)
   private String summary;
 
   @NotNull
+  @Column(length = 1000)
   private String link;
 
   @NotNull
+  @Column(length = 500)
   private String source;
 
   @NotNull
