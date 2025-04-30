@@ -230,21 +230,20 @@ public class CommentServiceImpl implements CommentService {
       limit = DEFAULT_LIMIT;
     }
 
-    // 정렬 필드 설정 (orderBy가 좋아요 수면 likeCount, 아니면 (날짜)createdAt)
+// 정렬 필드 설정
     String sortField;
-    if (orderBy != null && orderBy.equalsIgnoreCase("likes")) {
+    if (orderBy != null && (orderBy.equalsIgnoreCase("likes") || orderBy.equalsIgnoreCase("likeCount"))) {
       sortField = "likeCount";
     } else {
-      sortField = "createdAt";
+      sortField = "createdAt"; // 기본값은 여전히 createdAt
     }
-    log.debug("정렬 필드 설정: {}", sortField);
 
-    // 정렬 방향 설정
+// 정렬 방향 설정
     boolean isAscending;
     if (direction != null && direction.equalsIgnoreCase("asc")) {
       isAscending = true;
     } else {
-      isAscending = false;
+      isAscending = false; // 기본값은 내림차순
     }
 
     String directionLog;
@@ -297,18 +296,15 @@ public class CommentServiceImpl implements CommentService {
 
     // 댓글 조회 (정렬 기준과 방향에 따라 다른 쿼리 사용)
     List<Comment> comments;
-
-    if (sortField.equals("likeCount")) { //정렬기준이 좋아요 수일 경우
-      if (isAscending) { //(isAscending == true) 오름차순 (적은 수 -> 많은 수)
-        log.debug("좋아요 오름차순으로 댓글 조회");
+    if (sortField.equals("likeCount")) { // 좋아요 수로 정렬
+      if (isAscending) { // 오름차순
         if (cursorId == null || likesCursor == null || effectiveAfter == null) {
           comments = commentRepository.findByArticleIdLikesAsc(articleId, pageable);
         } else {
           comments = commentRepository.findByArticleIdLikesAfterCursorWithValues(
               articleId, cursorId, likesCursor, effectiveAfter, pageable);
         }
-      } else { //(isAscending == false) 내림차순 (많은 수 -> 적은 수)
-        log.debug("좋아요 내림차순으로 댓글 조회");
+      } else { // 내림차순
         if (cursorId == null || likesCursor == null || effectiveAfter == null) {
           comments = commentRepository.findByArticleIdLikesDesc(articleId, pageable);
         } else {
@@ -316,17 +312,15 @@ public class CommentServiceImpl implements CommentService {
               articleId, cursorId, likesCursor, effectiveAfter, pageable);
         }
       }
-    } else { //정렬 기준이 날짜일 경우
-      if (isAscending) { //(isAscending == true) 오름차순 (오래된 순 -> 최근 순)
-        log.debug("생성시간 오름차순으로 댓글 조회");
+    } else { // 생성 시간으로 정렬 (기본값)
+      if (isAscending) { // 오름차순
         if (cursorId == null || effectiveAfter == null) {
           comments = commentRepository.findByArticleIdCreatedAtAsc(articleId, pageable);
         } else {
           comments = commentRepository.findByArticleIdCreatedAtAfterCursorWithValues(
               articleId, cursorId, effectiveAfter, pageable);
         }
-      } else { //(isAscending == false) 내림차순 (최근 순 -> 오래된 순)
-        log.debug("생성시간 내림차순으로 댓글 조회");
+      } else { // 내림차순
         if (cursorId == null || effectiveAfter == null) {
           comments = commentRepository.findByArticleIdCreatedAtDesc(articleId, pageable);
         } else {
@@ -335,6 +329,7 @@ public class CommentServiceImpl implements CommentService {
         }
       }
     }
+
 
     log.debug("댓글 조회 결과: 조회된 댓글 수={}", comments.size());
 
