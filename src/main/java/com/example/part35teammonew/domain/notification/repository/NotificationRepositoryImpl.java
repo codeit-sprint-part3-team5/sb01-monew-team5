@@ -31,7 +31,7 @@ public class NotificationRepositoryImpl implements NotificationRepositoryCustom 
     }
 
     Query query = new Query(criteria);
-    query.limit(limit);
+    query.limit(limit+1);
     query.with(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
 
     return mongoTemplate.find(query, Notification.class);

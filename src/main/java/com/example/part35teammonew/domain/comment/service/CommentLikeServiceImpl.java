@@ -59,6 +59,8 @@ public class CommentLikeServiceImpl implements CommentLikeService {
           return new IllegalArgumentException("존재하지 않는 사용자입니다"); //todo 유저 커스텀 예외처리 나중에 추가
         });
 
+    String requestName=user.getNickname();
+
     // 이미 좋아요를 눌렀는지 확인
     Optional<CommentLike> existingLike = commentLikeRepository.findByUserIdAndCommentId(requestUserId, commentId);
     if (existingLike.isPresent()) {
@@ -97,7 +99,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     log.info("댓글 좋아요 추가 성공: commentId={}, userId={}, likeId={}",
         commentId, requestUserId, savedLike.getId());
-    notificationServiceInterface.addCommentNotice(comment.getUser().getId(), "댓글에 좋아요가 달렸습니다", commentId);//좋아요 알림 생성
+    notificationServiceInterface.addCommentNotice(comment.getUser().getId(), requestName+ " 님이 나의 댓글을 좋아합니다.", commentId);//좋아요 알림 생성
 
     return response;
   }

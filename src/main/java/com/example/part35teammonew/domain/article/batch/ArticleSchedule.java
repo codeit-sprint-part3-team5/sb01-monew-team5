@@ -19,16 +19,13 @@ public class ArticleSchedule {
   private final Job backupJob;
   private final Job S3BatchJob;
 
-
-
-  @Scheduled(cron = "0 29 * * * *") //매 시 5 분
-
+  @Scheduled(cron = "0 40 * * * *") //매 시 5 분
   public void runArticleJob() throws Exception {
     JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis()) // 중복 방지용
         .toJobParameters();
     jobLauncher.run(articleJob, jobParameters);
   }
-  @Scheduled(cron = "0 34 0 * * *") //매 시 15분
+  @Scheduled(cron = "0 15 0 * * *") //매 시 15분
   public void runS3Job() throws Exception {
     JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
         .toJobParameters();

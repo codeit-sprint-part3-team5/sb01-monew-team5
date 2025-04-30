@@ -87,7 +87,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     //찾은 유저에게 알람보내기
     for (UUID userId : targetUserID){
-      notificationServiceInterface.addNewsNotice(userId,"관심있는 뉴스 등록",articleId);
+      notificationServiceInterface.addNewsNotice(userId,articleTitle+" 라는 관심있는 뉴그가 등록되었습니다",articleId);
     }
 
     return saved.getId();
