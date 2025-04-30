@@ -79,11 +79,4 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
 		Pageable pageable
 	);
 
-	@Query("""
-			SELECT COUNT(i) FROM Interest i
-			WHERE lower(i.name) LIKE lower(concat('%', :keyword, '%'))
-			   OR lower(i.keywords) LIKE lower(concat('%', :keyword, '%'))
-		""")
-	long countByNameOrKeyword(@Param("keyword") String keyword);
-
 }

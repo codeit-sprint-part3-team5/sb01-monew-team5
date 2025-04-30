@@ -66,15 +66,16 @@ public class ArticleServiceImpl implements ArticleService {
         saved.getId());//뷰테이블 만듬
 
     //관심사, 키워드 추출
-    String articleTitle = article.getTitle();
-    UUID articleId = article.getId();
-    List<Pair<String, UUID>> getInterest = interestService.getInterestList();
-    Set<UUID> containedId = new HashSet<>();
-    Set<UUID> targetUserID = new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
 
-    //title.contains()//
-    for (Pair<String, UUID> pair : getInterest) {
-      if (pair.getLeft().contains(articleTitle)) {
+    String articleTitle= article.getTitle();
+    UUID articleId=article.getId();
+    List<Pair<String,UUID>> getInterest=interestService.getInterestList();
+    Set<UUID> containedId =new HashSet<>();
+    Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
+
+    //title.contains()// 안돼면 확인
+    for(Pair<String,UUID> pair:getInterest){
+      if(articleTitle.contains(pair.getLeft())){
         containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
       }
     }
@@ -86,8 +87,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     //찾은 유저에게 알람보내기
-    for (UUID userId : targetUserID) {
-      notificationServiceInterface.addNewsNotice(userId, "관심있는 뉴스 등록", articleId);
+
+    for (UUID userId : targetUserID){
+      notificationServiceInterface.addNewsNotice(userId,articleTitle+" 라는 관심있는 뉴스가 등록되었습니다",articleId);
     }
 
     return saved.getId();
