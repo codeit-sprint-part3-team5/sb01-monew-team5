@@ -20,7 +20,6 @@ public class ArticleSchedule {
   private final Job S3BatchJob;
 
 
-
   @Scheduled(cron = "0 24 * * * *") //매 시 5 분
 
   public void runArticleJob() throws Exception {
