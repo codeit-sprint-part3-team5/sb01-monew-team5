@@ -37,7 +37,14 @@ public class NotificationController {
       @RequestParam(value = "limit") int limit,
       @RequestHeader("Monew-Request-User-ID") UUID requestUserId
   ) {
-    CursorPageRequest cursorPageRequest = new CursorPageRequest(cursor, after, limit);
+
+    CursorPageRequest cursorPageRequest=null;
+    if(limit<=0){
+      cursorPageRequest = new CursorPageRequest(cursor, after, 1);
+    }
+    else if (limit>0) {
+      cursorPageRequest = new CursorPageRequest(cursor, after, limit);
+    }
     CursorPageResponse<NotificationDto> result =
         notificationServiceInterface.getNoticePage(requestUserId, cursorPageRequest);
 
