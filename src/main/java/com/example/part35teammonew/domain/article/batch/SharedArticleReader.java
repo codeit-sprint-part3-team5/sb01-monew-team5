@@ -40,11 +40,12 @@ public class SharedArticleReader implements ItemReader<Article> {
     if (interestList.isEmpty()) {
       //디폴트 값
       InterestDto interest = interestService.createInterest(
-          new InterestCreateRequest("에듀테크", List.of("코드잇", "멋쟁이사자처럼")));
+          new InterestCreateRequest("지역", List.of("인천", "대구")));
       interestList = interestService.getInterestList();
     }
     for (Pair<String, UUID> stringUUIDPair : interestList) {
       String keyword = stringUUIDPair.getKey();
+      System.out.println("keyword = " + keyword);
 
       page++;
       String json = newsSearch.getNews(keyword, 10, (page - 1) * 10 + 1, "date");
@@ -63,6 +64,7 @@ public class SharedArticleReader implements ItemReader<Article> {
         queue.add(article);
       }
     }
+
 
     return queue.poll();
   }
