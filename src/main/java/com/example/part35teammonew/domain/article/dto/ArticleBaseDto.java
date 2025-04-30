@@ -20,13 +20,13 @@ public class ArticleBaseDto {
   private String summary;
 
   @NotBlank
-  private String link;
+  private String sourceUrl;
 
   @NotBlank
   private String source;
 
   @NotNull
-  private LocalDateTime date;
+  private LocalDateTime publishDate;
 
   private LocalDateTime createdAt;
 
@@ -39,9 +39,9 @@ public class ArticleBaseDto {
     this.id = article.getId();
     this.title = article.getTitle();
     this.summary = article.getSummary();
-    this.link = article.getLink();
+    this.sourceUrl = article.getLink();
     this.source = article.getSource();
-    this.date = article.getDate();
+    this.publishDate = article.getDate();
     this.createdAt = article.getCreatedAt();
     this.commentCount = article.getCommentCount();
   }
@@ -51,9 +51,9 @@ public class ArticleBaseDto {
     this.id = id;
     this.title = title;
     this.summary = summary;
-    this.link = link;
+    this.sourceUrl = link;
     this.source = source;
-    this.date = date;
+    this.publishDate = date;
     this.createdAt = createdAt;
     this.commentCount = commentCount;
     this.viewCount = viewCount;
@@ -63,9 +63,9 @@ public class ArticleBaseDto {
       LocalDateTime date, int commentCount) {
     this.title = title;
     this.summary = summary;
-    this.link = link;
+    this.sourceUrl = link;
     this.source = source;
-    this.date = date;
+    this.publishDate = date;
     this.commentCount = commentCount;
   }
 }

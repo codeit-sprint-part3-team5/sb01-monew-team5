@@ -69,9 +69,9 @@ public class ArticleController {
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt().toLocalDate());
     articleEnrollmentResponse.setArticleId(articleId);
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
-    articleEnrollmentResponse.setSourceUrl(articleBaseDto.getLink());
+    articleEnrollmentResponse.setSourceUrl(articleBaseDto.getSourceUrl());
     articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
-    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
+    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getPublishDate());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
 
     CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null,
@@ -240,7 +240,7 @@ public class ArticleController {
     if (result == null || result.isEmpty()) return result;
     Comparator<ArticleBaseDto> comparator;
     switch (sortField) {
-      case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getDate);
+      case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getPublishDate);
       case commentCount -> comparator = Comparator.comparing(ArticleBaseDto::getCommentCount);
       //case viewCount -> comparator = Comparator.comparing(ArticleBaseDto::get, String.CASE_INSENSITIVE_ORDER);
       default -> throw new IllegalArgumentException("Unknown sort field: " + sortField);

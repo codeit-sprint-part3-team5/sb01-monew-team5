@@ -51,10 +51,10 @@ public class ArticleServiceImpl implements ArticleService {
   // 기사 저장
   @Override
   public UUID save(ArticleBaseDto dto) {
-    if (dto.getTitle() == null || dto.getTitle().isBlank() || dto.getDate() == null) {
+    if (dto.getTitle() == null || dto.getTitle().isBlank() || dto.getPublishDate() == null) {
       throw new IllegalArgumentException("제목과 날짜는 필수입니다.");
     }
-    if (articleRepository.findByTitleAndDate(dto.getTitle(), dto.getDate()) != null) {
+    if (articleRepository.findByTitleAndDate(dto.getTitle(), dto.getPublishDate()) != null) {
       throw new IllegalArgumentException("중복 저장되었습니다.");
     }
 
@@ -424,7 +424,7 @@ public class ArticleServiceImpl implements ArticleService {
           response.setNextCursor("0");
         } else {
           List<UUID> nextPageIds = articleViewServiceInterface.getSortByVewCountPageNation(nextCursor, pageable, req.getDirection().toString());
-          LocalDateTime nextAfter = nextPageIds.isEmpty() ? null : findById(nextPageIds.get(0)).getDate();
+          LocalDateTime nextAfter = nextPageIds.isEmpty() ? null : findById(nextPageIds.get(0)).getPublishDate();
 
           response.setArticles(findByIds(sortByVewCountPageNation));
           response.setNextAfter(nextAfter);
