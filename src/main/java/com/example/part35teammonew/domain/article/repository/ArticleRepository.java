@@ -46,7 +46,7 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
 
   @Query("SELECT a FROM Article a  WHERE a.commentCount > :cursor AND a.deletedAt IS NULL ORDER BY a.commentCount ASC")
   List<Article> findByCommentCursorAsc(@Param("cursor") int cursor, Pageable pageable);
-  @Query("SELECT a FROM Article a  WHERE  a.commentCount < :cursor AND a.deletedAt IS NULL ORDER BY a.commentCount DESC")
+  @Query("SELECT a FROM Article a  WHERE  a.commentCount < :cursor AND a.commentCount > 0 AND a.deletedAt IS NULL ORDER BY a.commentCount DESC")
   List<Article> findByCommentCursorDesc(@Param("cursor") int cursor, Pageable pageable);
 
 }

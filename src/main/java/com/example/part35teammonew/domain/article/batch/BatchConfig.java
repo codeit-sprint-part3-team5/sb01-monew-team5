@@ -44,7 +44,6 @@ public class BatchConfig {
   private final ArticleService articleService;
   private final NewsSearch newsSearch;
   private final InterestService interestService;
-
   //private final S3UploadArticle s3UploadArticle;
 
 
@@ -150,7 +149,8 @@ public class BatchConfig {
                 obj.getString("source"),
                 LocalDateTime.parse(obj.getString("date")),
                 null,
-                obj.getInt("commentCount")
+                obj.getInt("commentCount"),
+                null
             )
         );
         fullSyncList.add(article);
