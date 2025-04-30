@@ -418,11 +418,11 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         if (newNextAfter != null) {
-          //response.setHasNext("true");
+          response.setHasNext("true");
           response.setNextAfter(newNextAfter.getPublishDate());
           response.setNextCursor(newNextCursor.toString());
         } else {
-          //articlesResponse.setHasNext("false");
+          response.setHasNext("false");
           response.setNextAfter(newNextCursor);
           response.setNextCursor(newNextCursor.toString());
         }

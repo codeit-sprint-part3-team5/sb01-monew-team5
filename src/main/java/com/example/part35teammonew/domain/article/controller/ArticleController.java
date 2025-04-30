@@ -314,7 +314,7 @@ public class ArticleController {
 */
     LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
     String nextCursor = byCursorPaging.getNextCursor();
-    if(!newNextAfter.toString().equals(nextCursor)){
+    if(!byCursorPaging.getHasNext().equals("false")) {
       articlesResponse.setHasNext("true");
       articlesResponse.setNextAfter(newNextAfter.toString());
       articlesResponse.setNextCursor(nextCursor);
