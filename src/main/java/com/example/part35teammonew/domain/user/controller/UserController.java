@@ -42,7 +42,7 @@ public class UserController {
     }
 
     // 닉네임 수정
-    @PutMapping("/{userId}")
+    @PatchMapping("/{userId}")
     ResponseEntity<UserDto> updateUser(@PathVariable(value = "userId") UUID userId, @RequestBody UserUpdateRequest request) {
         UserDto updatedUserDto = userService.update(userId, request);
         return ResponseEntity
