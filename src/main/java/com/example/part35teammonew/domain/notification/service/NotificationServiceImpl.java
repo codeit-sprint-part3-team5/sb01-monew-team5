@@ -6,6 +6,7 @@ import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -91,38 +92,33 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     return true;
   }
 
-  @Override//페이지 내이션 일단 안 읽은거만 내보냄, 그다음 시간 등으로 페이지네이션
   @Transactional(readOnly = true)
-  public CursorPageResponse<NotificationDto> getNoticePage(UUID userId,
-      CursorPageRequest pageRequest) {
-    ObjectId cursorId = pageRequest.getCursorObjectId();
-
-    // LocalDateTime  Instant로 인달 엔티티가 이거암
-    Instant afterInstant = null;
-    if (pageRequest.getAfter() != null) {
-      afterInstant = pageRequest.getAfter().atZone(ZoneOffset.UTC).toInstant();
-    }
+  @Override
+  public CursorPageResponse<NotificationDto> getNoticePage(UUID userId, CursorPageRequest pageRequest) {
+    Instant cursorInstant = pageRequest.getCursor();
+    Instant afterInstant = pageRequest.getAfter();
 
     List<Notification> notifications;
 
     if (afterInstant != null) {
-      if (cursorId != null) {
-        notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterAndIdLessThanOrderByIdDesc(
-                userId, afterInstant, cursorId);
+      if (cursorInstant != null) {
+        // ✨ 여기! Custom Repository 메서드 사용
+        notifications = notificationRepository.findAllUnreadByUserIdWithCursor(
+            userId, afterInstant, cursorInstant, pageRequest.getLimit()
+        );
       } else {
         notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterOrderByIdDesc(
+            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtAfterOrderByCreatedAtDesc(
                 userId, afterInstant);
       }
     } else {
-      if (cursorId != null) {
+      if (cursorInstant != null) {
         notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseAndIdLessThanOrderByIdDesc(
-                userId, cursorId);
+            .findAllByUserIdAndConfirmedIsFalseAndCreatedAtBeforeOrderByCreatedAtDesc(
+                userId, cursorInstant);
       } else {
         notifications = notificationRepository
-            .findAllByUserIdAndConfirmedIsFalseOrderByIdDesc(userId);
+            .findAllByUserIdAndConfirmedIsFalseOrderByCreatedAtDesc(userId);
       }
     }
 
@@ -137,7 +133,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
     String nextCursor;
     if (hasNext) {
-      nextCursor = notifications.get(notifications.size() - 1).getId().toHexString();
+      nextCursor = notifications.get(notifications.size() - 1).getCreatedAt().toString();
     } else {
       nextCursor = null;
     }
@@ -145,8 +141,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     long totalElement = notificationRepository.countByUserIdAndConfirmedIsFalse(userId);
     long size = dtoList.size();
 
-    return new CursorPageResponse<>(dtoList, nextCursor, Boolean.toString(hasNext), hasNext, size,
-        totalElement);
+    return new CursorPageResponse<>(dtoList, nextCursor, Boolean.toString(hasNext), hasNext, size, totalElement);
   }
 
 
