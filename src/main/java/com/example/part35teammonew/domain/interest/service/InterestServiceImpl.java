@@ -1,11 +1,9 @@
 package com.example.part35teammonew.domain.interest.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -152,6 +150,7 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	@Transactional(readOnly = true)
 	public PageResponse<InterestDto> listInterests(InterestPageRequest req) {
+
 		Sort.Direction direction = req.direction().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
 		String orderBy = normalizeOrderBy(req.orderBy());
 
@@ -160,7 +159,17 @@ public class InterestServiceImpl implements InterestService {
 			new Sort.Order(direction, "createdAt")
 		);
 
-		Pageable pageable = PageRequest.of(0, req.limit(), sort);
+		String keyword = req.keyword();
+		boolean isSearching = keyword != null && !keyword.trim().isEmpty();
+
+		int limit;
+		if (isSearching) {
+			limit = req.limit() > 0 ? req.limit() : 10;
+		} else {
+			limit = Integer.MAX_VALUE;
+		}
+
+		Pageable pageable = PageRequest.of(0, limit, sort);
 
 		List<Interest> interests;
 		LocalDateTime nextAfter = null;
@@ -168,30 +177,31 @@ public class InterestServiceImpl implements InterestService {
 		boolean hasNext = false;
 		long totalElements = interestRepository.count();
 
-		boolean isSearching = req.keyword() != null && !req.keyword().isBlank();
-
 		if (isSearching) {
-			Page<Interest> page = interestRepository.searchByNameOrKeyword(req.keyword(), pageable);
+			Page<Interest> page = interestRepository.searchByNameOrKeyword(keyword.trim(), pageable);
 			interests = page.getContent();
 			totalElements = page.getTotalElements();
 			hasNext = page.hasNext();
 		} else {
-			String rawCursor = req.cursor();
+			String rawCursor = req.safeCursor();
+
 			boolean isBlankCursor = rawCursor == null || rawCursor.isBlank();
 			String nameCursor = isBlankCursor ? null : rawCursor;
 			Long countCursor = (isBlankCursor || !orderBy.equals("subscriberCount")) ? null : Long.parseLong(rawCursor);
 
+			LocalDateTime after = (rawCursor == null) ? null : req.after();
+
 			if (orderBy.equalsIgnoreCase("name")) {
 				if (direction == Sort.Direction.ASC) {
-					interests = interestRepository.findByNameAfter(nameCursor, req.after(), pageable);
+					interests = interestRepository.findByNameAfter(nameCursor, after, pageable);
 				} else {
-					interests = interestRepository.findByNameBefore(nameCursor, req.after(), pageable);
+					interests = interestRepository.findByNameBefore(nameCursor, after, pageable);
 				}
 			} else if (orderBy.equalsIgnoreCase("subscriberCount")) {
 				if (direction == Sort.Direction.ASC) {
-					interests = interestRepository.findBySubscriberCountAfter(countCursor, req.after(), pageable);
+					interests = interestRepository.findBySubscriberCountAfter(countCursor, after, pageable);
 				} else {
-					interests = interestRepository.findBySubscriberCountBefore(countCursor, req.after(), pageable);
+					interests = interestRepository.findBySubscriberCountBefore(countCursor, after, pageable);
 				}
 			} else {
 				throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
@@ -291,7 +301,7 @@ public class InterestServiceImpl implements InterestService {
 		if (orderBy == null) {
 			throw new IllegalArgumentException("정렬 기준이 누락되었습니다.");
 		}
-		orderBy = orderBy.replace("\"", "").trim(); // 쌍따옴표, 공백 제거
+		orderBy = orderBy.replace("\"", "").strip();
 
 		if (orderBy.equalsIgnoreCase("name") || orderBy.equalsIgnoreCase("subscriberCount")) {
 			return orderBy;
