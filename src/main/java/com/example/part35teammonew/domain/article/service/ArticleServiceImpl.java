@@ -480,14 +480,10 @@ public class ArticleServiceImpl implements ArticleService {
         }
       }*/
       case commentCount -> {
-        System.out.println(" commentCount ");
-        System.out.println("req.getCursor() = " + req.getCursor());
         int cursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) : 0;
-        System.out.println("cursor = " + cursor);
         articles = req.getDirection() == Direction.ASC
             ? articleRepository.findByCommentCursorAsc(cursor, pageable)
             : articleRepository.findByCommentCursorDesc(cursor, pageable);
-        System.out.println("articles.size() = " + articles.size());
 
         int nextCursor = 0;
 
