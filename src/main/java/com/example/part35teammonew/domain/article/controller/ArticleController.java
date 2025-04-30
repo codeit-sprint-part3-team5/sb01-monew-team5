@@ -122,8 +122,24 @@ public class ArticleController {
       throw new IllegalArgumentException("유효하지 않은 정렬 방향입니다: " + direction);
     }
 
-    System.out.println("sortDirection = " + sortDirection);
-    System.out.println("limit = " + limit);
+
+    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
+    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
+    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
+    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
+    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+
+    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
+    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
+      String title = bySourceAndDateAndInterest.getTitle();
+      System.out.println("title = " + title);
+      LocalDateTime publishDate = bySourceAndDateAndInterest.getPublishDate();
+      System.out.println("publishDate = " + publishDate);
+    }
+    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
+
+
+
 
     // 커서 정규화 - ISO 형식으로 변환 시도
     if (sortField==SortField.publishDate && cursor != null && cursor.contains("T")) {
@@ -163,37 +179,105 @@ public class ArticleController {
         }
       }
     }
-
-    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection);
-
-    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
-    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
-    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
-    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
-    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
-
+    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection, bySourceAndDateAndInterests);
     findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
-    System.out.println("byCursorPaging = " + byCursorPaging);
     System.out.println("byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
 
-    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
-    System.out.println("bySourceAndDateAndInterests = " + bySourceAndDateAndInterests);
-    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
+    /*// 표준 ISO 형식 사용
+    System.out.println("이번 탐색에 사용할_cursor = " + cursor);
+    cursor = articleCursorRequest.getCursor();
+    System.out.println("커서 null 값 체크_cursor = " + cursor);
+
+    LocalDateTime newCursor;
+    if(cursor.contains("T")){
+      newCursor = LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    } else {
+      // 날짜만 있는 경우 현재 시간을 포함한 ISO 형식으로 변환
+      newCursor = LocalDateTime.parse(cursor + "T00:00:00");
+    }
+    System.out.println("String값에서 localDateTime 으로 : newCursor = " + newCursor);
+
+
+    LocalDateTime newNextCursor = null;
+    ArticleBaseDto newNextAfter = null;
+    List<ArticleBaseDto> newResult = new ArrayList<>();
+
+    if(Direction.valueOf(direction) == Direction.ASC){
+      bySourceAndDateAndInterests.sort(Comparator.comparing(ArticleBaseDto::getPublishDate));
+      for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
+        if( bySourceAndDateAndInterest.getPublishDate().isAfter(newCursor)){
+          newResult.add(bySourceAndDateAndInterest);
+        }
+      }
+      if( newResult.size() >= limit+1 ){
+        newNextAfter = newResult.get(limit+1);
+        newNextCursor = newResult.get(limit).getPublishDate();
+        newResult = newResult.subList(0, limit);
+
+        System.out.println("newNextAfter = " + newNextAfter);
+        System.out.println("newNextCursor = " + newNextCursor);
+        System.out.println("newResult.size() = " + newResult.size());
+      }else {
+        newNextAfter = null;
+        if(newResult.isEmpty()){
+          newNextCursor = newCursor;
+        }else {
+          newNextCursor = newResult.get(newResult.size()-1).getPublishDate();
+        }
+      }
+    }
+    if (Direction.valueOf(direction) == Direction.DESC) {
+      bySourceAndDateAndInterests.sort(Comparator.comparing(ArticleBaseDto::getPublishDate).reversed());
+      for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
+        if (bySourceAndDateAndInterest.getPublishDate().isBefore(newCursor)) {
+          newResult.add(bySourceAndDateAndInterest);
+        }
+      }
+      if (newResult.size() >= limit+1) {
+        newNextAfter = newResult.get(limit+1);
+        newNextCursor = newResult.get(limit).getPublishDate();
+        newResult = newResult.subList(0, limit);
+
+        System.out.println("newNextAfter = " + newNextAfter);
+        System.out.println("newNextCursor = " + newNextCursor);
+        System.out.println("newResult.size() = " + newResult.size());
+      }else {
+        newNextAfter = null;
+        if(newResult.isEmpty()){
+          newNextCursor = newCursor;
+        }else {
+          newNextCursor = newResult.get(newResult.size()-1).getPublishDate();
+        }
+      }
+    }
+
+    if(newNextAfter != null){
+      articlesResponse.setHasNext("true");
+      articlesResponse.setNextAfter(newNextAfter.getPublishDate().toString());
+      articlesResponse.setNextCursor(newNextCursor.toString());
+    }else {
+      articlesResponse.setHasNext("false");
+      articlesResponse.setNextCursor(newNextCursor.toString());
+    }*/
+
+
 
     List<ArticleBaseDto> result = new ArrayList<>();
-    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
-      if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
+    List<ArticleBaseDto> articles = byCursorPaging.getArticles();
+
+    for (ArticleBaseDto bySourceAndDateAndInterest : articles) {
+      //if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
         //ViewCount 조정
         bySourceAndDateAndInterest.setViewCount(articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
         //
         result.add(bySourceAndDateAndInterest);
-      }
+      //}
     }
-    result = sorting(result,direction,sortField);
+    //result = sorting(result,direction,sortField);
 
     System.out.println("result = " + result);
-    System.out.println("result = " + result.size());
-
+    System.out.println("result.size() = " + result.size());
+    /*
     if(publishDateFrom != null){
       try {
         String onlyDate = publishDateFrom.substring(0, 10);
@@ -227,8 +311,17 @@ public class ArticleController {
     }else {
       articlesResponse.setHasNext("false");
     }
-
-    articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
+*/
+    LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
+    String nextCursor = byCursorPaging.getNextCursor();
+    if(!newNextAfter.toString().equals(nextCursor)){
+      articlesResponse.setHasNext("true");
+      articlesResponse.setNextAfter(newNextAfter.toString());
+      articlesResponse.setNextCursor(nextCursor);
+    }else {
+      articlesResponse.setHasNext("false");
+      articlesResponse.setNextCursor(nextCursor);
+    }
     articlesResponse.setContent(result);
     articlesResponse.setSize(limit);
 
