@@ -66,27 +66,31 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     //관심사, 키워드 추출
-    String articleTitle= article.getTitle();
-    UUID articleId=article.getId();
+    String articleTitle= saved.getTitle();
+    UUID articleId=saved.getId();
     List<Pair<String,UUID>> getInterest=interestService.getInterestList();
     Set<UUID> containedId =new HashSet<>();
     Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
 
     //title.contains()// 안돼면 확인
     for(Pair<String,UUID> pair:getInterest){
-      if(articleTitle.contains(pair.getLeft())){
+      System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      if(articleTitle.toLowerCase().contains(pair.getLeft().toLowerCase())){
+        System.out.println("====================================================");
         containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
       }
     }
 
     //관심사, 키워드를 구독중인 유저 얼아내기
     for (UUID interestId : containedId) {
+      //System.out.println("------------------------------------------------------------");
       List<UUID> findUser=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
       targetUserID.addAll(findUser);
     }
 
     //찾은 유저에게 알람보내기
     for (UUID userId : targetUserID){
+      //System.out.println("=========================================");
       notificationServiceInterface.addNewsNotice(userId,articleTitle+" 라는 관심있는 뉴스가 등록되었습니다",articleId);
     }
 
