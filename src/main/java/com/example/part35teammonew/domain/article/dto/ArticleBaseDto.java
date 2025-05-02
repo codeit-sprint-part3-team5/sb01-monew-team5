@@ -31,7 +31,7 @@ public class ArticleBaseDto {
   @NotNull
   private int commentCount;
 
-  Long viewCount;
+  private Long viewCount;
 
   public ArticleBaseDto(Article article) {
     this.id = article.getId();
@@ -42,6 +42,7 @@ public class ArticleBaseDto {
     this.publishDate = article.getDate();
     this.createdAt = article.getCreatedAt();
     this.commentCount = article.getCommentCount();
+    this.viewCount = article.getViewCount();
   }
 
   // 생성자

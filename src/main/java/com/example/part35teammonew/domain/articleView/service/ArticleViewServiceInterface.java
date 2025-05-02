@@ -12,7 +12,4 @@ public interface ArticleViewServiceInterface {
 
   boolean addReadUser(UUID articleId, UUID userId);//유저가 기사 읽을때, //뭔가 문제 생김
 
-  Long countReadUser(UUID articleId);// 조회수 읽기
-
-  List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction);//조회수 기반 페이지네이션
 }
