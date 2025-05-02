@@ -75,7 +75,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     //title.contains()// 안돼면 확인
     for(Pair<String,UUID> pair:getInterest){
-      System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      //System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       if(articleTitle.toLowerCase().contains(pair.getLeft().toLowerCase())){
         containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
       }
