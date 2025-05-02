@@ -40,9 +40,7 @@ public class NewsSearch {
     requestHeaders.put("X-Naver-Client-Id", clientId);
     requestHeaders.put("X-Naver-Client-Secret", clientSecret);
     String responseBody = get(apiURL.toString(),requestHeaders);
-    System.out.println("apiURL = " + apiURL);
-    System.out.println(responseBody);
-    return responseBody;
+	  return responseBody;
   }
 
   private static String get(String apiUrl, Map<String, String> requestHeaders){
@@ -55,7 +53,7 @@ public class NewsSearch {
 
 
       int responseCode = con.getResponseCode();
-      System.out.println("responseCode = " + responseCode);
+      //System.out.println("responseCode = " + responseCode);
       if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
         return readBody(con.getInputStream());
       } else { // 오류 발생
@@ -72,7 +70,7 @@ public class NewsSearch {
   private static HttpURLConnection connect(String apiUrl){
     try {
       URL url = new URL(apiUrl);
-      System.out.println("API URL 연결되었습니다");
+      //System.out.println("API URL 연결되었습니다");
       return (HttpURLConnection)url.openConnection();
     } catch (MalformedURLException e) {
       throw new RuntimeException("API URL이 잘못되었습니다. : " + apiUrl, e);

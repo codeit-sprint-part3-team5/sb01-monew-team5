@@ -5,6 +5,8 @@ import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.InterestErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -60,7 +62,7 @@ public class UserActivity {
     if (!subscriptions.contains(interest)) {
       subscriptions.add(interest);
     } else {
-      throw new AlreadySubscribedException("이미 구독한 관심사입니다: " + interest.getInterestName());
+      throw new RestApiException(InterestErrorCode.DUPLICATE_SUBSCRIBED_INTEREST, "구독 업데이트에 실패 했습니다. : " + interest.getInterestName());
     }
   }
 
@@ -68,7 +70,7 @@ public class UserActivity {
     if (subscriptions.contains(interest)) {
       subscriptions.remove(interest);
     } else {
-      throw new AlreadySubscribedException("구독되지 않은 관심사입니다.: " + interest.getInterestName());
+      throw new RestApiException(InterestErrorCode.UNSUBSCRIBED_INTEREST, "구독 취소에 실패 했습니다. : " + interest.getInterestName());
     }
   }
 
