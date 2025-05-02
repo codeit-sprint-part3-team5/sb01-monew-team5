@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,18 +76,18 @@ public class Article {
   public Article(ArticleBaseDto articleBaseDto) {
     this.title = articleBaseDto.getTitle();
     this.summary = articleBaseDto.getSummary();
-    this.link = articleBaseDto.getLink();
+    this.link = articleBaseDto.getSourceUrl();
     this.source = articleBaseDto.getSource();
-    this.date = articleBaseDto.getDate();
+    this.date = articleBaseDto.getPublishDate();
     this.createdAt = LocalDateTime.now();
     this.commentCount = articleBaseDto.getCommentCount();
   }
   public Article update(ArticleBaseDto articleUpdateDto) {
     if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
     if(articleUpdateDto.getSummary() != null) { this.summary = articleUpdateDto.getSummary(); }
-    if(articleUpdateDto.getLink() != null) { this.link = articleUpdateDto.getLink(); }
+    if(articleUpdateDto.getSourceUrl() != null) { this.link = articleUpdateDto.getSourceUrl(); }
     if(articleUpdateDto.getSource() != null) { this.source = articleUpdateDto.getSource(); }
-    if(articleUpdateDto.getDate() != null) { this.date = articleUpdateDto.getDate(); }
+    if(articleUpdateDto.getPublishDate() != null) { this.date = articleUpdateDto.getPublishDate(); }
     if(articleUpdateDto.getCommentCount() > 0) { this.commentCount = articleUpdateDto.getCommentCount(); }
     return this;
   }

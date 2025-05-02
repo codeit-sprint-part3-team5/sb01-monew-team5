@@ -14,7 +14,6 @@ import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
 import com.example.part35teammonew.domain.comment.service.CommentService;
 import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class ArticleController {
+
   private final ArticleService articleService;
   private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
@@ -51,7 +50,8 @@ public class ArticleController {
 
 
   @PostMapping("/api/articles/{articleId}/article-views")
-  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId ) {
+  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(
+      @PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId) {
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
 
@@ -69,9 +69,9 @@ public class ArticleController {
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt().toLocalDate());
     articleEnrollmentResponse.setArticleId(articleId);
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
-    articleEnrollmentResponse.setSourceUrl(articleBaseDto.getLink());
+    articleEnrollmentResponse.setSourceUrl(articleBaseDto.getSourceUrl());
     articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
-    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
+    articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getPublishDate());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
 
     CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null,
@@ -122,11 +122,29 @@ public class ArticleController {
       throw new IllegalArgumentException("유효하지 않은 정렬 방향입니다: " + direction);
     }
 
-    System.out.println("sortDirection = " + sortDirection);
-    System.out.println("limit = " + limit);
+    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
+    if (sourceIn != null) {
+      articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
+    }
+    if (publishDateFrom != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
+    }
+    if (publishDateTo != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
+    }
+    if (keyword != null) {
+      articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+    }
+
+    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(
+        articleSourceAndDateAndInterestsRequest);
+    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
+      String title = bySourceAndDateAndInterest.getTitle();
+      LocalDateTime publishDate = bySourceAndDateAndInterest.getPublishDate();
+    }
 
     // 커서 정규화 - ISO 형식으로 변환 시도
-    if (sortField==SortField.publishDate && cursor != null && cursor.contains("T")) {
+    if (sortField == SortField.publishDate && cursor != null && cursor.contains("T")) {
       try {
         // ISO 형식 체크
         LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
@@ -163,84 +181,54 @@ public class ArticleController {
         }
       }
     }
-
-    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, sortDirection);
-
-    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
-    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
-    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
-    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
-    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
-
-    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
-    System.out.println("byCursorPaging = " + byCursorPaging);
-    System.out.println("byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
-
-    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
-    System.out.println("bySourceAndDateAndInterests = " + bySourceAndDateAndInterests);
-    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
+    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit,
+        sortDirection, bySourceAndDateAndInterests);
+    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(
+        articleCursorRequest);
 
     List<ArticleBaseDto> result = new ArrayList<>();
-    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
-      if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
-        //ViewCount 조정
-        bySourceAndDateAndInterest.setViewCount(articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
-        //
-        result.add(bySourceAndDateAndInterest);
-      }
-    }
-    result = sorting(result,direction,sortField);
+    List<ArticleBaseDto> articles = byCursorPaging.getArticles();
 
-    System.out.println("result = " + result);
-    System.out.println("result = " + result.size());
-
-    if(publishDateFrom != null){
-      try {
-        String onlyDate = publishDateFrom.substring(0, 10);
-        LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
-        System.out.println("DateFrom = " + DateFrom);
-        System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-        if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
-          articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
-        }else {
-          articlesResponse.setNextAfter("false");
-        }
-      } catch (Exception e) {
-        articlesResponse.setNextAfter("false");
-      }
-    }else {
-      articlesResponse.setNextAfter("false");
+    for (ArticleBaseDto bySourceAndDateAndInterest : articles) {
+      //ViewCount 조정
+      bySourceAndDateAndInterest.setViewCount(
+          articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
+      //
+      result.add(bySourceAndDateAndInterest);
     }
 
-    if(publishDateTo != null){
-      try {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
-        if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
-          articlesResponse.setHasNext("true");
-        }else {
-          articlesResponse.setHasNext("false");
-        }
-      } catch (Exception e) {
-        articlesResponse.setHasNext("false");
-      }
-    }else {
+    LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
+    String nextCursor = byCursorPaging.getNextCursor();
+
+    System.out.println("byCursorPaging.getHasNext() = " + byCursorPaging.getHasNext());
+    System.out.println("byCursorPaging.getNextCursor() = " + byCursorPaging.getNextCursor());
+    System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+
+    if (byCursorPaging.getHasNext().equals("true")) {
+      articlesResponse.setHasNext("true");
+      articlesResponse.setNextAfter(newNextAfter.toString());
+      articlesResponse.setNextCursor(nextCursor);
+    } else {
       articlesResponse.setHasNext("false");
+      articlesResponse.setNextAfter(newNextAfter.toString());
+      articlesResponse.setNextCursor(nextCursor);
     }
-
-    articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
+    if( sortField != SortField.publishDate){
+      result = sorting(result, direction, sortField);
+    }
     articlesResponse.setContent(result);
     articlesResponse.setSize(limit);
-
     return ResponseEntity.ok(articlesResponse);
   }
 
   private List<ArticleBaseDto> sorting(List<ArticleBaseDto> result, String direction,
       SortField sortField) {
-    if (result == null || result.isEmpty()) return result;
+    if (result == null || result.isEmpty()) {
+      return result;
+    }
     Comparator<ArticleBaseDto> comparator;
     switch (sortField) {
-      case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getDate);
+      case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getPublishDate);
       case commentCount -> comparator = Comparator.comparing(ArticleBaseDto::getCommentCount);
       //case viewCount -> comparator = Comparator.comparing(ArticleBaseDto::get, String.CASE_INSENSITIVE_ORDER);
       default -> throw new IllegalArgumentException("Unknown sort field: " + sortField);
