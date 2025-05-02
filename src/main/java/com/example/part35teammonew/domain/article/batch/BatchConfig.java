@@ -31,7 +31,6 @@ import org.springframework.batch.item.data.RepositoryItemWriter;
 import org.springframework.batch.item.data.builder.RepositoryItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -100,7 +99,7 @@ public class BatchConfig {
       // 1️⃣ 기존 JSON 파일 읽기
       if (file.exists()) {
         String content = Files.readString(file.toPath());
-        System.out.println("content = " + content);
+        //System.out.println("content = " + content);
         jsonArray = new JSONArray(content);
         for (int i = 0; i < jsonArray.length(); i++) {
           JSONObject obj = jsonArray.getJSONObject(i);

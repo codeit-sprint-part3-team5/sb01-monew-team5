@@ -3,8 +3,9 @@ package com.example.part35teammonew.domain.article.batch;
 import com.example.part35teammonew.domain.article.api.NewsSearch;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.entity.Article;
+import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.service.InterestService;
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,9 +39,13 @@ public class SharedArticleReader implements ItemReader<Article> {
     List<Pair<String, UUID>> interestList = interestService.getInterestList();
     if (interestList.isEmpty()) {
       //디폴트 값
+      InterestDto interest = interestService.createInterest(
+          new InterestCreateRequest("지역", List.of("인천", "대구")));
+      interestList = interestService.getInterestList();
     }
     for (Pair<String, UUID> stringUUIDPair : interestList) {
       String keyword = stringUUIDPair.getKey();
+      System.out.println("keyword = " + keyword);
 
       page++;
       String json = newsSearch.getNews(keyword, 10, (page - 1) * 10 + 1, "date");

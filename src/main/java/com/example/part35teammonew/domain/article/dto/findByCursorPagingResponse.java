@@ -10,4 +10,5 @@ public class findByCursorPagingResponse {
   private String nextCursor;
   private LocalDateTime nextAfter;
   private int limit;
+  private String hasNext;
 }

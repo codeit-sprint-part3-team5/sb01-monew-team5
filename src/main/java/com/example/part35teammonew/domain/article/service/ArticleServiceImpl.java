@@ -1,4 +1,5 @@
 package com.example.part35teammonew.domain.article.service;
+
 import com.example.part35teammonew.domain.article.batch.S3UploadArticle;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
@@ -18,9 +19,9 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,11 +31,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,23 +52,23 @@ public class ArticleServiceImpl implements ArticleService {
   // 기사 저장
   @Override
   public UUID save(ArticleBaseDto dto) {
-    if (dto.getTitle() == null || dto.getTitle().isBlank() || dto.getDate() == null) {
+    if (dto.getTitle() == null || dto.getTitle().isBlank() || dto.getPublishDate() == null) {
       throw new IllegalArgumentException("제목과 날짜는 필수입니다.");
     }
-    if (articleRepository.findByTitleAndDate(dto.getTitle(), dto.getDate()) != null) {
+    if (articleRepository.findByTitleAndDate(dto.getTitle(), dto.getPublishDate()) != null) {
       throw new IllegalArgumentException("중복 저장되었습니다.");
     }
 
     Article article = new Article(dto);
     Article saved = articleRepository.save(article);//저장
 
-    ArticleViewDto articleViewDto=articleViewServiceInterface.createArticleView(saved.getId());//뷰테이블 만듬
-
-
+    ArticleViewDto articleViewDto = articleViewServiceInterface.createArticleView(
+        saved.getId());//뷰테이블 만듬
 
     //관심사, 키워드 추출
     String articleTitle= saved.getTitle();
     UUID articleId=saved.getId();
+
     List<Pair<String,UUID>> getInterest=interestService.getInterestList();
     Set<UUID> containedId =new HashSet<>();
     Set<UUID> targetUserID=new HashSet<>();//Set<UUID> 유저아이디: 구독중인 유저들
@@ -76,19 +77,19 @@ public class ArticleServiceImpl implements ArticleService {
     for(Pair<String,UUID> pair:getInterest){
       System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       if(articleTitle.toLowerCase().contains(pair.getLeft().toLowerCase())){
-        System.out.println("====================================================");
         containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
       }
     }
 
     //관심사, 키워드를 구독중인 유저 얼아내기
     for (UUID interestId : containedId) {
-      //System.out.println("------------------------------------------------------------");
-      List<UUID> findUser=interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
+
+      List<UUID> findUser = interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
       targetUserID.addAll(findUser);
     }
 
     //찾은 유저에게 알람보내기
+
     for (UUID userId : targetUserID){
       //System.out.println("=========================================");
       notificationServiceInterface.addNewsNotice(userId,articleTitle+" 라는 관심있는 뉴스가 등록되었습니다",articleId);
@@ -155,7 +156,6 @@ public class ArticleServiceImpl implements ArticleService {
     String startDate = articleSourceAndDateAndInterestsRequest.getPublishDateFrom();
     String endDate = articleSourceAndDateAndInterestsRequest.getPublishDateTo();
     String interests = articleSourceAndDateAndInterestsRequest.getKeyword();
-    System.out.println("startDate = " + startDate);
     if (sources == null && startDate == null && endDate == null) {
       ArticleSourceAndDateAndInterestsRequest request = new ArticleSourceAndDateAndInterestsRequest();
       request.setSourceIn(sources);
@@ -174,24 +174,21 @@ public class ArticleServiceImpl implements ArticleService {
       System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재
-      System.out.println(" } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재");
+      System.out.println(
+          " } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재");
 
-      LocalDateTime startDateTime = LocalDate.parse(startDate.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+      LocalDateTime startDateTime = LocalDate.parse(startDate.substring(0, 10),
+          DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
       LocalDateTime endDateTime = LocalDate.now().plusDays(1).atStartOfDay(); //오늘보다 하루 뒤
-      System.out.println("startDateTime = " + startDateTime);
-      System.out.println("endDateTime = " + endDateTime);
 
       articles = articleRepository.findByStartEndDate(startDateTime, endDateTime);
-
-      for (Article article : articles) {
-        System.out.println("findByStartEndDate_article = " + article);
-      }
       System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate == null && endDate != null) { //endDate만 존재
       System.out.println("  } else if (sources == null && startDate == null && endDate != null)");
       LocalDate DateFrom = LocalDate.of(1970, 1, 1); //시작일 기준
-      LocalDate localDate = LocalDate.parse(endDate.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+      LocalDate localDate = LocalDate.parse(endDate.substring(0, 10),
+              DateTimeFormatter.ofPattern("yyyy-MM-dd"))
           .plusDays(1);
       System.out.println("startDateTime = " + DateFrom);
       System.out.println("endDateTime = " + localDate);
@@ -202,7 +199,7 @@ public class ArticleServiceImpl implements ArticleService {
       }
       System.out.println("articles.size() = " + articles.size());
 
-    } else if(sources == null && startDate != null && endDate != null){
+    } else if (sources == null && startDate != null && endDate != null) {
       System.out.println("startDate = " + startDate);
       System.out.println("endDate = " + endDate);
       System.out.println("else if(sources == null && startDate != null && endDate != null)");
@@ -229,9 +226,10 @@ public class ArticleServiceImpl implements ArticleService {
       }
       System.out.println("articles.size() = " + articles.size());
 
-    }else if (sources != null && startDate != null && endDate == null) { //source, startDate 존재
+    } else if (sources != null && startDate != null && endDate == null) { //source, startDate 존재
       System.out.println("    } else if (sources != null && startDate != null && endDate == null)");
-      LocalDate localStartDate = LocalDate.parse(startDate.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      LocalDate localStartDate = LocalDate.parse(startDate.substring(0, 10),
+          DateTimeFormatter.ofPattern("yyyy-MM-dd"));
       LocalDate plus = LocalDate.now().plusDays(1); //오늘보다 하루 뒤
       LocalDate localEndDate = LocalDate.parse(plus.toString(),
           DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -249,7 +247,8 @@ public class ArticleServiceImpl implements ArticleService {
     } else if (sources != null && startDate == null && endDate != null) { //source, endDate 존재
       System.out.println("else if (sources != null && startDate == null && endDate != null)");
       LocalDate DateFrom = LocalDate.of(1970, 1, 1);
-      LocalDate localDate = LocalDate.parse(endDate.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+      LocalDate localDate = LocalDate.parse(endDate.substring(0, 10),
+              DateTimeFormatter.ofPattern("yyyy-MM-dd"))
           .plusDays(1); //endDate보다 하루 뒤
       for (String source : sources) {
         articles.addAll(articleRepository.findBySourceAndDate(source, DateFrom.atStartOfDay(),
@@ -264,7 +263,8 @@ public class ArticleServiceImpl implements ArticleService {
       System.out.println("   } else if (sources != null) { //source, startDate, endDate 모두 존재");
       LocalDate localStartDate = LocalDate.parse(startDate.substring(0, 10),
           DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-      LocalDate localEndDate = LocalDate.parse(endDate.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+      LocalDate localEndDate = LocalDate.parse(endDate.substring(0, 10),
+              DateTimeFormatter.ofPattern("yyyy-MM-dd"))
           .plusDays(1); //endDate보다 하루 뒤
       for (String source : sources) {
         articles.addAll(articleRepository.findBySourceAndDate(source, localStartDate.atStartOfDay(),
@@ -336,11 +336,100 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public findByCursorPagingResponse findByCursorPaging(ArticleCursorRequest req) {
     findByCursorPagingResponse response = new findByCursorPagingResponse();
-    List<Article> articles = null;
-    Pageable pageable = PageRequest.of(0, req.getSize()+1);
+    List<Article> articles = new ArrayList<>();
+    List<ArticleBaseDto> newResult = new ArrayList<>();
+    Pageable pageable = PageRequest.of(0, req.getSize() + 1);
 
     switch (req.getSortField()) {
       case publishDate -> {
+        newResult = new ArrayList<>();
+        String cursor = req.getCursor();
+        LocalDateTime newCursor;
+        if (cursor.contains("T")) {
+          newCursor = LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        } else {
+          // 날짜만 있는 경우 현재 시간을 포함한 ISO 형식으로 변환
+          newCursor = LocalDateTime.parse(cursor + "T00:00:00");
+        }
+        System.out.println("String값에서 localDateTime 으로 : newCursor = " + newCursor);
+
+        LocalDateTime newNextCursor = null;
+        ArticleBaseDto newNextAfter = null;
+
+        if (req.getDirection() == Direction.ASC) {
+          List<ArticleBaseDto> temp = req.getArticles();
+          System.out.println("temp.size() = " + temp.size());
+          temp.sort(Comparator.comparing(ArticleBaseDto::getPublishDate));
+          for (ArticleBaseDto bySourceAndDateAndInterest : temp) {
+            if (bySourceAndDateAndInterest.getPublishDate().isAfter(newCursor)) {
+              newResult.add(bySourceAndDateAndInterest);
+            }
+          }
+          if (newResult.size() >= req.getSize() + 1) {
+            newNextAfter = newResult.get(req.getSize() + 1);
+            newNextCursor = newResult.get(req.getSize()).getPublishDate();
+            newResult = newResult.subList(0, req.getSize());
+
+            System.out.println("newNextAfter = " + newNextAfter);
+            System.out.println("newNextCursor = " + newNextCursor);
+            System.out.println("newResult.size() = " + newResult.size());
+            response.setArticles(newResult);
+          } else {
+            newNextAfter = null;
+            response.setArticles(newResult);
+            if (newResult.isEmpty()) {
+              newNextCursor = newCursor;
+            } else {
+              newNextCursor = newResult.get(newResult.size() - 1).getPublishDate();
+            }
+          }
+        }
+        if (req.getDirection() == Direction.DESC) {
+          List<ArticleBaseDto> temp = req.getArticles();
+          System.out.println("temp.size() = " + temp.size());
+          temp.sort(Comparator.comparing(ArticleBaseDto::getPublishDate).reversed());
+          for (ArticleBaseDto bySourceAndDateAndInterest : temp) {
+            if (bySourceAndDateAndInterest.getPublishDate().isBefore(newCursor)) {
+              newResult.add(bySourceAndDateAndInterest);
+            }
+          }
+
+          if (newResult.size() >= req.getSize() + 1) {
+            newNextAfter = newResult.get(req.getSize() + 1);
+            newNextCursor = newResult.get(req.getSize()).getPublishDate();
+            newResult = newResult.subList(0, req.getSize());
+
+            System.out.println("newNextAfter = " + newNextAfter);
+            System.out.println("newNextCursor = " + newNextCursor);
+            System.out.println("newResult.size() = " + newResult.size());
+            response.setArticles(newResult);
+          } else {
+            newNextAfter = null;
+            response.setArticles(newResult);
+            if (newResult.isEmpty()) {
+              newNextCursor = newCursor;
+            } else {
+              newNextCursor = newResult.get(newResult.size() - 1).getPublishDate();
+            }
+          }
+        }
+
+        if (newNextAfter != null) {
+          response.setHasNext("true");
+          response.setNextAfter(newNextAfter.getPublishDate());
+          response.setNextCursor(newNextCursor.toString());
+        } else {
+          response.setHasNext("false");
+          response.setNextAfter(newNextCursor);
+          response.setNextCursor(newNextCursor.toString());
+        }
+        System.out.println("newNextAfter = " + newNextAfter);
+        System.out.println("newNextCursor = " + newNextCursor);
+
+        response.setLimit(req.getSize());
+        return response;
+      }
+      /*case publishDate -> {
         LocalDateTime cursor;
         try {
           // 표준 ISO 형식 사용
@@ -350,7 +439,9 @@ public class ArticleServiceImpl implements ArticleService {
             // 날짜만 있는 경우 현재 시간을 포함한 ISO 형식으로 변환
             cursor = LocalDateTime.parse(req.getCursor() + "T00:00:00");
           }
+
           System.out.println("cursor = " + cursor);
+
           articles = req.getDirection() == Direction.ASC
               ? articleRepository.findByDateCursorAsc(cursor, pageable)
               : articleRepository.findByDateCursorDesc(cursor, pageable);
@@ -384,51 +475,58 @@ public class ArticleServiceImpl implements ArticleService {
           response.setNextCursor(cursor.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
           response.setNextAfter(null);
         }
-      }
+      }*/
       case commentCount -> {
-        System.out.println(" commentCount ");
-        System.out.println("req.getCursor() = " + req.getCursor());
         int cursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) : 0;
-        //int nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor())+1 : 0;
-        System.out.println("cursor = " + cursor);
         articles = req.getDirection() == Direction.ASC
             ? articleRepository.findByCommentCursorAsc(cursor, pageable)
             : articleRepository.findByCommentCursorDesc(cursor, pageable);
-        System.out.println("articles.size() = " + articles.size());
 
         int nextCursor = 0;
-        if( req.getDirection() == Direction.ASC){
-          nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor())+articles.size() : 0;
-        }else if( req.getDirection() == Direction.DESC){
-          nextCursor = req.getCursor() != null ? articles.get(articles.size()-1).getCommentCount() : 0;
-        }
-        if(articles.isEmpty()) {
-          response.setNextAfter(null);
-          response.setNextCursor("0");
-        } else {
-          Article nextArticle = req.getDirection() == Direction.ASC
-              ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
-              ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
-              : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty()
-              ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
 
-          response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
-          response.setNextCursor(String.valueOf(nextCursor));
+        if (req.getDirection() == Direction.ASC && !articles.isEmpty()) {
+          nextCursor = req.getCursor() != null ? Integer.parseInt(req.getCursor()) + articles.size() : 0;
+          response.setNextAfter(articles.get(articles.size()-1).getDate());
+        } else if (req.getDirection() == Direction.DESC && !articles.isEmpty()) {
+          nextCursor = req.getCursor() != null ? articles.get(articles.size() - 1).getCommentCount() : 0;
+          response.setNextAfter(articles.get(0).getDate());
+        }else {
+          System.out.println(" setNextAfter null 설정 ");
+          response.setNextAfter(null);
         }
+        
+        if (articles.isEmpty() || articles.size() < req.getSize()) {
+          response.setHasNext("false");
+          response.setNextCursor(String.valueOf(nextCursor));
+        } else {
+          Article nextArticle = req.getDirection() == Direction.ASC ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
+              ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
+              : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty() ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
+          System.out.println("nextArticle = " + nextArticle);
+          response.setHasNext("true");
+          response.setNextCursor(String.valueOf(nextCursor));
+          //response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
+        }
+        response.setArticles(articles.stream().filter(Article::isNotLogicallyDeleted).map(ArticleBaseDto::new).toList());
+        response.setLimit(req.getSize());
+        return response;
       }
       case viewCount -> {
         Long cursor = req.getCursor() != null ? Long.parseLong(req.getCursor()) : 0L;
-        Long nextCursor = req.getCursor() != null ? Long.parseLong(req.getCursor())+1 : 0;
+        Long nextCursor = req.getCursor() != null ? Long.parseLong(req.getCursor()) + 1 : 0;
         //articles = req.getDirection() == Direction.ASC ? articleRepository.findByViewCursorAsc(cursor, pageable) : articleRepository.findByViewCursorDesc(cursor, pageable);
-        List<UUID> sortByVewCountPageNation = articleViewServiceInterface.getSortByVewCountPageNation(cursor, pageable, req.getDirection().toString());
+        List<UUID> sortByVewCountPageNation = articleViewServiceInterface.getSortByVewCountPageNation(
+            cursor, pageable, req.getDirection().toString());
 
-        if(sortByVewCountPageNation.isEmpty()) {
+        if (sortByVewCountPageNation.isEmpty()) {
           response.setArticles(List.of());
           response.setNextAfter(null);
           response.setNextCursor("0");
         } else {
-          List<UUID> nextPageIds = articleViewServiceInterface.getSortByVewCountPageNation(nextCursor, pageable, req.getDirection().toString());
-          LocalDateTime nextAfter = nextPageIds.isEmpty() ? null : findById(nextPageIds.get(0)).getDate();
+          List<UUID> nextPageIds = articleViewServiceInterface.getSortByVewCountPageNation(
+              nextCursor, pageable, req.getDirection().toString());
+          LocalDateTime nextAfter =
+              nextPageIds.isEmpty() ? null : findById(nextPageIds.get(0)).getPublishDate();
 
           response.setArticles(findByIds(sortByVewCountPageNation));
           response.setNextAfter(nextAfter);
@@ -440,19 +538,14 @@ public class ArticleServiceImpl implements ArticleService {
       }
       default -> throw new IllegalArgumentException("정렬 조건이 잘못되었습니다.");
     }
-
-    if(articles == null || articles.isEmpty()) {
-      response.setArticles(List.of());
-    } else {
-      response.setArticles(articles.stream().filter(Article::isNotLogicallyDeleted).map(ArticleBaseDto::new).toList());
-    }
-    response.setLimit(req.getSize());
-    return response;
   }
+
   @Override
   public List<UUID> backup(String from, String to) {
-    LocalDate localStartDate = LocalDate.parse(from.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    LocalDate localEndDate = LocalDate.parse(to.substring(0, 10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    LocalDate localStartDate = LocalDate.parse(from.substring(0, 10),
+        DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    LocalDate localEndDate = LocalDate.parse(to.substring(0, 10),
+        DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     List<UUID> result = new ArrayList<>();
     Queue<Article> queue = new LinkedList<>();
     while (localStartDate.isBefore(localEndDate)) {
@@ -461,7 +554,7 @@ public class ArticleServiceImpl implements ArticleService {
       File file = new File("articles_" + localStartDate + "temp.json");
       JSONArray jsonArray;
       try {
-        if(s3UploadArticle.exists("articles_"+localStartDate+".json")){
+        if (s3UploadArticle.exists("articles_" + localStartDate + ".json")) {
           s3UploadArticle.download(file);
           String content = Files.readString(file.toPath());
           jsonArray = new JSONArray(content);
@@ -480,14 +573,16 @@ public class ArticleServiceImpl implements ArticleService {
           ));
           queue.add(article);
         }
-      }catch (Exception e){
+      } catch (Exception e) {
 
       }
       System.out.println("articleBackupReader_queue = " + queue.size());
-      while(!queue.isEmpty()){
+      while (!queue.isEmpty()) {
         Article article = queue.poll();
-        article = articleRepository.findByTitleAndDate(article.getTitle(), article.getDate()) != null ? null : article;
-        if(article != null){
+        article =
+            articleRepository.findByTitleAndDate(article.getTitle(), article.getDate()) != null
+                ? null : article;
+        if (article != null) {
           save(new ArticleBaseDto(article));
           result.add(article.getId());
           System.out.println("article = " + article);

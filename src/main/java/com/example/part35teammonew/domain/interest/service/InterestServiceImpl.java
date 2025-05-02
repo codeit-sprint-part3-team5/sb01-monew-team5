@@ -87,12 +87,12 @@ public class InterestServiceImpl implements InterestService {
 		//DTO 변환 todo: 나중에 mapper 클래스 생성하면 리팩토링
 		List<String> keywordsList = request.getKeywords();
 		return InterestDto.builder()
-			.id(savedInterest.getId())
-			.name(savedInterest.getName())
-			.keywords(keywordsList)
-			.subscriberCount(0)
-			.subscribedByMe(false)
-			.build();
+				.id(savedInterest.getId())
+				.name(savedInterest.getName())
+				.keywords(keywordsList)
+				.subscriberCount(0)
+				.subscribedByMe(false)
+				.build();
 
 	}
 
@@ -100,7 +100,7 @@ public class InterestServiceImpl implements InterestService {
 	@Transactional
 	public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
 		Interest interest = interestRepository.findById(interestId)
-			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
 		interest.setKeywords(String.join(",", newKeywords));
 		Interest saved = interestRepository.save(interest);
@@ -121,7 +121,7 @@ public class InterestServiceImpl implements InterestService {
 	@Transactional
 	public void deleteInterest(UUID interestId) {
 		Interest interest = interestRepository.findById(interestId)
-			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 		interestRepository.delete(interest);
 	}
 
@@ -130,21 +130,21 @@ public class InterestServiceImpl implements InterestService {
 		List<Interest> interestList = interestRepository.findAll();
 
 		return interestList.stream()
-			.flatMap(interest -> {
-				if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
-					throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
-				}
-				List<String> keywords = Stream.of(interest.getKeywords().split(","))
-					.map(String::trim)
-					.toList();
+				.flatMap(interest -> {
+					if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
+						throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
+					}
+					List<String> keywords = Stream.of(interest.getKeywords().split(","))
+							.map(String::trim)
+							.toList();
 
-				// 이름  키워드를 하나의 스트림으로
-				return Stream.concat(
-					Stream.of(interest.getName().strip()),
-					keywords.stream()
-				).map(value -> Pair.of(value, interest.getId()));
-			})
-			.toList();
+					// 이름  키워드를 하나의 스트림으로
+					return Stream.concat(
+							Stream.of(interest.getName().strip()),
+							keywords.stream()
+					).map(value -> Pair.of(value, interest.getId()));
+				})
+				.toList();
 	}
 
 	@Override
@@ -155,8 +155,8 @@ public class InterestServiceImpl implements InterestService {
 		String orderBy = normalizeOrderBy(req.orderBy());
 
 		Sort sort = Sort.by(
-			new Sort.Order(direction, orderBy),
-			new Sort.Order(direction, "createdAt")
+				new Sort.Order(direction, orderBy),
+				new Sort.Order(direction, "createdAt")
 		);
 
 		String keyword = req.keyword();
@@ -221,23 +221,23 @@ public class InterestServiceImpl implements InterestService {
 		}
 
 		List<InterestDto> content = interests.stream()
-			.map(i -> mapToDtoWithSubscription(i, req.userId()))
-			.toList();
+				.map(i -> mapToDtoWithSubscription(i, req.userId()))
+				.toList();
 
 		return new PageResponse<>(
-			content,
-			nextCursor,
-			nextAfter,
-			content.size(),
-			totalElements,
-			hasNext
+				content,
+				nextCursor,
+				nextAfter,
+				content.size(),
+				totalElements,
+				hasNext
 		);
 	}
 
 	@Override
 	public void subscribe(UUID interestId, UUID userId) {
 		Interest interest = interestRepository.findById(interestId).orElseThrow(
-			() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
 		if (interestUserListServiceInterface.addSubscribedUser(interestId, userId)) {
 			interest.setSubscriberCount(interest.getSubscriberCount() + 1);
@@ -252,7 +252,7 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public void unsubscribe(UUID interestId, UUID userId) {
 		Interest interest = interestRepository.findById(interestId)
-			.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
 
 		if (interestUserListServiceInterface.subtractSubscribedUser(interestId, userId)) {
 			long count = interest.getSubscriberCount();
@@ -285,16 +285,16 @@ public class InterestServiceImpl implements InterestService {
 		long subscriberCount = interestUserListServiceInterface.countSubscribedUser(interestId);
 
 		List<String> keywordList = entity.getKeywords() != null
-			? Arrays.stream(entity.getKeywords().split(",")).map(String::strip).toList()
-			: List.of();
+				? Arrays.stream(entity.getKeywords().split(",")).map(String::strip).toList()
+				: List.of();
 
 		return InterestDto.builder()
-			.id(entity.getId())
-			.name(entity.getName())
-			.keywords(keywordList)
-			.subscriberCount(subscriberCount)
-			.subscribedByMe(subscribedByMe)
-			.build();
+				.id(entity.getId())
+				.name(entity.getName())
+				.keywords(keywordList)
+				.subscriberCount(subscriberCount)
+				.subscribedByMe(subscribedByMe)
+				.build();
 	}
 
 	private String normalizeOrderBy(String orderBy) {
