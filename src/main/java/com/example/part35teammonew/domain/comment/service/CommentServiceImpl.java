@@ -13,9 +13,8 @@ import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 import com.example.part35teammonew.domain.userActivity.maper.RecentCommentMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import com.example.part35teammonew.exeception.comment.CommentDeleteUnauthorized;
-import com.example.part35teammonew.exeception.comment.CommentNotFound;
-import com.example.part35teammonew.exeception.comment.CommentUpdateUnauthorized;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.CommentErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
     if (!request.getUserId().equals(effectiveUserId)) {
       log.debug("사용자 ID 불일치: requestUserId={}, requestBodyUserId={}",
           effectiveUserId, request.getUserId());
-      throw new CommentUpdateUnauthorized("요청자 ID와 댓글 작성자 ID가 일치하지 않습니다");
+      throw new RestApiException(CommentErrorCode.COMMENT_UPDATE_UNAUTHORIZED, "요청자 ID와 댓글 작성자 ID가 일치하지 않습니다");
     }
 
     // 나머지 기존 로직은 동일하게 유지
@@ -105,14 +104,14 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 댓글 작성자와 요청자가 같은지 확인
     if (!comment.getUser().getId().equals(requestUserId)) {
       log.debug("댓글 수정 권한 없음: commentId={}, requestUserId={}, commentUserId={}",
           commentId, requestUserId, comment.getUser().getId());
-      throw new CommentUpdateUnauthorized("댓글 작성자만 수정할 수 있습니다");
+      throw new RestApiException(CommentErrorCode.COMMENT_UPDATE_UNAUTHORIZED, "댓글 작성자만 수정할 수 있습니다");
     }
 
     // 댓글 내용 업데이트
@@ -139,14 +138,14 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 댓글 작성자와 요청자가 같은지 확인 (권한 검증)
     if (!comment.getUser().getId().equals(requestUserId)) {
       log.debug("댓글 삭제 권한 없음: commentId={}, requestUserId={}, commentUserId={}",
           commentId, requestUserId, comment.getUser().getId());
-      throw new CommentDeleteUnauthorized("댓글 작성자만 삭제할 수 있습니다");
+      throw new RestApiException(CommentErrorCode.COMMENT_DELETE_UNAUTHORIZED, "댓글 작성자만 삭제할 수 있습니다");
     }
 
     //기사 CommentCount 감소
@@ -172,7 +171,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     //기사 CommentCount 감소 ( 논리 삭제 후 물리 삭제 시 -2 ? )
@@ -195,7 +194,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 댓글의 좋아요 개수 반환
@@ -283,7 +282,7 @@ public class CommentServiceImpl implements CommentService {
         cursorComment = optionalComment.get();
       } else {
         log.debug("커서에 해당하는 댓글을 찾을 수 없음: cursorId={}", cursorId);
-        throw new CommentNotFound("커서에 해당하는 댓글을 찾을 수 없습니다");
+        throw new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "커서에 해당하는 댓글을 찾을 수 없습니다");
       }
 
       likesCursor = cursorComment.getLikeCount();
@@ -396,7 +395,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 사용자가 해당 댓글에 좋아요를 눌렀는지 확인
