@@ -45,7 +45,7 @@ public class SharedArticleReader implements ItemReader<Article> {
     }
     for (Pair<String, UUID> stringUUIDPair : interestList) {
       String keyword = stringUUIDPair.getKey();
-      System.out.println("keyword = " + keyword);
+      //System.out.println("keyword = " + keyword);
 
       page++;
       String json = newsSearch.getNews(keyword, 10, (page - 1) * 10 + 1, "date");

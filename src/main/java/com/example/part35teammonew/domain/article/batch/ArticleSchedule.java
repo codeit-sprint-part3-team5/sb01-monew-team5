@@ -49,9 +49,9 @@ public class ArticleSchedule {
       String fileDate = file.getName().substring(9, 19); // "articles_2025-04-24.json" 에서 날짜 추출
       if (!fileDate.equals(today.toString())) {
         if (file.delete()) {
-          System.out.println("🧼 오래된 백업 삭제: " + file.getName());
+          //System.out.println(" 오래된 백업 삭제: " + file.getName());
         } else {
-          System.err.println("⚠️ 삭제 실패: " + file.getAbsolutePath());
+          //System.err.println(" 삭제 실패: " + file.getAbsolutePath());
         }
       }
     }

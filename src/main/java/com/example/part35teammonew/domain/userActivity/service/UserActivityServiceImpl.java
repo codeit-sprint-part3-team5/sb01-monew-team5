@@ -1,5 +1,13 @@
 package com.example.part35teammonew.domain.userActivity.service;
 
+import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
@@ -9,13 +17,6 @@ import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.maper.UserActivityMapper;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserActivityServiceImpl implements UserActivityServiceInterface {

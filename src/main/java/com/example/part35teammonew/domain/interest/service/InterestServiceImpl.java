@@ -86,13 +86,7 @@ public class InterestServiceImpl implements InterestService {
 
 		//DTO 변환 todo: 나중에 mapper 클래스 생성하면 리팩토링
 		List<String> keywordsList = request.getKeywords();
-		return InterestDto.builder()
-				.id(savedInterest.getId())
-				.name(savedInterest.getName())
-				.keywords(keywordsList)
-				.subscriberCount(0)
-				.subscribedByMe(false)
-				.build();
+		return InterestDto.toDto(savedInterest);
 
 	}
 
