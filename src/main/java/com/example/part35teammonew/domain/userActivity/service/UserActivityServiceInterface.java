@@ -1,14 +1,14 @@
 package com.example.part35teammonew.domain.userActivity.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
 import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 public interface UserActivityServiceInterface {
 

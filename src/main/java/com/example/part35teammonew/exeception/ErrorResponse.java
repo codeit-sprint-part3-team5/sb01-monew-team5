@@ -1,14 +1,16 @@
 package com.example.part35teammonew.exeception;
 
-import java.time.Instant;
-import java.util.Map;
+import java.time.LocalDateTime;
 
-public record ErrorResponse(
-	Instant timestamp,
-	String code,
-	String message,
-	Map<String, Object> details,
-	String exceptionType,
-	int status
-) {
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import lombok.Builder;
+
+
+@JsonPropertyOrder({"timestamp", "status", "message", "details"})
+public record ErrorResponse(LocalDateTime timestamp, int status, String message, String details) {
+	@Builder
+	public ErrorResponse {
+	}
+
 }

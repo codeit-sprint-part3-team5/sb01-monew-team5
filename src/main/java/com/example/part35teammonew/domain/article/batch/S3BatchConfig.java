@@ -47,7 +47,7 @@ public class S3BatchConfig {
 
   @Bean
   public Step S3articleStep() {
-    System.out.println("S3BatchConfig");
+    //System.out.println("S3BatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("S3articleStep", jobRepository).<Article, Article>chunk(10,
             platformTransactionManager)
@@ -112,9 +112,9 @@ public class S3BatchConfig {
   public ItemWriter<Article> articleWriterWithS3() {
     return chunk -> {
       List<? extends Article> articles = chunk.getItems();
-      System.out.println("articles = " + articles);
+      //System.out.println("articles = " + articles);
       if (articles.isEmpty()) {
-        System.out.println("No new articles");
+        //System.out.println("No new articles");
         return;
       }
       try {
@@ -163,12 +163,12 @@ public class S3BatchConfig {
         // ☁️ S3 업로드
         s3UploadArticle.upload(file, file.getName());
 
-        System.out.println("✅ JSON 파일 S3 업로드 완료 (누적): " + file.getName());
-        System.out.println("추가된 기사 수: " + count);
+        //System.out.println("JSON 파일 S3 업로드 완료 (누적): " + file.getName());
+        //System.out.println("추가된 기사 수: " + count);
 
         /*//파일 삭제
         if (!file.delete()) {
-          System.err.println("⚠️ 파일 삭제 실패: " + file.getAbsolutePath());
+          System.err.println("파일 삭제 실패: " + file.getAbsolutePath());
         }*/
       } catch (Exception e) {
         throw new RuntimeException("JSON 파일 누적 저장 실패", e);

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -15,13 +14,11 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
-import com.example.part35teammonew.exeception.InterestNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestUnsubScribeServiceTest {

@@ -24,8 +24,8 @@ import com.example.part35teammonew.domain.interest.repository.InterestRepository
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
 import com.example.part35teammonew.domain.userActivity.maper.InterestViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import com.example.part35teammonew.exeception.DuplicateInterestNameException;
-import com.example.part35teammonew.exeception.InterestNotFoundException;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.InterestErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,7 +69,7 @@ public class InterestServiceImpl implements InterestService {
 
 		//유사도 검증
 		if (isNameTooSimilar(name)) {
-			throw new DuplicateInterestNameException("관심사 이름의 유사도가 80% 이상입니다.");
+			throw new RestApiException(InterestErrorCode.SIMILAR_INTEREST_NAME, "관심사 생성에 실패 했습니다.");
 		}
 
 		//List keywords -> DB 저장용 String 으로 변환
@@ -86,13 +86,7 @@ public class InterestServiceImpl implements InterestService {
 
 		//DTO 변환 todo: 나중에 mapper 클래스 생성하면 리팩토링
 		List<String> keywordsList = request.getKeywords();
-		return InterestDto.builder()
-				.id(savedInterest.getId())
-				.name(savedInterest.getName())
-				.keywords(keywordsList)
-				.subscriberCount(0)
-				.subscribedByMe(false)
-				.build();
+		return InterestDto.toDto(savedInterest);
 
 	}
 
@@ -100,7 +94,7 @@ public class InterestServiceImpl implements InterestService {
 	@Transactional
 	public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
 		Interest interest = interestRepository.findById(interestId)
-				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "키워드 수정에 실패 했습니다."));
 
 		interest.setKeywords(String.join(",", newKeywords));
 		Interest saved = interestRepository.save(interest);
@@ -121,7 +115,7 @@ public class InterestServiceImpl implements InterestService {
 	@Transactional
 	public void deleteInterest(UUID interestId) {
 		Interest interest = interestRepository.findById(interestId)
-				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "관심사 삭제에 실패 했습니다."));
 		interestRepository.delete(interest);
 	}
 
@@ -237,14 +231,14 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public void subscribe(UUID interestId, UUID userId) {
 		Interest interest = interestRepository.findById(interestId).orElseThrow(
-				() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				() -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다."));
 
 		if (interestUserListServiceInterface.addSubscribedUser(interestId, userId)) {
 			interest.setSubscriberCount(interest.getSubscriberCount() + 1);
 			InterestDto interestDto = InterestDto.toDto(interest);
 			userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
 		} else {
-			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , user id 오류");
+			throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다.");
 		}
 		interestRepository.save(interest);
 	}
@@ -252,7 +246,7 @@ public class InterestServiceImpl implements InterestService {
 	@Override
 	public void unsubscribe(UUID interestId, UUID userId) {
 		Interest interest = interestRepository.findById(interestId)
-				.orElseThrow(() -> new InterestNotFoundException("관심사를 찾을 수 없습니다: id 오류"));
+				.orElseThrow(() -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다."));
 
 		if (interestUserListServiceInterface.subtractSubscribedUser(interestId, userId)) {
 			long count = interest.getSubscriberCount();
@@ -260,7 +254,7 @@ public class InterestServiceImpl implements InterestService {
 			InterestDto interestDto = InterestDto.toDto(interest);
 			userActivityServiceInterface.subtractInterestView(userId, interestViewMapper.toDto(interestDto));
 		} else {
-			throw new InterestNotFoundException("관심사를 찾을 수 없습니다: 관심사 id , userId 오류");
+			throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다.");
 		}
 
 		interestRepository.save(interest);

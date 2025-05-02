@@ -43,7 +43,7 @@ public class BackupBatchConfig {
 
   @Bean
   public Step backupStep() {
-    System.out.println("BackupBatchConfig");
+    //System.out.println("BackupBatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("backupStep", jobRepository).<Article, Article>chunk(10, platformTransactionManager)
         .reader(articleBackupReader(null, null))
@@ -91,10 +91,10 @@ public class BackupBatchConfig {
                 }
               }
               if (!file.delete()) {
-                System.err.println("⚠️ 파일 삭제 실패: " + file.getAbsolutePath());
+                //System.err.println("⚠️ 파일 삭제 실패: " + file.getAbsolutePath());
               }
             }
-            System.out.println("Loaded articles: " + queue.size());
+            //System.out.println("Loaded articles: " + queue.size());
           } catch (Exception e) {
             throw new RuntimeException("S3 JSON 파일 로딩 실패", e);
           }
