@@ -5,8 +5,7 @@ import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
-import com.example.part35teammonew.exeception.AlreadySubscribedException;
-import java.time.Instant;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.LinkedList;

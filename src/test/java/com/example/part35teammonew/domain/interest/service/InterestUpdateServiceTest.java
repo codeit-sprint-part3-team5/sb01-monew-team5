@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.interest.service;
 
-import com.example.part35teammonew.exeception.InterestNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,8 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestUpdateServiceTest {
