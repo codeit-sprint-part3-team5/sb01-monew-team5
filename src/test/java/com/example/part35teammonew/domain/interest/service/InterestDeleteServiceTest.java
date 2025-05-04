@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.exeception.InterestNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestDeleteServiceTest {

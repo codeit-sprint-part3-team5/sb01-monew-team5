@@ -76,15 +76,15 @@ public class ArticleController {
 
     CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null,
         null, null);
-    System.out.println("comments.getSize() = " + comments.getSize());
+    //System.out.println("comments.getSize() = " + comments.getSize());
     //articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount()); //기사 코멘트 읽기 여기서 문제인가?
     articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
 
     articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
     //articleEnrollmentResponse.setArticleViewCount(100L);
 
-    System.out.println("userId = " + userId);
-    System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
+    //System.out.println("userId = " + userId);
+    //System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
 
     userActivityServiceInterface.addArticleInfoView(requestUserId,
         articleInfoViewMapper.toDto(articleEnrollmentResponse, requestUserId));
@@ -200,9 +200,9 @@ public class ArticleController {
     LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
     String nextCursor = byCursorPaging.getNextCursor();
 
-    System.out.println("byCursorPaging.getHasNext() = " + byCursorPaging.getHasNext());
-    System.out.println("byCursorPaging.getNextCursor() = " + byCursorPaging.getNextCursor());
-    System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
+    // System.out.println("byCursorPaging.getHasNext() = " + byCursorPaging.getHasNext());
+    // System.out.println("byCursorPaging.getNextCursor() = " + byCursorPaging.getNextCursor());
+    // System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
 
     if (byCursorPaging.getHasNext().equals("true")) {
       articlesResponse.setHasNext("true");

@@ -8,11 +8,11 @@ import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
 import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
 import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
-import com.example.part35teammonew.exeception.AlreadySubscribedException;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

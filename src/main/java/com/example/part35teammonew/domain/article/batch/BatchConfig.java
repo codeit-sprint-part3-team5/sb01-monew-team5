@@ -54,7 +54,7 @@ public class BatchConfig {
 
   @Bean
   public Step articleStep() {
-    System.out.println("BatchConfig");
+    //System.out.println("BatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("articleStep", jobRepository).<Article, Article>chunk(10,
             platformTransactionManager)
@@ -96,7 +96,7 @@ public class BatchConfig {
       Set<String> existingKeys = new HashSet<>();
       JSONArray jsonArray = new JSONArray();
 
-      // 1️⃣ 기존 JSON 파일 읽기
+      // 1. 기존 JSON 파일 읽기
       if (file.exists()) {
         String content = Files.readString(file.toPath());
         //System.out.println("content = " + content);
@@ -108,7 +108,7 @@ public class BatchConfig {
         }
       }
 
-      // 2️⃣ DB에 저장할 기사 및 JSON에 추가할 기사 추리기
+      // 2. DB에 저장할 기사 및 JSON에 추가할 기사 추리기
       List<Article> newArticlesForDB = new LinkedList<>();
       for (Article article : articles) {
         String key = article.getTitle() + "|" + article.getDate().toString();
@@ -161,7 +161,7 @@ public class BatchConfig {
       }
       //articleRepository.saveAll(newArticlesForDB);
 
-      System.out.println("✅ 저장 완료: DB " + newArticlesForDB.size() + "건, JSON 누적 " + jsonArray.length() + "건");
+      //System.out.println("저장 완료: DB " + newArticlesForDB.size() + "건, JSON 누적 " + jsonArray.length() + "건");
     };
   }
 

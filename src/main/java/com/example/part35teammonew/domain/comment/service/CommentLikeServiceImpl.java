@@ -15,9 +15,8 @@ import com.example.part35teammonew.domain.user.repository.UserRepository;
 
 import com.example.part35teammonew.domain.userActivity.maper.LikeCommentMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import com.example.part35teammonew.exeception.comment.CommentLikeConflict;
-import com.example.part35teammonew.exeception.comment.CommentLikeNotFound;
-import com.example.part35teammonew.exeception.comment.CommentNotFound;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.CommentErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,7 +48,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 좋아요 요청자 존재 여부 확인
@@ -65,7 +64,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     Optional<CommentLike> existingLike = commentLikeRepository.findByUserIdAndCommentId(requestUserId, commentId);
     if (existingLike.isPresent()) {
       log.debug("이미 좋아요를 누른 댓글: commentId={}, userId={}", commentId, requestUserId);
-      throw new CommentLikeConflict("이미 좋아요를 누른 댓글입니다");
+      throw new  RestApiException(CommentErrorCode.COMMENT_LIKE_CONFLICT, "이미 좋아요를 누른 댓글입니다");
     }
 
     // 좋아요 생성
@@ -113,14 +112,14 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 좋아요 존재 여부 확인
     CommentLike commentLike = commentLikeRepository.findByUserIdAndCommentId(requestUserId, commentId)
         .orElseThrow(() -> {
           log.debug("좋아요를 누르지 않은 댓글: commentId={}, userId={}", commentId, requestUserId);
-          return new CommentLikeNotFound("해당 댓글에 좋아요를 누르지 않았습니다");
+          return new RestApiException(CommentErrorCode.COMMENT_LIKE_NOT_FOUND, "해당 댓글에 좋아요를 누르지 않았습니다");
         });
 
     // 좋아요 삭제
@@ -161,7 +160,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     Comment comment = commentRepository.findByIdAndIsDeletedFalse(commentId)
         .orElseThrow(() -> {
           log.debug("존재하지 않는 댓글: commentId={}", commentId);
-          return new CommentNotFound("존재하지 않는 댓글입니다");
+          return new RestApiException(CommentErrorCode.COMMENT_NOT_FOUND, "존재하지 않는 댓글입니다");
         });
 
     // 사용자가 좋아요를 눌렀는지 확인

@@ -150,8 +150,8 @@ public class ArticleServiceImpl implements ArticleService {
   @Override
   public List<ArticleBaseDto> findBySourceAndDateAndInterests(
       ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest) {
-    System.out.println(
-        "articleSourceAndDateAndInterestsRequest = " + articleSourceAndDateAndInterestsRequest);
+    // System.out.println(
+    //     "articleSourceAndDateAndInterestsRequest = " + articleSourceAndDateAndInterestsRequest);
     String[] sources = articleSourceAndDateAndInterestsRequest.getSourceIn(); //추후 처리 고려해야 할 듯
     String startDate = articleSourceAndDateAndInterestsRequest.getPublishDateFrom();
     String endDate = articleSourceAndDateAndInterestsRequest.getPublishDateTo();
@@ -170,39 +170,39 @@ public class ArticleServiceImpl implements ArticleService {
       for (String source : sources) {
         articles.addAll(articleRepository.findBySource(source));
       }
-      System.out.println("findBySource_articles = " + articles);
-      System.out.println("articles.size() = " + articles.size());
+      // System.out.println("findBySource_articles = " + articles);
+      // System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재
-      System.out.println(
-          " } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재");
+      // System.out.println(
+      //     " } else if (sources == null && startDate != null && endDate == null) { //startDate만 존재");
 
       LocalDateTime startDateTime = LocalDate.parse(startDate.substring(0, 10),
           DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
       LocalDateTime endDateTime = LocalDate.now().plusDays(1).atStartOfDay(); //오늘보다 하루 뒤
 
       articles = articleRepository.findByStartEndDate(startDateTime, endDateTime);
-      System.out.println("articles.size() = " + articles.size());
+      //System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate == null && endDate != null) { //endDate만 존재
-      System.out.println("  } else if (sources == null && startDate == null && endDate != null)");
+      //System.out.println("  } else if (sources == null && startDate == null && endDate != null)");
       LocalDate DateFrom = LocalDate.of(1970, 1, 1); //시작일 기준
       LocalDate localDate = LocalDate.parse(endDate.substring(0, 10),
               DateTimeFormatter.ofPattern("yyyy-MM-dd"))
           .plusDays(1);
-      System.out.println("startDateTime = " + DateFrom);
-      System.out.println("endDateTime = " + localDate);
+      // System.out.println("startDateTime = " + DateFrom);
+      // System.out.println("endDateTime = " + localDate);
       articles = articleRepository.findByStartEndDate(DateFrom.atStartOfDay(),
           localDate.atStartOfDay());
       for (Article article : articles) {
-        System.out.println("findByStartEndDate_article = " + article);
+        // System.out.println("findByStartEndDate_article = " + article);
       }
-      System.out.println("articles.size() = " + articles.size());
+      // System.out.println("articles.size() = " + articles.size());
 
     } else if (sources == null && startDate != null && endDate != null) {
-      System.out.println("startDate = " + startDate);
-      System.out.println("endDate = " + endDate);
-      System.out.println("else if(sources == null && startDate != null && endDate != null)");
+      // System.out.println("startDate = " + startDate);
+      // System.out.println("endDate = " + endDate);
+      // System.out.println("else if(sources == null && startDate != null && endDate != null)");
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       String onlyDate = startDate.substring(0, 10); // "2025-04-24"
       LocalDateTime DateFrom = LocalDate.parse(onlyDate,
@@ -217,35 +217,35 @@ public class ArticleServiceImpl implements ArticleService {
       /*LocalDate DateFrom =  LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
       LocalDate localDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
           .plusDays(1);*/
-      System.out.println("startDateTime = " + DateFrom);
-      System.out.println("endDateTime = " + localDate);
+      // System.out.println("startDateTime = " + DateFrom);
+      // System.out.println("endDateTime = " + localDate);
       articles = articleRepository.findByStartEndDate(DateFrom,
           localDate);
       for (Article article : articles) {
         System.out.println("findByStartEndDate_article = " + article);
       }
-      System.out.println("articles.size() = " + articles.size());
+      // System.out.println("articles.size() = " + articles.size());
 
     } else if (sources != null && startDate != null && endDate == null) { //source, startDate 존재
-      System.out.println("    } else if (sources != null && startDate != null && endDate == null)");
+      // System.out.println("    } else if (sources != null && startDate != null && endDate == null)");
       LocalDate localStartDate = LocalDate.parse(startDate.substring(0, 10),
           DateTimeFormatter.ofPattern("yyyy-MM-dd"));
       LocalDate plus = LocalDate.now().plusDays(1); //오늘보다 하루 뒤
       LocalDate localEndDate = LocalDate.parse(plus.toString(),
           DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-      System.out.println("startDateTime = " + localStartDate);
-      System.out.println("plus = " + plus);
-      System.out.println("endDateTime = " + localEndDate);
+      // System.out.println("startDateTime = " + localStartDate);
+      // System.out.println("plus = " + plus);
+      // System.out.println("endDateTime = " + localEndDate);
       for (String source : sources) {
         articles.addAll(articleRepository.findBySourceAndDate(source, localStartDate.atStartOfDay(),
             localEndDate.atStartOfDay()));
       }
       for (Article article : articles) {
-        System.out.println("findBySourceAndDate_article = " + article);
+        // System.out.println("findBySourceAndDate_article = " + article);
       }
 
     } else if (sources != null && startDate == null && endDate != null) { //source, endDate 존재
-      System.out.println("else if (sources != null && startDate == null && endDate != null)");
+      // System.out.println("else if (sources != null && startDate == null && endDate != null)");
       LocalDate DateFrom = LocalDate.of(1970, 1, 1);
       LocalDate localDate = LocalDate.parse(endDate.substring(0, 10),
               DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -255,12 +255,12 @@ public class ArticleServiceImpl implements ArticleService {
             localDate.atStartOfDay()));
       }
       for (Article article : articles) {
-        System.out.println("findBySourceAndDate_article = " + article);
+        // System.out.println("findBySourceAndDate_article = " + article);
       }
 
 
     } else if (sources != null) { //source, startDate, endDate 모두 존재
-      System.out.println("   } else if (sources != null) { //source, startDate, endDate 모두 존재");
+      // System.out.println("   } else if (sources != null) { //source, startDate, endDate 모두 존재");
       LocalDate localStartDate = LocalDate.parse(startDate.substring(0, 10),
           DateTimeFormatter.ofPattern("yyyy-MM-dd"));
       LocalDate localEndDate = LocalDate.parse(endDate.substring(0, 10),
@@ -271,15 +271,15 @@ public class ArticleServiceImpl implements ArticleService {
             localEndDate.atStartOfDay()));
       }
       for (Article article : articles) {
-        System.out.println("findBySourceAndDate_article = " + article);
+        // System.out.println("findBySourceAndDate_article = " + article);
       }
     }
     //논리삭제여부
     articles = articles.stream().filter(Article::isNotLogicallyDeleted).toList();
     for (Article article : articles) {
-      System.out.println("isNotLogicallyDeleted_article = " + article);
+      // System.out.println("isNotLogicallyDeleted_article = " + article);
     }
-    System.out.println("articles.size() = " + articles.size());
+    // System.out.println("articles.size() = " + articles.size());
 
     if (interests != null && !interests.isEmpty()) {
       //System.out.println("interests = " + interests);
@@ -351,14 +351,14 @@ public class ArticleServiceImpl implements ArticleService {
           // 날짜만 있는 경우 현재 시간을 포함한 ISO 형식으로 변환
           newCursor = LocalDateTime.parse(cursor + "T00:00:00");
         }
-        System.out.println("String값에서 localDateTime 으로 : newCursor = " + newCursor);
+        // System.out.println("String값에서 localDateTime 으로 : newCursor = " + newCursor);
 
         LocalDateTime newNextCursor = null;
         ArticleBaseDto newNextAfter = null;
 
         if (req.getDirection() == Direction.ASC) {
           List<ArticleBaseDto> temp = req.getArticles();
-          System.out.println("temp.size() = " + temp.size());
+          // System.out.println("temp.size() = " + temp.size());
           temp.sort(Comparator.comparing(ArticleBaseDto::getPublishDate));
           for (ArticleBaseDto bySourceAndDateAndInterest : temp) {
             if (bySourceAndDateAndInterest.getPublishDate().isAfter(newCursor)) {
@@ -370,9 +370,9 @@ public class ArticleServiceImpl implements ArticleService {
             newNextCursor = newResult.get(req.getSize()).getPublishDate();
             newResult = newResult.subList(0, req.getSize());
 
-            System.out.println("newNextAfter = " + newNextAfter);
-            System.out.println("newNextCursor = " + newNextCursor);
-            System.out.println("newResult.size() = " + newResult.size());
+            // System.out.println("newNextAfter = " + newNextAfter);
+            // System.out.println("newNextCursor = " + newNextCursor);
+            // System.out.println("newResult.size() = " + newResult.size());
             response.setArticles(newResult);
           } else {
             newNextAfter = null;
@@ -386,7 +386,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
         if (req.getDirection() == Direction.DESC) {
           List<ArticleBaseDto> temp = req.getArticles();
-          System.out.println("temp.size() = " + temp.size());
+          // System.out.println("temp.size() = " + temp.size());
           temp.sort(Comparator.comparing(ArticleBaseDto::getPublishDate).reversed());
           for (ArticleBaseDto bySourceAndDateAndInterest : temp) {
             if (bySourceAndDateAndInterest.getPublishDate().isBefore(newCursor)) {
@@ -399,9 +399,9 @@ public class ArticleServiceImpl implements ArticleService {
             newNextCursor = newResult.get(req.getSize()).getPublishDate();
             newResult = newResult.subList(0, req.getSize());
 
-            System.out.println("newNextAfter = " + newNextAfter);
-            System.out.println("newNextCursor = " + newNextCursor);
-            System.out.println("newResult.size() = " + newResult.size());
+            // System.out.println("newNextAfter = " + newNextAfter);
+            // System.out.println("newNextCursor = " + newNextCursor);
+            // System.out.println("newResult.size() = " + newResult.size());
             response.setArticles(newResult);
           } else {
             newNextAfter = null;
@@ -423,8 +423,8 @@ public class ArticleServiceImpl implements ArticleService {
           response.setNextAfter(newNextCursor);
           response.setNextCursor(newNextCursor.toString());
         }
-        System.out.println("newNextAfter = " + newNextAfter);
-        System.out.println("newNextCursor = " + newNextCursor);
+        // System.out.println("newNextAfter = " + newNextAfter);
+        // System.out.println("newNextCursor = " + newNextCursor);
 
         response.setLimit(req.getSize());
         return response;
@@ -491,7 +491,7 @@ public class ArticleServiceImpl implements ArticleService {
           nextCursor = req.getCursor() != null ? articles.get(articles.size() - 1).getCommentCount() : 0;
           response.setNextAfter(articles.get(0).getDate());
         }else {
-          System.out.println(" setNextAfter null 설정 ");
+          //System.out.println(" setNextAfter null 설정 ");
           response.setNextAfter(null);
         }
         
@@ -502,7 +502,7 @@ public class ArticleServiceImpl implements ArticleService {
           Article nextArticle = req.getDirection() == Direction.ASC ? articleRepository.findByCommentCursorAsc(nextCursor, pageable).isEmpty()
               ? null : articleRepository.findByCommentCursorAsc(nextCursor, pageable).get(0)
               : articleRepository.findByCommentCursorDesc(nextCursor, pageable).isEmpty() ? null : articleRepository.findByCommentCursorDesc(nextCursor, pageable).get(0);
-          System.out.println("nextArticle = " + nextArticle);
+          //System.out.println("nextArticle = " + nextArticle);
           response.setHasNext("true");
           response.setNextCursor(String.valueOf(nextCursor));
           //response.setNextAfter(nextArticle != null ? nextArticle.getDate() : null);
@@ -549,8 +549,8 @@ public class ArticleServiceImpl implements ArticleService {
     List<UUID> result = new ArrayList<>();
     Queue<Article> queue = new LinkedList<>();
     while (localStartDate.isBefore(localEndDate)) {
-      System.out.println("localStartDate = " + localStartDate);
-      System.out.println("localEndDate = " + localEndDate);
+      // System.out.println("localStartDate = " + localStartDate);
+      // System.out.println("localEndDate = " + localEndDate);
       File file = new File("articles_" + localStartDate + "temp.json");
       JSONArray jsonArray;
       try {
