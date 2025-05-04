@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserService {
             .build();
         User savedUser = userRepository.save(user); // repository save된 버전 = DB에 저장된 버전을 return해야 반환값에 id랑 createdAt이 채워진다
         userActivityServiceInterface.createUserActivity(savedUser.getCreatedAt(),savedUser.getId(),savedUser.getNickname(),savedUser.getEmail());// 유저 생성에 맞춰 유저 활동내역 생성
-
         return UserDto.fromEntity(savedUser);
     }
   
