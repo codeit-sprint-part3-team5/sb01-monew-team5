@@ -95,3 +95,4 @@ jacocoTestReport {
         html.required = true
     }
 }
+

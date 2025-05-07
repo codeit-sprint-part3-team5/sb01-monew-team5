@@ -1,0 +1,24 @@
+<configuration>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="MONGODB" class="com.example.part35teammonew.log.MongoDBAppender">
+    <host>localhost</host>
+    <port>27017</port>
+    <dbName>monew-log</dbName>
+    <collectionName>logs</collectionName>
+  </appender>
+
+  <logger name="com.example" level="INFO" additivity="false">
+    <appender-ref ref="MONGODB"/>
+  </logger>
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>

@@ -36,14 +36,14 @@ public class UserServiceImpl implements UserService {
 		String encryptedPassword = passwordEncoder.encode(request.getPassword());
 
 		User user = User.builder()
-			.email(request.getEmail())
-			.nickname(request.getNickname())
-			.password(encryptedPassword)
-			.build();
+				.email(request.getEmail())
+				.nickname(request.getNickname())
+				.password(encryptedPassword)
+				.build();
 		User savedUser = userRepository.save(
-			user); // repository save된 버전 = DB에 저장된 버전을 return해야 반환값에 id랑 createdAt이 채워진다
+				user); // repository save된 버전 = DB에 저장된 버전을 return해야 반환값에 id랑 createdAt이 채워진다
 		userActivityServiceInterface.createUserActivity(savedUser.getCreatedAt(), savedUser.getId(),
-			savedUser.getNickname(), savedUser.getEmail());// 유저 생성에 맞춰 유저 활동내역 생성
+				savedUser.getNickname(), savedUser.getEmail());// 유저 생성에 맞춰 유저 활동내역 생성
 
 		return UserDto.fromEntity(savedUser);
 	}
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 	public UserDto login(UserLoginRequest request) {
 		// 이메일로 사용자 검색 (논리 삭제가 되지 않은 사용자여야 함)
 		User user = userRepository.findByEmailAndIsDeletedFalse(request.getEmail())
-			.orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
+				.orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
 
 		// 비밀번호 검증
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDto update(UUID userId, UserUpdateRequest request) {
 		User user = userRepository.findById(userId)
-			.orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
+				.orElseThrow(); // TODO 커스텀 예외 추가 후 수정 예정
 		user.updateNickname(request.getNickname());
 
 		userActivityServiceInterface.updateUserInformation(userId, new UserInfoDto(request.getNickname()));
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteLogical(UUID userId) {
 		User user = userRepository.findById(userId)
-			.orElseThrow();
+				.orElseThrow();
 		user.deleteLogical();
 		userRepository.save(user);
 	}
