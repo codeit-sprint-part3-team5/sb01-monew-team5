@@ -46,7 +46,11 @@ public class SecurityConfig {
                                 "/api/comments/{commentId}/hard",
                                 "/api/user-activities/{userId}",
                                 "/api/notifications/{notificationId}",
-                                "/api/notifications"
+                                "/api/notifications",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
