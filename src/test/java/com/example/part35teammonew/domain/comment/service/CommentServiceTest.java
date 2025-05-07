@@ -202,7 +202,6 @@ class CommentServiceTest {
     verify(userActivityServiceInterface, times(1)).addRecentCommentView(any(UUID.class), any());
   }
 
-  // 나머지 테스트 메소드는 동일하게 유지
   @Test
   @Order(2)
   @DisplayName("댓글 수정 기능 테스트")
