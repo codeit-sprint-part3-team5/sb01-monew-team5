@@ -17,7 +17,8 @@ class NotificationTest {
     String content = "그르륷";
     UUID resourceId = UUID.randomUUID();
     UUID userId = UUID.randomUUID();
-    Notification notification = Notification.createCommentNotice(userId, content, resourceId);
+    Instant time=Instant.now();
+    Notification notification = Notification.createCommentNotice(userId, content, resourceId,time);
 
     assertThat(notification.getType()).isEqualTo(NotificationType.COMMENT);
     assertThat(notification.getContent()).isEqualTo(content);
@@ -33,8 +34,8 @@ class NotificationTest {
     String content = "크르릉컹";
     UUID resourceId = UUID.randomUUID();
     UUID userId = UUID.randomUUID();
-
-    Notification notification = Notification.createNewsNotice(userId, content, resourceId);
+    Instant time=Instant.now();
+    Notification notification = Notification.createNewsNotice(userId, content, resourceId,time);
 
     assertThat(notification.getType()).isEqualTo(NotificationType.NEWS);
     assertThat(notification.getContent()).isEqualTo(content);
@@ -44,5 +45,5 @@ class NotificationTest {
     assertThat(notification.getCreatedAt()).isBeforeOrEqualTo(Instant.now());
   }
 
-  
+
 }

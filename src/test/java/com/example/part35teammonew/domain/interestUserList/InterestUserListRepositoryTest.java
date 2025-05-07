@@ -8,10 +8,13 @@ import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@DataMongoTest
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class InterestUserListRepositoryTest {
 
   @Autowired

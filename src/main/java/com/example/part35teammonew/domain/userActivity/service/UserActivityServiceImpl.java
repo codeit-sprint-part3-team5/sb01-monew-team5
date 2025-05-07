@@ -154,7 +154,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       log.info("유저 활동 삭제 완료: {}", id);
     } catch (Exception e) {
       log.error("유저 활동 삭제 중 예외 발생: {}", id, e);
-      throw new RuntimeException("유저 활동 삭제 중 예기치 못한 오류가 발생했습니다.", e);
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_DELETE_FOUND, "기사 정보 추가 중 오류가 발생했습니다.");
     }
 
 

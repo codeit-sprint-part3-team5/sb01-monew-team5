@@ -17,9 +17,12 @@ public class ArticleView {
 
   @Id
   private ObjectId id;
-  private final UUID articleId;
+  private UUID articleId;
   private Long count;
   private Set<UUID> readUserIds;
+
+  protected ArticleView() {
+  }
 
 
   @Builder

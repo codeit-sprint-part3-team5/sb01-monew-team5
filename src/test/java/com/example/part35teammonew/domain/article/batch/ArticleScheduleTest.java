@@ -154,7 +154,7 @@ class ArticleScheduleTest {
     // DB에서 얻은 고유 article key
     Set<String> dbKeys = new HashSet<>();
     for (ArticleBaseDto article : articleService.findAll()) {
-      dbKeys.add(article.getTitle() + "::" + article.getDate().toString());
+      dbKeys.add(article.getTitle() + "::" + article.getPublishDate().toString());
     }
 
     // 🔍 S3엔 있는데 DB엔 없는 것

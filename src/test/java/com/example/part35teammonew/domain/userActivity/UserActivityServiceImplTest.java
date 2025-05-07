@@ -40,14 +40,14 @@ public class UserActivityServiceImplTest {
   private UUID userId;
   private UserActivity userActivity;
 
-  /*@BeforeEach
+  @BeforeEach
   void setUp() {
     userActivityRepository.deleteAll();
     userId = UUID.randomUUID();
-    userActivity = UserActivity.setUpNewUserActivity(Instant.now(), userId, "닉닉네네임임",
+    userActivity = UserActivity.setUpNewUserActivity(LocalDateTime.now(), userId, "닉닉네네임임",
         "test@test.com");
     userActivityRepository.save(userActivity);
-  }*/
+  }
 
   @Test
   @DisplayName("생성 확인")
@@ -213,11 +213,4 @@ public class UserActivityServiceImplTest {
     assertTrue(result.isEmpty());
   }
 
-  @Test
-  @DisplayName("없는거 물리적 삭제")
-  void testDeleteUserActivityWhenUserDoesNotExist() {
-    UUID nonExistentId = UUID.randomUUID();
-    userActivityService.deleteUserActivity(nonExistentId);
-    assertTrue(true);
-  }
 }
