@@ -16,26 +16,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class InterestDto {
-	private UUID id;
 
-	private String name;
+  private UUID id;
 
-	private List<String> keywords;
+  private String name;
 
-	private long subscriberCount;
+  private List<String> keywords;
 
-	private boolean subscribedByMe;
+  private long subscriberCount;
 
-	public static InterestDto toDto(Interest interest) {
-		List<String> keywordList = Arrays.stream(interest.getKeywords().split(","))
-			.map(String::strip)
-			.toList();
-		return new InterestDto(
-			interest.getId(),
-			interest.getName(),
-			keywordList,
-			interest.getSubscriberCount(),
-			interest.isSubscribedMe()
-		);
-	}
+  private boolean subscribedByMe;
+
+  public static InterestDto toDto(Interest interest) {
+    List<String> keywordList = Arrays.stream(interest.getKeywords().split(","))
+        .map(String::strip)
+        .toList();
+    return new InterestDto(
+        interest.getId(),
+        interest.getName(),
+        keywordList,
+        interest.getSubscriberCount(),
+        interest.isSubscribedMe()
+    );
+  }
 }

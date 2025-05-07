@@ -16,12 +16,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InterestCreateRequest {
 
-	@NotBlank
-	@Size(min = 2, max = 50)
-	private String name;
+  @NotBlank
+  @Size(min = 2, max = 50)
+  private String name;
 
-	@NotNull
-	@Size(min = 1)
-	private List<@NotBlank String> keywords;
+  @NotNull
+  @Size(min = 1)
+  private List<@NotBlank String> keywords;
 
 }

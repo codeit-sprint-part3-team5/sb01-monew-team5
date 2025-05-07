@@ -34,61 +34,61 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class InterestController {
 
-	private final InterestService interestService;
+  private final InterestService interestService;
 
-	@PostMapping
-	public ResponseEntity<InterestDto> create(@RequestBody @Valid InterestCreateRequest request) {
-		InterestDto dto = interestService.createInterest(request);
-		return new ResponseEntity<>(dto, HttpStatus.CREATED);
-	}
+  @PostMapping
+  public ResponseEntity<InterestDto> create(@RequestBody @Valid InterestCreateRequest request) {
+    InterestDto dto = interestService.createInterest(request);
+    return new ResponseEntity<>(dto, HttpStatus.CREATED);
+  }
 
-	@PatchMapping("{interestId}")
-	public ResponseEntity<InterestDto> updateKeywords(@PathVariable UUID interestId,
-		@RequestBody @Valid InterestUpdateRequest request) {
-		InterestDto dto = interestService.updateKeywords(interestId, request.getKeywords());
-		return new ResponseEntity<>(dto, HttpStatus.OK);
-	}
+  @PatchMapping("{interestId}")
+  public ResponseEntity<InterestDto> updateKeywords(@PathVariable UUID interestId,
+      @RequestBody @Valid InterestUpdateRequest request) {
+    InterestDto dto = interestService.updateKeywords(interestId, request.getKeywords());
+    return new ResponseEntity<>(dto, HttpStatus.OK);
+  }
 
-	@DeleteMapping("{interestId}")
-	public ResponseEntity<InterestDto> delete(@PathVariable UUID interestId) {
-		interestService.deleteInterest(interestId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+  @DeleteMapping("{interestId}")
+  public ResponseEntity<InterestDto> delete(@PathVariable UUID interestId) {
+    interestService.deleteInterest(interestId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 
-	@PostMapping("{interestId}/subscriptions")
-	public ResponseEntity<Void> subscribe(@PathVariable UUID interestId,
-		@RequestHeader("Monew-Request-User-ID") UUID userId) {
-		interestService.subscribe(interestId, userId);
-		return new ResponseEntity<>(HttpStatus.OK);
-	}
+  @PostMapping("{interestId}/subscriptions")
+  public ResponseEntity<Void> subscribe(@PathVariable UUID interestId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId) {
+    interestService.subscribe(interestId, userId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
-	@GetMapping
-	public ResponseEntity<PageResponse<InterestDto>> listInterests(
-		@RequestParam(required = false) String keyword,
-		@RequestParam String orderBy,
-		@RequestParam String direction,
-		@RequestParam(required = false) String cursor,
-		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-		@RequestParam int limit,
-		@RequestHeader("Monew-Request-User-ID") UUID userId
-	) {
-		InterestPageRequest request = new InterestPageRequest(
-			keyword,
-			orderBy,
-			direction,
-			cursor,
-			after,
-			limit,
-			userId
-		);
-		PageResponse<InterestDto> result = interestService.listInterests(request);
-		return ResponseEntity.ok(result);
-	}
+  @GetMapping
+  public ResponseEntity<PageResponse<InterestDto>> listInterests(
+      @RequestParam(required = false) String keyword,
+      @RequestParam String orderBy,
+      @RequestParam String direction,
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
+      @RequestParam int limit,
+      @RequestHeader("Monew-Request-User-ID") UUID userId
+  ) {
+    InterestPageRequest request = new InterestPageRequest(
+        keyword,
+        orderBy,
+        direction,
+        cursor,
+        after,
+        limit,
+        userId
+    );
+    PageResponse<InterestDto> result = interestService.listInterests(request);
+    return ResponseEntity.ok(result);
+  }
 
-	@DeleteMapping("{interestId}/subscriptions")
-	public ResponseEntity<Void> unsubscribe(@PathVariable UUID interestId,
-		@RequestHeader("Monew-Request-User-ID") UUID userId) {
-		interestService.unsubscribe(interestId, userId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+  @DeleteMapping("{interestId}/subscriptions")
+  public ResponseEntity<Void> unsubscribe(@PathVariable UUID interestId,
+      @RequestHeader("Monew-Request-User-ID") UUID userId) {
+    interestService.unsubscribe(interestId, userId);
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
 }
