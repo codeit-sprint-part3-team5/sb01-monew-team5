@@ -1,6 +1,7 @@
 package com.example.part35teammonew.domain.userActivity.controller;
 
 import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
+import com.example.part35teammonew.domain.userActivity.controller.docs.UserActivityApi;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 
 import java.util.UUID;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user-activities")
-public class UserActivityController {
+public class UserActivityController implements UserActivityApi {
 
 	private final UserActivityServiceInterface userActivityServiceInterface;
 

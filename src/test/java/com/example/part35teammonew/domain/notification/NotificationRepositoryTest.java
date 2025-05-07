@@ -1,10 +1,11 @@
-package com.example.part35teammonew.notification;
+package com.example.part35teammonew.domain.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.part35teammonew.domain.notification.Enum.NotificationType;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,7 +26,8 @@ public class NotificationRepositoryTest {
   void saveCommentNotice_success() {
     UUID userId = UUID.randomUUID();
     UUID resourceId = UUID.randomUUID();
-    Notification notification = Notification.createCommentNotice(userId, "댓글", resourceId);
+    Instant time=Instant.now();
+    Notification notification = Notification.createCommentNotice(userId, "댓글", resourceId,time);
 
     Notification saved = noticeRepository.save(notification);
 
@@ -41,8 +43,9 @@ public class NotificationRepositoryTest {
   void findNoticeById_success() {
     UUID userId = UUID.randomUUID();
     UUID resourceId = UUID.randomUUID();
+    Instant time=Instant.now();
     Notification saved = noticeRepository.save(
-        Notification.createNewsNotice(userId, "뉴스", resourceId));
+        Notification.createNewsNotice(userId, "뉴스", resourceId,time));
 
     Optional<Notification> found = noticeRepository.findById(saved.getId());
 
@@ -55,12 +58,13 @@ public class NotificationRepositoryTest {
   @DisplayName("userId로 알림 조회")
   void findAllByUserIdAndConfirmedIsFalse_success() {
     UUID userId = UUID.randomUUID();
-    Notification n1 = Notification.createNewsNotice(userId, "뉴스1", UUID.randomUUID());
-    Notification n2 = Notification.createCommentNotice(userId, "댓글2", UUID.randomUUID());
+    Instant time=Instant.now();
+    Notification n1 = Notification.createNewsNotice(userId, "뉴스1", UUID.randomUUID(),time);
+    Notification n2 = Notification.createCommentNotice(userId, "댓글2", UUID.randomUUID(),time);
     n1.confirmedRead();
     noticeRepository.save(n1);
     noticeRepository.save(n2);
-    
+
     var result = noticeRepository.findAllByUserIdAndConfirmedIsFalse(userId);
 
     assertThat(result).hasSize(1);
