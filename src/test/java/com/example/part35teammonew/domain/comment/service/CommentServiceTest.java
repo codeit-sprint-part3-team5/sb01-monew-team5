@@ -17,13 +17,15 @@ import com.example.part35teammonew.domain.comment.repository.CommentRepository;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 
+import com.example.part35teammonew.domain.userActivity.maper.RecentCommentMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
+import com.example.part35teammonew.exeception.RestApiException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -57,6 +59,12 @@ class CommentServiceTest {
 
   @Mock
   private CommentMapper commentMapper;
+
+  @Mock
+  private RecentCommentMapper recentCommentMapper;
+
+  @Mock
+  private UserActivityServiceInterface userActivityServiceInterface;
 
   private User testUser;
   private Article testArticle;
@@ -123,6 +131,9 @@ class CommentServiceTest {
           .build();
     });
 
+    // userActivityServiceInterface 모킹 추가
+    doNothing().when(userActivityServiceInterface).addRecentCommentView(any(UUID.class), any());
+
     // 기본 모킹 설정
     setupMocks();
   }
@@ -160,6 +171,7 @@ class CommentServiceTest {
     when(commentRepository.findById(any(UUID.class))).thenReturn(Optional.of(testComment));
     when(commentRepository.existsById(any(UUID.class))).thenReturn(true);
 
+
     // CommentLike 서비스 모킹
     when(commentLikeService.hasLiked(any(UUID.class), any(UUID.class))).thenReturn(false);
   }
@@ -187,8 +199,10 @@ class CommentServiceTest {
     assertFalse(result.isLikedByMe());
 
     verify(commentRepository, times(1)).save(any(Comment.class));
+    verify(userActivityServiceInterface, times(1)).addRecentCommentView(any(UUID.class), any());
   }
 
+  // 나머지 테스트 메소드는 동일하게 유지
   @Test
   @Order(2)
   @DisplayName("댓글 수정 기능 테스트")
@@ -212,6 +226,21 @@ class CommentServiceTest {
 
   @Test
   @Order(3)
+  @DisplayName("다른 사용자의 댓글 수정 시 권한 오류 발생")
+  void updateComment_unauthorized() {
+    // given
+    CommentUpdateRequest request = new CommentUpdateRequest();
+    request.setContent("수정된 댓글");
+    UUID otherUserId = UUID.randomUUID(); // 댓글 작성자와 다른 ID
+
+    // when & then
+    assertThrows(RestApiException.class, () -> {
+      commentService.updateComment(testCommentId, request, otherUserId);
+    }, "댓글 작성자만 수정할 수 있습니다");
+  }
+
+  @Test
+  @Order(4)
   @DisplayName("댓글 논리 삭제 기능 테스트")
   void deleteComment() {
     // given
@@ -230,7 +259,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(4)
+  @Order(5)
   @DisplayName("댓글 좋아요 수 조회 기능 테스트")
   void countLikes() {
     // given
@@ -244,7 +273,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(5)
+  @Order(6)
   @DisplayName("댓글 목록 조회 기능 테스트 - 생성일시 기준 내림차순")
   void getComments_orderByCreatedAtDesc() {
     // given
@@ -344,7 +373,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(6)
+  @Order(7)
   @DisplayName("댓글 목록 조회 기능 테스트 - 좋아요 수 기준 내림차순")
   void getComments_orderByLikesDesc() {
     // given
@@ -440,7 +469,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(7)
+  @Order(8)
   @DisplayName("개별 댓글 조회 기능 테스트")
   void getComment() {
     // given
@@ -459,7 +488,7 @@ class CommentServiceTest {
   }
 
   @Test
-  @Order(8)
+  @Order(9)
   @DisplayName("댓글에 좋아요 여부 확인 기능 테스트")
   void getComment_withLikeStatus() {
     // given
