@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "UserActivity", description = "유저 활동 조회 API")
 public interface UserActivityApi {
   @Operation(summary = "사용자 활동내역 조회", description = "사용자 ID로 활동 내역을 조회합니다")
   @ApiResponses(value = {
