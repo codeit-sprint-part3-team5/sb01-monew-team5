@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ import com.example.part35teammonew.exeception.errorcode.InterestErrorCode;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InterestServiceImpl implements InterestService {
@@ -42,6 +44,7 @@ public class InterestServiceImpl implements InterestService {
   @Override
   public boolean isNameTooSimilar(String name) {
 
+    log.debug("관심사 이름 유사도 측정 : {}", name);
     List<String> existingNames = interestRepository.findAllNames();
 
     String newName = name.strip().toLowerCase();
@@ -84,8 +87,8 @@ public class InterestServiceImpl implements InterestService {
     Interest savedInterest = interestRepository.save(toSave);
     interestUserListServiceInterface.createInterestList(savedInterest.getId());
 
-    //DTO 변환 todo: 나중에 mapper 클래스 생성하면 리팩토링
-    List<String> keywordsList = request.getKeywords();
+    log.info("관심사 생성 성공 : interestId = {}", savedInterest.getId());
+
     return InterestDto.toDto(savedInterest);
 
   }
@@ -94,14 +97,16 @@ public class InterestServiceImpl implements InterestService {
   @Transactional
   public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
     Interest interest = interestRepository.findById(interestId)
-        .orElseThrow(
-            () -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "키워드 수정에 실패 했습니다."));
+        .orElseThrow(() -> {
+          log.debug("존재하지 않는 관심사 : {}", interestId);
+          return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "키워드 수정에 실패 했습니다.");
+        });
 
     interest.setKeywords(String.join(",", newKeywords));
     Interest saved = interestRepository.save(interest);
     InterestDto interestDto = InterestDto.toDto(interest);
 
-    //여기서 구독중인 모든 유저 어기
+    //여기서 구독중인 모든 유저 확인
     List<UUID> userListNowSub = interestUserListServiceInterface.getAllUserNowSubscribe(interestId);
     //구독중인 모든 유저 활동내역 변경
     for (UUID userId : userListNowSub) {
@@ -109,7 +114,7 @@ public class InterestServiceImpl implements InterestService {
           interestViewMapper.toDto(interestDto));
       userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
     }
-
+    log.info("관심사 업데이트 완료 : interestId = {}, 새로운 키워드 = {}", saved.getId(), newKeywords);
     return InterestDto.toDto(saved);
   }
 
@@ -117,8 +122,11 @@ public class InterestServiceImpl implements InterestService {
   @Transactional
   public void deleteInterest(UUID interestId) {
     Interest interest = interestRepository.findById(interestId)
-        .orElseThrow(
-            () -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "관심사 삭제에 실패 했습니다."));
+        .orElseThrow(() -> {
+          log.debug("존재하지 않는 관심사 : {}", interestId);
+          return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "관심사 삭제에 실패 했습니다.");
+        });
+
     interestRepository.delete(interest);
   }
 
@@ -129,12 +137,13 @@ public class InterestServiceImpl implements InterestService {
     return interestList.stream()
         .flatMap(interest -> {
           if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
+            log.debug("키워드가 비워져 있습니다 : interestId = {}", interest.getId());
             throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
           }
           List<String> keywords = Stream.of(interest.getKeywords().split(","))
               .map(String::trim)
               .toList();
-
+          log.info("관심사 전체 리스트 반환 완료");
           // 이름  키워드를 하나의 스트림으로
           return Stream.concat(
               Stream.of(interest.getName().strip()),
@@ -159,6 +168,9 @@ public class InterestServiceImpl implements InterestService {
 
     String keyword = req.keyword();
     boolean isSearching = keyword != null && !keyword.trim().isEmpty();
+
+    log.info("커서 요청 수신 - 관심사 목록 조회: 정렬 = {}, 방향 = {}, 검색어 = {}, 커서 = {}", orderBy, direction,
+        keyword, req.safeCursor());
 
     int limit;
     if (isSearching) {
@@ -190,18 +202,17 @@ public class InterestServiceImpl implements InterestService {
 
       LocalDateTime after = (rawCursor == null) ? null : req.after();
 
+      log.debug("커서 기반 페이지네이션 적용 - orderBy = {}, cursor = {}, after = {}", orderBy, rawCursor,
+          after);
+
       if (orderBy.equalsIgnoreCase("name")) {
-        if (direction == Sort.Direction.ASC) {
-          interests = interestRepository.findByNameAfter(nameCursor, after, pageable);
-        } else {
-          interests = interestRepository.findByNameBefore(nameCursor, after, pageable);
-        }
+        interests = direction == Sort.Direction.ASC
+            ? interestRepository.findByNameAfter(nameCursor, after, pageable)
+            : interestRepository.findByNameBefore(nameCursor, after, pageable);
       } else if (orderBy.equalsIgnoreCase("subscriberCount")) {
-        if (direction == Sort.Direction.ASC) {
-          interests = interestRepository.findBySubscriberCountAfter(countCursor, after, pageable);
-        } else {
-          interests = interestRepository.findBySubscriberCountBefore(countCursor, after, pageable);
-        }
+        interests = direction == Sort.Direction.ASC
+            ? interestRepository.findBySubscriberCountAfter(countCursor, after, pageable)
+            : interestRepository.findBySubscriberCountBefore(countCursor, after, pageable);
       } else {
         throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
       }
@@ -223,6 +234,8 @@ public class InterestServiceImpl implements InterestService {
         .map(i -> mapToDtoWithSubscription(i, req.userId()))
         .toList();
 
+    log.info("관심사 조회 완료 - 조회 건수 = {}, hasNext = {}, nextCursor = {}", content.size(), hasNext,
+        nextCursor);
     return new PageResponse<>(
         content,
         nextCursor,
@@ -235,24 +248,29 @@ public class InterestServiceImpl implements InterestService {
 
   @Override
   public void subscribe(UUID interestId, UUID userId) {
-    Interest interest = interestRepository.findById(interestId).orElseThrow(
-        () -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다."));
+    Interest interest = interestRepository.findById(interestId).orElseThrow(() -> {
+      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다.");
+    });
 
     if (interestUserListServiceInterface.addSubscribedUser(interestId, userId)) {
       interest.setSubscriberCount(interest.getSubscriberCount() + 1);
       InterestDto interestDto = InterestDto.toDto(interest);
       userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
     } else {
+      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
       throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다.");
     }
+    log.info("관심사 구독 완료 : interestId = {}, userId = {}", interestId, userId);
     interestRepository.save(interest);
   }
 
   @Override
   public void unsubscribe(UUID interestId, UUID userId) {
-    Interest interest = interestRepository.findById(interestId)
-        .orElseThrow(
-            () -> new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다."));
+    Interest interest = interestRepository.findById(interestId).orElseThrow(() -> {
+      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다.");
+    });
 
     if (interestUserListServiceInterface.subtractSubscribedUser(interestId, userId)) {
       long count = interest.getSubscriberCount();
@@ -261,9 +279,10 @@ public class InterestServiceImpl implements InterestService {
       userActivityServiceInterface.subtractInterestView(userId,
           interestViewMapper.toDto(interestDto));
     } else {
+      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
       throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다.");
     }
-
+    log.info("관심사 해제 구독 완료 : interestId = {}, userId = {}", interestId, userId);
     interestRepository.save(interest);
   }
 
