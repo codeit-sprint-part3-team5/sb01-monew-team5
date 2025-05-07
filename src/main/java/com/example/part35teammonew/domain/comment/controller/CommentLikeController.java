@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.comment.controller;
 
+import com.example.part35teammonew.domain.comment.controller.docs.CommentLikeApi;
 import com.example.part35teammonew.domain.comment.dto.CommentLikeResponse;
 import com.example.part35teammonew.domain.comment.service.CommentLikeService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
-public class CommentLikeController {
+public class CommentLikeController implements CommentLikeApi {
 
   private final CommentLikeService commentLikeService;
 

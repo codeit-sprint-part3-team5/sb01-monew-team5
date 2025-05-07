@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.comment.controller;
 
+import com.example.part35teammonew.domain.comment.controller.docs.CommentApi;
 import com.example.part35teammonew.domain.comment.dto.CommentCreateRequest;
 import com.example.part35teammonew.domain.comment.dto.CommentDto;
 import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentController implements CommentApi {
 
   private final CommentService commentService;
 
@@ -32,7 +33,7 @@ public class CommentController {
       @RequestParam(defaultValue = "DESC") String direction, //정렬 기본 방향: 내림차순 (최신 댓글이 위로 감)
       @RequestParam(required = false) String cursor, // 커서 기반 페이지네이션 기준이 되는 댓글 ID
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-      @RequestParam(defaultValue = "10") Integer limit, // 조회할 댓글 수 제한
+      @RequestParam(defaultValue = "50") Integer limit, // 조회할 댓글 수 제한
       @RequestHeader("Monew-Request-User-ID") UUID requestUserId) { // 요청 사용자 ID (헤더)
 
     log.info("댓글 목록 조회 요청: articleId={}, orderBy={}, direction={}, cursor={}, after={}, limit={}, requestUserId={}",
