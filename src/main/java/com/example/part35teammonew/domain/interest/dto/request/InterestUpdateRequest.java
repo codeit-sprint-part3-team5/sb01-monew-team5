@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InterestUpdateRequest {
 
-	@NotNull
-	@Size(min = 1)
-	private List<@NotBlank String> keywords;
+  @NotNull
+  @Size(min = 1)
+  private List<@NotBlank String> keywords;
 }
