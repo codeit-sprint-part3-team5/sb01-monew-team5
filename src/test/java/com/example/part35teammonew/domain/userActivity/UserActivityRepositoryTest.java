@@ -1,4 +1,4 @@
-package com.example.part35teammonew.userActivity;
+package com.example.part35teammonew.domain.userActivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

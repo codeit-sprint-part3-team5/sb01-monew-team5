@@ -1,4 +1,4 @@
-package com.example.part35teammonew.interestUserList;
+package com.example.part35teammonew.domain.interestUserList;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 

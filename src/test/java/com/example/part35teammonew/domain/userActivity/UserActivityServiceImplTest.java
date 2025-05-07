@@ -1,4 +1,4 @@
-package com.example.part35teammonew.userActivity;
+package com.example.part35teammonew.domain.userActivity;
 
 import static org.bson.assertions.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;

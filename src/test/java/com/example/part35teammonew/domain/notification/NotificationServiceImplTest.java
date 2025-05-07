@@ -1,4 +1,4 @@
-package com.example.part35teammonew.notification;
+package com.example.part35teammonew.domain.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

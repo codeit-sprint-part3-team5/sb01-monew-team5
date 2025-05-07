@@ -1,4 +1,4 @@
-package com.example.part35teammonew.articleView;
+package com.example.part35teammonew.domain.articleView;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
