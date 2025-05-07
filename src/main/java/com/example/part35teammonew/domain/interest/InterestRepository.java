@@ -1,4 +1,4 @@
-package com.example.part35teammonew.domain.interest.repository;
+package com.example.part35teammonew.domain.interest;
 
 import java.time.LocalDateTime;
 import java.util.List;

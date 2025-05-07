@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,7 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.domain.interest.InterestRepository;
+import com.example.part35teammonew.exeception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestDeleteServiceTest {
@@ -34,8 +36,7 @@ public class InterestDeleteServiceTest {
 
 		//when then
 		assertThatThrownBy(() -> interestService.deleteInterest(id))
-			.isInstanceOf(InterestNotFoundException.class)
-			.hasMessageContaining("관심사를 찾을 수 없습니다: id 오류");
+			.isInstanceOf(RestApiException.class);
 
 		verify(interestRepository, never()).deleteById(any());
 	}

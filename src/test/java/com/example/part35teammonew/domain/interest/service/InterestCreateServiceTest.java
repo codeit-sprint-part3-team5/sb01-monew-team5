@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
+import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,13 +20,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.domain.interest.InterestRepository;
+import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListDto;
+import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
+import com.example.part35teammonew.exeception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestCreateServiceTest {
 
 	@Mock
 	private InterestRepository interestRepository;
+
+	@Mock
+	private InterestUserListServiceInterface userListService;
 
 	@InjectMocks
 	private InterestServiceImpl interestService;
@@ -40,7 +48,9 @@ public class InterestCreateServiceTest {
 		saved.setId(interestId);
 		saved.setName("여행");
 		saved.setKeywords("제주도,서울,부산");
+		InterestUserListDto interestUserListDto = new InterestUserListDto(saved.getId(), new HashSet<UUID>());
 		given(interestRepository.save(any(Interest.class))).willReturn(saved);
+		given(userListService.createInterestList(saved.getId())).willReturn(interestUserListDto);
 
 		//when
 		InterestDto dto = interestService.createInterest(req);
@@ -72,8 +82,7 @@ public class InterestCreateServiceTest {
 
 		//when & then
 		assertThatThrownBy(() -> interestService.createInterest(req))
-			.isInstanceOf(DuplicateInterestNameException.class)
-			.hasMessageContaining("관심사 이름의 유사도가 80% 이상입니다.");
+			.isInstanceOf(RestApiException.class);
 
 		verify(interestRepository, never()).save(any(Interest.class));
 	}

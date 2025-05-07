@@ -11,7 +11,7 @@ import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.domain.interest.InterestRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
