@@ -35,7 +35,7 @@ class NotificationServiceImplTest {
     NotificationDto dto = notificationService.addNewsNotice(userId, "뉴스", resourceId);
 
     assertThat(dto).isNotNull();
-    assertThat(dto.content()).isEqualTo("뉴스");
+    assertThat(dto.getContent()).isEqualTo("뉴스");
   }
 
   @Test
@@ -47,7 +47,7 @@ class NotificationServiceImplTest {
     NotificationDto dto = notificationService.addCommentNotice(userId, "댓글", resourceId);
 
     assertThat(dto).isNotNull();
-    assertThat(dto.content()).isEqualTo("댓글");
+    assertThat(dto.getContent()).isEqualTo("댓글");
   }
 
   @Test
@@ -162,7 +162,7 @@ class NotificationServiceImplTest {
         new CursorPageRequest(firstPage.getNextCursor(), LocalDateTime.now().minusDays(1), 2));
 
     assertThat(nextPage.getContent()).hasSize(1);
-    assertThat(nextPage.getContent().get(0).content()).isEqualTo("A");
+    assertThat(nextPage.getContent().get(0).getContent()).isEqualTo("A");
   }
 
   @Test
@@ -184,15 +184,15 @@ class NotificationServiceImplTest {
     var page1 = notificationService.getNoticePage(userId, firstPageRequest);
 
     assertThat(page1.getContent()).hasSize(2);
-    assertThat(page1.getContent().get(0).content()).isEqualTo("알림3");
-    assertThat(page1.getContent().get(1).content()).isEqualTo("알림2");
+    assertThat(page1.getContent().get(0).getContent()).isEqualTo("알림3");
+    assertThat(page1.getContent().get(1).getContent()).isEqualTo("알림2");
 
     CursorPageRequest secondPageRequest = new CursorPageRequest(page1.getNextCursor(),
         LocalDateTime.now().minusDays(1), 2);
     var page2 = notificationService.getNoticePage(userId, secondPageRequest);
 
     assertThat(page2.getContent()).hasSize(1);
-    assertThat(page2.getContent().get(0).content()).isEqualTo("알림1");
+    assertThat(page2.getContent().get(0).getContent()).isEqualTo("알림1");
     assertThat(page2.isHasNext()).isFalse();
   }
 
@@ -209,7 +209,7 @@ class NotificationServiceImplTest {
     var response = notificationService.getNoticePage(user1,
         new CursorPageRequest(null, LocalDateTime.now().minusDays(1), 10));
     assertThat(response.getContent()).hasSize(1);
-    assertThat(response.getContent().get(0).content()).isEqualTo("user1 알림");
+    assertThat(response.getContent().get(0).getContent()).isEqualTo("user1 알림");
   }
 
 //  @Test  이거 실행할려면 엔티티 필드 바꾸고 테스트 해야함

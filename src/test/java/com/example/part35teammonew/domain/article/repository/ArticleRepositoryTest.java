@@ -2,7 +2,6 @@ package com.example.part35teammonew.domain.article.repository;
 
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.entity.Article;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,15 +21,19 @@ class ArticleRepositoryTest {
 
   private Article createSampleArticle(String title) {
     ArticleBaseDto dto = new ArticleBaseDto(
-        UUID.randomUUID(),
-        title,
-        "summary",
-        "link",
-        "source",
-        LocalDateTime.now(),null, 0
+            UUID.randomUUID(),
+            title,
+            "summary",
+            "link",
+            "source",
+            LocalDateTime.now(),
+            null,         // createdAt
+            0,            // commentCount
+            0L            // viewCount 추가!
     );
     return new Article(dto);
   }
+
 
   @Test
   @Name("저장 로직 테스트")
@@ -67,8 +70,18 @@ class ArticleRepositoryTest {
     Article article = createSampleArticle("original");
     articleRepository.save(article);
 
-    // 수정
-    article.update(new ArticleBaseDto(UUID.randomUUID(),"updated title", "updated summary", "updated link", "updated source", LocalDateTime.now(),null, 0));
+    ArticleBaseDto updateDto = new ArticleBaseDto(
+            UUID.randomUUID(),
+            "updated title",
+            "updated summary",
+            "updated link",
+            "updated source",
+            LocalDateTime.now(),
+            null,
+            0,
+            0L
+    );
+    article.update(updateDto);
     articleRepository.save(article);
 
     Optional<Article> updated = articleRepository.findById(article.getId());

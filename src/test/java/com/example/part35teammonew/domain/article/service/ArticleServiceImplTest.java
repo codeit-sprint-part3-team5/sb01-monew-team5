@@ -368,11 +368,12 @@ class ArticleServiceImplTest {
     String source = "thelec";
     LocalDateTime baseTime = LocalDateTime.of(2025, 4, 22, 10, 0);
 
-    for(int i=0; i<100; i++){
-      ArticleBaseDto articleBaseDto = new ArticleBaseDto(null, "Spring" + i, "내용" + i, "link", source, baseTime.minusHours(i), null, i);
+    for (int i = 0; i < 100; i++) {
+      ArticleBaseDto articleBaseDto = new ArticleBaseDto(null,"Spring" + i,"내용" + i,"link", source, baseTime.minusHours(i), null, i, 0L);
       UUID save = articleServiceImpl.save(articleBaseDto);
-      System.out.println("save "+i+" = " + articleBaseDto);
+      System.out.println("save " + i + " = " + articleBaseDto);
     }
+
 
     // When: createdAt 기준 오름차순 페이징
     ArticleCursorRequest reqDate = new ArticleCursorRequest();
@@ -390,7 +391,7 @@ class ArticleServiceImplTest {
 
     // When: commentCount 기준 내림차순 페이징 (cursor = 30)
     ArticleCursorRequest reqComment = new ArticleCursorRequest();
-    reqComment.setSortField(SortField.COMMENT_COUNT);
+    reqComment.setSortField(SortField.commentCount);
     reqComment.setDirection(Direction.ASC);
     reqComment.setCursor("30");
     reqComment.setSize(10);
