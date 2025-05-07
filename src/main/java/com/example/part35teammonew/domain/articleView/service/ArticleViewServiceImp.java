@@ -6,6 +6,8 @@ import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.ArticleViewErrorCode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,29 +35,41 @@ public class ArticleViewServiceImp implements ArticleViewServiceInterface {
   @Override
   @Transactional  //기사가 만들어 질떄 호출
   public ArticleViewDto createArticleView(UUID articleId) {
-    ArticleView articleView = setUpNewArticleView(articleId);
-    ArticleView saved = articleViewRepository.save(articleView);
-    return articleViewMapper.toDto(saved);
+    try {
+      ArticleView articleView = setUpNewArticleView(articleId);
+      ArticleView saved = articleViewRepository.save(articleView);
+      return articleViewMapper.toDto(saved);
+    } catch (Exception e) {
+      throw new RestApiException(ArticleViewErrorCode.ARTICLE_VIEW_CREATE_ERROR, "기사 조회 기록 생성 중 오류가 발생했습니다.");
+    }
   }
 
   @Override
   @Transactional //유저가 기사 읽을떄 호출
   public boolean addReadUser(UUID articleId, UUID userId) {
-    return articleViewRepository.findByArticleId(articleId)
-        .map(articleView -> {
-          articleView.addNewReader(userId);
-          articleViewRepository.save(articleView);
-          return true;
-        })
-        .orElse(false);
+    try {
+      return articleViewRepository.findByArticleId(articleId)
+          .map(articleView -> {
+            articleView.addNewReader(userId);
+            articleViewRepository.save(articleView);
+            return true;
+          })
+          .orElse(false);
+    } catch (Exception e) {
+      throw new RestApiException(ArticleViewErrorCode.ARTICLE_VIEW_UPDATE_ERROR, "기사 읽음 정보 추가 중 오류가 발생했습니다.");
+    }
   }
 
   @Override
   @Transactional(readOnly = true) //기사의 조회수 호출
   public Long countReadUser(UUID articleId) {
-    return articleViewRepository.findByArticleId(articleId)
-        .map(ArticleView::getCount)
-        .orElse(0L);
+    try {
+      return articleViewRepository.findByArticleId(articleId)
+          .map(ArticleView::getCount)
+          .orElse(0L);
+    } catch (Exception e) {
+      throw new RestApiException(ArticleViewErrorCode.ARTICLE_VIEW_COUNT_ERROR, "기사 조회수 조회 중 오류가 발생했습니다.");
+    }
   }
 
   @Override

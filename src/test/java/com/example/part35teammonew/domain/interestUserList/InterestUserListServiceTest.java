@@ -1,4 +1,4 @@
-package com.example.part35teammonew.interestUserList;
+package com.example.part35teammonew.domain.interestUserList;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -11,15 +11,17 @@ import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-@DataMongoTest
-@Import({InterestUserListServiceImp.class, InterestUserListServiceTest.TestMapperConfig.class})
+@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InterestUserListServiceTest {
 
   @Autowired

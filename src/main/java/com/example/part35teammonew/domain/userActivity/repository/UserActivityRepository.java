@@ -11,4 +11,6 @@ public interface UserActivityRepository extends MongoRepository<UserActivity, Ob
   Optional<UserActivity> findByUserId(UUID userId);
 
   void deleteByUserId(UUID id);
+
+  boolean existsByUserId(UUID id);
 }
