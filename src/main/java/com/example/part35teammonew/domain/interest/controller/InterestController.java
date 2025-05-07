@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.interest.controller;
 
+import com.example.part35teammonew.domain.interest.controller.docs.InterestApi;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -34,10 +35,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/interests")
 @RequiredArgsConstructor
 @Validated
-public class InterestController {
+public class InterestController implements InterestApi {
 
   private final InterestService interestService;
 
+  @Override
   @PostMapping
   public ResponseEntity<InterestDto> create(@RequestBody @Valid InterestCreateRequest request) {
     log.info("POST /api/interests - 관심사 생성 요청 : {} ", request.getName());
@@ -47,6 +49,7 @@ public class InterestController {
   }
 
   @PatchMapping("{interestId}")
+  @Override
   public ResponseEntity<InterestDto> updateKeywords(@PathVariable UUID interestId,
       @RequestBody @Valid InterestUpdateRequest request) {
     log.info("PATCH /api/interests/{} - 키워드 수정 요청 : {} ", interestId, request.getKeywords());
@@ -56,6 +59,7 @@ public class InterestController {
   }
 
   @DeleteMapping("{interestId}")
+  @Override
   public ResponseEntity<InterestDto> delete(@PathVariable UUID interestId) {
     log.info("DELETE /api/interests/{} - 관심사 삭제 요청", interestId);
     interestService.deleteInterest(interestId);
@@ -64,6 +68,7 @@ public class InterestController {
   }
 
   @PostMapping("{interestId}/subscriptions")
+  @Override
   public ResponseEntity<Void> subscribe(@PathVariable UUID interestId,
       @RequestHeader("Monew-Request-User-ID") UUID userId) {
     log.info("POST /api/interests/{}/subscriptions - 구독 요청 user ID : {}", interestId, userId);
@@ -73,6 +78,7 @@ public class InterestController {
   }
 
   @GetMapping
+  @Override
   public ResponseEntity<PageResponse<InterestDto>> listInterests(
       @RequestParam(required = false) String keyword,
       @RequestParam String orderBy,
@@ -82,7 +88,8 @@ public class InterestController {
       @RequestParam int limit,
       @RequestHeader("Monew-Request-User-ID") UUID userId
   ) {
-    log.info("GET /api/interests - 목록 조회 요청: keyword={}, orderBy={}, direction={}, cursor={}, after={}, limit={}",
+    log.info(
+        "GET /api/interests - 목록 조회 요청: keyword={}, orderBy={}, direction={}, cursor={}, after={}, limit={}",
         keyword, orderBy, direction, cursor, after, limit);
 
     InterestPageRequest request = new InterestPageRequest(
@@ -100,6 +107,7 @@ public class InterestController {
   }
 
   @DeleteMapping("{interestId}/subscriptions")
+  @Override
   public ResponseEntity<Void> unsubscribe(@PathVariable UUID interestId,
       @RequestHeader("Monew-Request-User-ID") UUID userId) {
     log.info("POST /api/interests/{}/subscriptions - 구독 해제 요청 user ID : {}", interestId, userId);
