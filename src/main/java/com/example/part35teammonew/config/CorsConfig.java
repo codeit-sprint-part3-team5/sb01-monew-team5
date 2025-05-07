@@ -13,7 +13,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173"); // 이 포트만 허용
+        config.addAllowedOrigin("http://localhost:5175"); // 이 포트만 허용
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization"); // 프론트엔드에서 Authorization 헤더를 읽을 수 있게 함
