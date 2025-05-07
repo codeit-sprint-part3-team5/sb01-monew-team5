@@ -72,6 +72,7 @@ public class InterestServiceImpl implements InterestService {
 
     //유사도 검증
     if (isNameTooSimilar(name)) {
+      log.error("관심사 생성에 실패 했습니다 : name = {}", name);
       throw new RestApiException(InterestErrorCode.SIMILAR_INTEREST_NAME, "관심사 생성에 실패 했습니다.");
     }
 
@@ -98,7 +99,7 @@ public class InterestServiceImpl implements InterestService {
   public InterestDto updateKeywords(UUID interestId, List<String> newKeywords) {
     Interest interest = interestRepository.findById(interestId)
         .orElseThrow(() -> {
-          log.debug("존재하지 않는 관심사 : {}", interestId);
+          log.error("존재하지 않는 관심사 : {}", interestId);
           return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "키워드 수정에 실패 했습니다.");
         });
 
@@ -123,7 +124,7 @@ public class InterestServiceImpl implements InterestService {
   public void deleteInterest(UUID interestId) {
     Interest interest = interestRepository.findById(interestId)
         .orElseThrow(() -> {
-          log.debug("존재하지 않는 관심사 : {}", interestId);
+          log.error("존재하지 않는 관심사 : {}", interestId);
           return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "관심사 삭제에 실패 했습니다.");
         });
 
@@ -137,7 +138,7 @@ public class InterestServiceImpl implements InterestService {
     return interestList.stream()
         .flatMap(interest -> {
           if (interest.getKeywords() == null || interest.getKeywords().isBlank()) {
-            log.debug("키워드가 비워져 있습니다 : interestId = {}", interest.getId());
+            log.error("키워드가 비워져 있습니다 : interestId = {}", interest.getId());
             throw new IllegalArgumentException("키워드는 비어 있을 수 없습니다");
           }
           List<String> keywords = Stream.of(interest.getKeywords().split(","))
@@ -214,6 +215,7 @@ public class InterestServiceImpl implements InterestService {
             ? interestRepository.findBySubscriberCountAfter(countCursor, after, pageable)
             : interestRepository.findBySubscriberCountBefore(countCursor, after, pageable);
       } else {
+        log.error("정렬기준이 올바르지 않습니다 : orderBy = {}", req.orderBy());
         throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
       }
 
@@ -249,7 +251,7 @@ public class InterestServiceImpl implements InterestService {
   @Override
   public void subscribe(UUID interestId, UUID userId) {
     Interest interest = interestRepository.findById(interestId).orElseThrow(() -> {
-      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      log.error("존재하지 않는 관심사 : interestId = {}", interestId);
       return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다.");
     });
 
@@ -258,7 +260,7 @@ public class InterestServiceImpl implements InterestService {
       InterestDto interestDto = InterestDto.toDto(interest);
       userActivityServiceInterface.addInterestView(userId, interestViewMapper.toDto(interestDto));
     } else {
-      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      log.error("존재하지 않는 관심사 : interestId = {}", interestId);
       throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독에 실패 했습니다.");
     }
     log.info("관심사 구독 완료 : interestId = {}, userId = {}", interestId, userId);
@@ -268,7 +270,7 @@ public class InterestServiceImpl implements InterestService {
   @Override
   public void unsubscribe(UUID interestId, UUID userId) {
     Interest interest = interestRepository.findById(interestId).orElseThrow(() -> {
-      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      log.error("존재하지 않는 관심사 : interestId = {}", interestId);
       return new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다.");
     });
 
@@ -279,7 +281,7 @@ public class InterestServiceImpl implements InterestService {
       userActivityServiceInterface.subtractInterestView(userId,
           interestViewMapper.toDto(interestDto));
     } else {
-      log.debug("존재하지 않는 관심사 : interestId = {}", interestId);
+      log.error("존재하지 않는 관심사 : interestId = {}", interestId);
       throw new RestApiException(InterestErrorCode.INTEREST_NOT_FOUND, "구독 해제에 실패 했습니다.");
     }
     log.info("관심사 해제 구독 완료 : interestId = {}, userId = {}", interestId, userId);
