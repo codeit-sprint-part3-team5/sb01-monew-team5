@@ -10,13 +10,14 @@ import com.example.part35teammonew.exeception.RestApiException;
 import com.example.part35teammonew.exeception.errorcode.InterestUserListErrorCode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 public class InterestUserListServiceImp implements InterestUserListServiceInterface {
 
 
@@ -39,6 +40,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
       interestUserListRepository.save(interestUserList);
       return interestUserListMapper.toDto(interestUserList);
     } catch (Exception e) {
+      log.error("관심사 리스트 생성 중 오류 발생: {} ", interest, e);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_CREATE_ERROR, "관심사 리스트 생성 중 오류 발생");
     }
   }
@@ -52,6 +54,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
       interestUserListRepository.save(interestUserList);
       return true;
     } catch (Exception e) {
+      log.error("관심사 구독 추가 중 오류 발생: {}  {}", interestId, userId,e);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_UPDATE_ERROR, "관심사 구독 추가 중 오류 발생");
     }
   }
@@ -65,6 +68,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
       interestUserListRepository.save(interestUserList);
       return true;
     } catch (Exception e) {
+      log.error("관심사 구독 취소 중 오류 발생: {}  {}", id, user,e);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_UPDATE_ERROR, "관심사 구독 취소 중 오류 발생");
     }
   }
@@ -76,6 +80,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
     try {
       return interestUserList.findUser(userId);
     } catch (Exception e) {
+      log.error("관심사 구독 확인 중 오류 발생: {}  {}", interestId, userId,e);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_CHECK_ERROR, "관심사 구독 확인 중 오류 발생");
     }
   }
@@ -87,6 +92,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
     try {
       return new ArrayList<>(interestUserList.getSubscribedUser());
     } catch (Exception e) {
+      log.error("관심사 구독자 목록 조회 중 오류 발생: {}", interestId ,e);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_READ_ERROR, "관심사 구독자 목록 조회 중 오류 발생");
     }
   }
@@ -98,6 +104,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
     try {
       return interestUserList.getUserCount();
     } catch (Exception e) {
+      log.error("관심사 구독자 수 조회 중 오류 발생 : {}",interest);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_READ_ERROR, "관심사 구독자 수 조회 중 오류 발생");
     }
   }
@@ -108,6 +115,7 @@ public class InterestUserListServiceImp implements InterestUserListServiceInterf
     try {
       interestUserListRepository.deleteByInterest(interest);
     } catch (Exception e) {
+      log.error("관심사 리스트 삭제 중 오류 발생 : {}",interest);
       throw new RestApiException(InterestUserListErrorCode.INTEREST_USER_LIST_DELETE_ERROR, "관심사 리스트 삭제 중 오류 발생");
     }
   }

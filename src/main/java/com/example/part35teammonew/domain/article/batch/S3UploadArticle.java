@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 @Profile("dev")
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3UploadArticle {
 
   private final AmazonS3 amazonS3Client;
@@ -37,6 +39,7 @@ public class S3UploadArticle {
       PutObjectRequest request = new PutObjectRequest(bucketName, filename, inputStream, metadata);
       amazonS3Client.putObject(request);
     } catch (Exception e) {
+      log.error("S3에 파일을 업로드 과정 중 실패했습니다.", e);
       throw new IllegalArgumentException("Failed to upload file to S3", e);
     }
   }
@@ -99,6 +102,7 @@ public class S3UploadArticle {
       upload(file, file.getName());
 
     } catch (Exception e) {
+      log.error("S3 JSON 삭제 중 오류 발생", e);
       throw new RestApiException(ArticleErrorCode.S3_FAIL_TO_UPLOAD, "S3 JSON 삭제 중 오류 발생");
     }
   }

@@ -82,6 +82,7 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     boolean wasChanged = notification.confirmedRead();
     if (wasChanged) {
       notificationRepository.save(notification);
+      log.info("{} 알림 읽음",id);
     }
 
     return wasChanged;
@@ -100,6 +101,8 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
 
       notificationList.forEach(Notification::confirmedRead);
       notificationRepository.saveAll(notificationList);
+      log.info("{}의 현재 알림 모두 읽음",userId);
+
       return true;
     } catch (Exception e) {
       log.error("모든 알림 읽음 처리 중 오류 발생: {}", userId, e);

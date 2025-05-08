@@ -29,6 +29,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,9 +38,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleServiceImpl implements ArticleService {
 
   private final ArticleRepository articleRepository;
@@ -51,12 +54,15 @@ public class ArticleServiceImpl implements ArticleService {
 
   // 기사 저장
   @Override
+  @Transactional
   public UUID save(ArticleBaseDto dto) {
     if (dto.getTitle() == null || dto.getTitle().isBlank() || dto.getPublishDate() == null) {
-      throw new IllegalArgumentException("제목과 날짜는 필수입니다.");
+      log.error("제목과 날짜는 필수입니다.");
+      throw new RestApiException(ArticleErrorCode.ARTICLE_MiISSING_ARTICLE_FIELD_Exception, "제목과 날짜는 필수입니다.");
     }
     if (articleRepository.findByTitleAndDate(dto.getTitle(), dto.getPublishDate()) != null) {
-      throw new IllegalArgumentException("중복 저장되었습니다.");
+      log.error("기사가 중복 저장되었습니다.");
+      throw new RestApiException(ArticleErrorCode.ARTICLE_DUPLICATED_SAVED,"중복 저장되었습니다.");
     }
 
     Article article = new Article(dto);
@@ -75,7 +81,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     //title.contains()// 안돼면 확인
     for(Pair<String,UUID> pair:getInterest){
-      //System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       if(articleTitle.toLowerCase().contains(pair.getLeft().toLowerCase())){
         containedId.add(pair.getRight());//Set<UUID> 관심사id 들 : 관심사 x 제목 x 키워드로 거른
         saved.setInterestId(pair.getRight());
@@ -92,7 +97,6 @@ public class ArticleServiceImpl implements ArticleService {
     //찾은 유저에게 알람보내기
 
     for (UUID userId : targetUserID){
-      //System.out.println("=========================================");
       notificationServiceInterface.addNewsNotice(userId,articleTitle+" 라는 관심있는 뉴스가 등록되었습니다",articleId);
     }
 
@@ -127,6 +131,7 @@ public class ArticleServiceImpl implements ArticleService {
 
   // 기사 삭제
   @Override
+  @Transactional
   public void deletePhysical(UUID id) {
     Optional<Article> articleOptional = articleRepository.findById(id);
     if (articleOptional.isPresent()) {
@@ -143,21 +148,23 @@ public class ArticleServiceImpl implements ArticleService {
         //S3가 연결될 수 있는가?
         s3UploadArticle.removeArticleFromS3Json(article.getTitle());
       }catch (Exception e){
+        log.error("S3 Bucket에 파일이 존재하지 않습니다.", e);
         throw new RestApiException(ArticleErrorCode.S3_FILE_NOT_FOUND, "S3 Bucket에 파일이 존재하지 않습니다.");
       }
       return;
     }
+    log.error("해당 ID의 기사를 찾을 수 없습니다.");
     throw new RestApiException(ArticleErrorCode.ARTICLE_NOT_FOUND, "해당 ID의 기사를 찾을 수 없습니다.");
   }
 
   @Override
+  @Transactional
   public void deleteLogical(UUID id) {
-    //deletedAt 존재하며 현재 시간보다 이전이면 제거된 것으로 침
-    //다른 검색 메서드에서도 포함시켜야할 듯
     Optional<Article> article = articleRepository.findById(id);
     if (article.isPresent()) {
       article.get().logicalDelete(LocalDateTime.now());
     } else {
+      log.error("해당 ID의 기사를 찾을 수 없습니다.");
       throw new RestApiException(ArticleErrorCode.ARTICLE_NOT_FOUND, "해당 ID의 기사를 찾을 수 없습니다.");
     }
   }
@@ -196,6 +203,7 @@ public class ArticleServiceImpl implements ArticleService {
       try {
         page = Integer.parseInt(cursor);
       } catch (NumberFormatException e) {
+        log.error("커서는 숫자여야 합니다.", e);
         throw new RestApiException(ArticleErrorCode.ARTICLE_CURSOR_IS_NUMBER,"커서는 숫자여야 합니다.");
       }
     }
@@ -206,7 +214,6 @@ public class ArticleServiceImpl implements ArticleService {
     if (interestId != null && !interestId.isBlank()) {
       interestUUID = UUID.fromString(interestId);
     }
-    System.out.println("interestUUID = " + interestUUID);
 
     LocalDateTime from = null;
     if (publishDateFrom != null && !publishDateFrom.isBlank()) {
@@ -290,6 +297,7 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional
   public List<UUID> backup(String from, String to) {
     LocalDate localStartDate = LocalDate.parse(from.substring(0, 10),
         DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -308,7 +316,8 @@ public class ArticleServiceImpl implements ArticleService {
           String content = Files.readString(file.toPath());
           jsonArray = new JSONArray(content);
         } else {
-          throw new IllegalArgumentException("S3 Bucket에 파일이 존재하지 않습니다.");
+          log.error("S3 Bucket에 파일이 존재하지 않습니다.");
+          throw new RestApiException(ArticleErrorCode.S3_FILE_NOT_FOUND, "S3 Bucket에 파일이 존재하지 않습니다.");
         }
         for (int i = 0; i < jsonArray.length(); i++) {
           JSONObject obj = jsonArray.getJSONObject(i);
@@ -323,9 +332,10 @@ public class ArticleServiceImpl implements ArticleService {
           queue.add(article);
         }
       } catch (Exception e) {
+        log.error("FILE IO 작업 중 에러 발생했습니다.", e);
+        throw new RestApiException(ArticleErrorCode.S3_FILE_IO_ERROR, "FILE IO 작업 중 에러 발생했습니다.");
 
       }
-      System.out.println("articleBackupReader_queue = " + queue.size());
       while (!queue.isEmpty()) {
         Article article = queue.poll();
         article =

@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.batch.core.Job;
@@ -35,6 +36,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class BatchConfig {
 
   private final JobRepository jobRepository;
@@ -159,9 +161,7 @@ public class BatchConfig {
           articleService.save(new ArticleBaseDto(article));
         }
       }
-      //articleRepository.saveAll(newArticlesForDB);
-
-      //System.out.println("저장 완료: DB " + newArticlesForDB.size() + "건, JSON 누적 " + jsonArray.length() + "건");
+      log.info("저장 완료: DB " + newArticlesForDB.size() + "건, JSON 누적 " + jsonArray.length() + "건");
     };
   }
 

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.batch.core.Job;
@@ -29,6 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class S3BatchConfig {
 
   private final JobRepository jobRepository;
@@ -63,42 +65,6 @@ public class S3BatchConfig {
     //모든 관심사를 찾아서 그 키워드를 Queue에 넣고 돌려서 갱신?
     //키워드가 너무 많으면 시간대 별로 나눠서 진행?
     return new SharedArticleReader(newsSearch,interestService);
-    /*return new ItemReader<>() {
-      private Queue<Article> queue = new LinkedList<>();
-      private int page = 0;
-
-      @Override
-      public Article read() throws Exception {
-        if (!queue.isEmpty()) {
-          return queue.poll();
-        }
-
-        // 다 꺼냈다면 다음 뉴스 API 호출
-        if (page >= 10) { // 최대 100개까지만 읽기 (10페이지 x 10개)
-          return null;
-        }
-
-        page++;
-        //키워드 파라미터로 받도록 수정 필요
-        String json = newsSearch.getNews("금융", 10, (page - 1) * 10 + 1, "date");
-        JSONObject jsonObject = new JSONObject(json);
-        JSONArray items = jsonObject.getJSONArray("items");
-
-        for (int i = 0; i < items.length(); i++) {
-          JSONObject item = items.getJSONObject(i);
-          String title = item.getString("title").replaceAll("<.*?>", "");
-          String summary = item.getString("description").replaceAll("<.*?>", "");
-          String link = item.getString("link");
-          //item이라는 JSON 객체에서 "originallink"라는 키가 존재하면 → 그 값을 쓰고, 없으면 "null"라는 기본값을 쓰겠다는 뜻
-          String source = item.optString("originallink", "null");
-          String pubDate = item.getString("pubDate");
-          Article article = new Article(
-              new ArticleBaseDto(null, title, summary, link, source, parsePubDate(pubDate), 0));
-          queue.add(article);
-        }
-        return queue.poll();
-      }
-    };*/
   }
 
 
@@ -112,9 +78,8 @@ public class S3BatchConfig {
   public ItemWriter<Article> articleWriterWithS3() {
     return chunk -> {
       List<? extends Article> articles = chunk.getItems();
-      //System.out.println("articles = " + articles);
       if (articles.isEmpty()) {
-        //System.out.println("No new articles");
+        log.error("새로운 기사가 없습니다.");
         return;
       }
       try {
@@ -162,15 +127,11 @@ public class S3BatchConfig {
 
         // ☁️ S3 업로드
         s3UploadArticle.upload(file, file.getName());
+        log.info("JSON 파일 S3 업로드 완료 (누적): " + file.getName());
+        log.info("추가된 기사 수: " + count);
 
-        //System.out.println("JSON 파일 S3 업로드 완료 (누적): " + file.getName());
-        //System.out.println("추가된 기사 수: " + count);
-
-        /*//파일 삭제
-        if (!file.delete()) {
-          System.err.println("파일 삭제 실패: " + file.getAbsolutePath());
-        }*/
       } catch (Exception e) {
+        log.error("JSON 파일 누적 저장 실패", e);
         throw new RuntimeException("JSON 파일 누적 저장 실패", e);
       }
     };

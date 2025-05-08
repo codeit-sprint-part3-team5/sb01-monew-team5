@@ -85,8 +85,6 @@ public class ArticleController implements ArticleApi {
     if(articleViewServiceInterface.addReadUser(articleId, requestUserId)){
       articleService.increaseCountReadUser(articleId);
     }
-    //articleViewServiceInterface.addReadUser(articleId, requestUserId);
-
     articleEnrollmentResponse.setId(articleId);
     articleEnrollmentResponse.setViewedBy(articleId);
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt().toLocalDate());
@@ -99,7 +97,6 @@ public class ArticleController implements ArticleApi {
 
     CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null, null, null);
     articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
-    //articleEnrollmentResponse.setArticleViewCount(articleViewServiceInterface.countReadUser(articleId)); //수정
     articleEnrollmentResponse.setArticleViewCount(articleBaseDto.getViewCount());
     userActivityServiceInterface.addArticleInfoView(requestUserId, articleInfoViewMapper.toDto(articleEnrollmentResponse, requestUserId));
 
