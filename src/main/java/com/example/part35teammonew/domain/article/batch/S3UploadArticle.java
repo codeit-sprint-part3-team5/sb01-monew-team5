@@ -3,11 +3,17 @@ package com.example.part35teammonew.domain.article.batch;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.ArticleErrorCode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -54,6 +60,46 @@ public class S3UploadArticle {
           .transferTo(outputStream);
     } catch (Exception e) {
       throw new IllegalArgumentException("S3에서 파일 다운로드 실패: " + file.getName(), e);
+    }
+  }
+
+  public void removeArticleFromS3Json(String titleToDelete) {
+    try {
+      String today = LocalDate.now().toString();
+      File file = new File("articles_" + today + ".json");
+
+      // 1. 다운로드
+      if (exists(file.getName())) {
+        download(file);
+      } else {
+        return; // 삭제할 것도 없음
+      }
+
+      // 2. 파일 읽기
+      String content = Files.readString(file.toPath());
+      JSONArray jsonArray = new JSONArray(content);
+
+      // 3. 삭제 대상 필터링
+      JSONArray updatedArray = new JSONArray();
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject obj = jsonArray.getJSONObject(i);
+        String title = obj.getString("title");
+
+        if (!title.equals(titleToDelete)) {
+          updatedArray.put(obj);
+        }
+      }
+
+      // 4. 덮어쓰기
+      try (FileWriter writer = new FileWriter(file)) {
+        writer.write(updatedArray.toString(2));
+      }
+
+      // 5. 다시 업로드
+      upload(file, file.getName());
+
+    } catch (Exception e) {
+      throw new RestApiException(ArticleErrorCode.S3_FAIL_TO_UPLOAD, "S3 JSON 삭제 중 오류 발생");
     }
   }
 }

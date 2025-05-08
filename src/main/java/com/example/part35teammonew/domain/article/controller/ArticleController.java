@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.article.controller;
 
+import com.example.part35teammonew.domain.article.controller.docs.ArticleApi;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
 import com.example.part35teammonew.domain.article.dto.ArticleEnrollmentResponse;
@@ -14,6 +15,8 @@ import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
 import com.example.part35teammonew.domain.comment.service.CommentService;
 import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
+import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exeception.errorcode.ArticleErrorCode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -26,21 +29,22 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
-public class ArticleController {
+@RequestMapping("/api/articles")
+public class ArticleController implements ArticleApi {
 
   private final ArticleService articleService;
-  private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
   private final Job backupJob;
   private final ArticleViewServiceInterface articleViewServiceInterface;
@@ -48,8 +52,25 @@ public class ArticleController {
   private final ArticleInfoViewMapper articleInfoViewMapper;
   private final CommentService commentService;
 
+  public ArticleController(
+      ArticleService articleService,
+      JobLauncher jobLauncher,
+      @Qualifier("backupJob") Job backupJob,
+      ArticleViewServiceInterface articleViewServiceInterface,
+      UserActivityServiceInterface userActivityServiceInterface,
+      ArticleInfoViewMapper articleInfoViewMapper,
+      CommentService commentService
+  ) {
+    this.articleService = articleService;
+    this.jobLauncher = jobLauncher;
+    this.backupJob = backupJob;
+    this.articleViewServiceInterface = articleViewServiceInterface;
+    this.userActivityServiceInterface = userActivityServiceInterface;
+    this.articleInfoViewMapper = articleInfoViewMapper;
+    this.commentService = commentService;
+  }
 
-  @PostMapping("/api/articles/{articleId}/article-views")
+  @PostMapping("/{articleId}/article-views")
   public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(
       @PathVariable UUID articleId, @RequestHeader("Monew-Request-User-ID") String userId) {
     ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
@@ -59,10 +80,12 @@ public class ArticleController {
     try {
       requestUserId = UUID.fromString(userId);
     } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("유효하지 않은 사용자 ID 형식입니다");
+      throw new RestApiException(ArticleErrorCode.ARTICLE_PARSE_UUID,"유효하지 않은 사용자 ID 형식입니다");
     }
-
-    articleViewServiceInterface.addReadUser(articleId, requestUserId);
+    if(articleViewServiceInterface.addReadUser(articleId, requestUserId)){
+      articleService.increaseCountReadUser(articleId);
+    }
+    //articleViewServiceInterface.addReadUser(articleId, requestUserId);
 
     articleEnrollmentResponse.setId(articleId);
     articleEnrollmentResponse.setViewedBy(articleId);
@@ -74,175 +97,41 @@ public class ArticleController {
     articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getPublishDate());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
 
-    CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null,
-        null, null);
-    //System.out.println("comments.getSize() = " + comments.getSize());
-    //articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount()); //기사 코멘트 읽기 여기서 문제인가?
+    CommentPageResponse comments = commentService.getComments(articleId, null, null, null, null, null, null);
     articleEnrollmentResponse.setArticleCommentCount(comments.getSize());
-
-    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
-    //articleEnrollmentResponse.setArticleViewCount(100L);
-
-    //System.out.println("userId = " + userId);
-    //System.out.println("articleEnrollmentResponse = " + articleEnrollmentResponse);
-
-    userActivityServiceInterface.addArticleInfoView(requestUserId,
-        articleInfoViewMapper.toDto(articleEnrollmentResponse, requestUserId));
+    //articleEnrollmentResponse.setArticleViewCount(articleViewServiceInterface.countReadUser(articleId)); //수정
+    articleEnrollmentResponse.setArticleViewCount(articleBaseDto.getViewCount());
+    userActivityServiceInterface.addArticleInfoView(requestUserId, articleInfoViewMapper.toDto(articleEnrollmentResponse, requestUserId));
 
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
 
-  @GetMapping("/api/articles")
+  @GetMapping
   public ResponseEntity<ArticlesResponse> articles(
       @RequestParam(required = false) String keyword,
+      @RequestParam(required = false) String interestId,
       @RequestParam(required = false) String[] sourceIn,
       @RequestParam(required = false) String publishDateFrom,
       @RequestParam(required = false) String publishDateTo,
-      @RequestParam String orderBy,
+      @RequestParam String orderBy, //코맨트수, 조회수, 시간순
       @RequestParam String direction,
-      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) String cursor, //orderby에 따라 달라짐
+      @RequestParam (required = false) String after, //시간
       @RequestParam int limit,
-      @RequestParam(required = false) String interestId,
       @RequestHeader("Monew-Request-User-ID") String userId
   ) {
-    ArticlesResponse articlesResponse = new ArticlesResponse();
-
-    // 유효한 파라미터인지 검증
-    SortField sortField;
-    try {
-      sortField = SortField.valueOf(orderBy);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("유효하지 않은 정렬 필드입니다: " + orderBy);
+    if ( limit == 0 ){
+      return ResponseEntity.badRequest().body(null);
     }
+    //같은게 있으면 제목순
+    ArticlesResponse result = articleService.getPageArticle(keyword, interestId,
+        sourceIn, publishDateFrom, publishDateTo, orderBy, direction, cursor, after, limit, userId);
 
-    Direction sortDirection;
-    try {
-      sortDirection = Direction.valueOf(direction);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("유효하지 않은 정렬 방향입니다: " + direction);
-    }
+    return ResponseEntity.ok(result);
 
-    ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
-    if (sourceIn != null) {
-      articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
-    }
-    if (publishDateFrom != null) {
-      articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
-    }
-    if (publishDateTo != null) {
-      articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
-    }
-    if (keyword != null) {
-      articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
-    }
-
-    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(
-        articleSourceAndDateAndInterestsRequest);
-    for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
-      String title = bySourceAndDateAndInterest.getTitle();
-      LocalDateTime publishDate = bySourceAndDateAndInterest.getPublishDate();
-    }
-
-    // 커서 정규화 - ISO 형식으로 변환 시도
-    if (sortField == SortField.publishDate && cursor != null && cursor.contains("T")) {
-      try {
-        // ISO 형식 체크
-        LocalDateTime.parse(cursor, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-      } catch (DateTimeParseException e) {
-        // 형식이 잘못된 경우, 표준 ISO 형식으로 변환 시도
-        try {
-          // 시간 부분 추출
-          String[] parts = cursor.split("T");
-          if (parts.length == 2) {
-            String date = parts[0];
-            String time = parts[1];
-
-            // 시간 부분에 한 자리 시간이 있다면 두 자리로 변환
-            if (time.length() < 8) {
-              String[] timeParts = time.split(":");
-              if (timeParts.length >= 2) {
-                time = String.format("%02d:%02d",
-                    Integer.parseInt(timeParts[0]),
-                    Integer.parseInt(timeParts[1]));
-
-                if (timeParts.length > 2) {
-                  time += ":" + timeParts[2];
-                } else {
-                  time += ":00";
-                }
-              }
-            }
-
-            cursor = date + "T" + time;
-          }
-        } catch (Exception ex) {
-          // 변환 실패 시 현재 시간 사용
-          cursor = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        }
-      }
-    }
-    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit,
-        sortDirection, bySourceAndDateAndInterests);
-    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(
-        articleCursorRequest);
-
-    List<ArticleBaseDto> result = new ArrayList<>();
-    List<ArticleBaseDto> articles = byCursorPaging.getArticles();
-
-    for (ArticleBaseDto bySourceAndDateAndInterest : articles) {
-      //ViewCount 조정
-      bySourceAndDateAndInterest.setViewCount(
-          articleViewService.countReadUser(bySourceAndDateAndInterest.getId()));
-      //
-      result.add(bySourceAndDateAndInterest);
-    }
-
-    LocalDateTime newNextAfter = byCursorPaging.getNextAfter();
-    String nextCursor = byCursorPaging.getNextCursor();
-
-    // System.out.println("byCursorPaging.getHasNext() = " + byCursorPaging.getHasNext());
-    // System.out.println("byCursorPaging.getNextCursor() = " + byCursorPaging.getNextCursor());
-    // System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-
-    if (byCursorPaging.getHasNext().equals("true")) {
-      articlesResponse.setHasNext("true");
-      articlesResponse.setNextAfter(newNextAfter.toString());
-      articlesResponse.setNextCursor(nextCursor);
-    } else {
-      articlesResponse.setHasNext("false");
-      articlesResponse.setNextAfter(newNextAfter.toString());
-      articlesResponse.setNextCursor(nextCursor);
-    }
-    if( sortField != SortField.publishDate){
-      result = sorting(result, direction, sortField);
-    }
-    articlesResponse.setContent(result);
-    articlesResponse.setSize(limit);
-    return ResponseEntity.ok(articlesResponse);
   }
 
-  private List<ArticleBaseDto> sorting(List<ArticleBaseDto> result, String direction,
-      SortField sortField) {
-    if (result == null || result.isEmpty()) {
-      return result;
-    }
-    Comparator<ArticleBaseDto> comparator;
-    switch (sortField) {
-      case publishDate -> comparator = Comparator.comparing(ArticleBaseDto::getPublishDate);
-      case commentCount -> comparator = Comparator.comparing(ArticleBaseDto::getCommentCount);
-      //case viewCount -> comparator = Comparator.comparing(ArticleBaseDto::get, String.CASE_INSENSITIVE_ORDER);
-      default -> throw new IllegalArgumentException("Unknown sort field: " + sortField);
-    }
-    if ("DESC".equalsIgnoreCase(direction)) {
-      comparator = comparator.reversed();
-    }
-    return result.stream()
-        .sorted(comparator)
-        .toList();
-  }
-
-
-  @GetMapping("/api/articles/restore")
+  @GetMapping("/restore")
   public ResponseEntity<ArticleEnrollmentResponse> articlesRestore(
       @RequestParam("from") String from,
       @RequestParam("to") String to) throws Exception {
@@ -258,15 +147,22 @@ public class ArticleController {
     return ResponseEntity.ok(null);
   }
 
-  @DeleteMapping("/api/articles/{articleId}")
+  @DeleteMapping("/{articleId}")
   public ResponseEntity<Void> articlesDelete(@PathVariable UUID articleId) {
     articleService.deleteLogical(articleId);
     return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("/api/articles/{articleId}/hard")
+  @DeleteMapping("/{articleId}/hard")
   public ResponseEntity<Void> articlesDeleteHard(@PathVariable UUID articleId) {
     articleService.deletePhysical(articleId);
     return ResponseEntity.noContent().build();
+  }
+
+  @GetMapping("/sources")
+  public ResponseEntity<List<String>> getSources(){
+    List<String> hardSources=new ArrayList<>();
+    hardSources.add("NAVER");
+    return ResponseEntity.ok(hardSources);
   }
 }

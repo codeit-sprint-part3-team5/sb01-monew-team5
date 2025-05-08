@@ -63,6 +63,11 @@ public class Article {
   @NotNull
   private int commentCount = 0;
 
+  @NotNull
+  private Long viewCount;
+
+  private UUID interestId;
+
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments = new ArrayList<>();
 
@@ -81,6 +86,7 @@ public class Article {
     this.date = articleBaseDto.getPublishDate();
     this.createdAt = LocalDateTime.now();
     this.commentCount = articleBaseDto.getCommentCount();
+    this.viewCount=0L;
   }
   public Article update(ArticleBaseDto articleUpdateDto) {
     if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
@@ -98,22 +104,8 @@ public class Article {
     return this.getDeletedAt() == null;
   }
 
-
-  @Override
-  public String toString() {
-    return "Article{" +
-        "id=" + id +
-        ", title='" + title + '\'' +
-        ", summary='" + summary + '\'' +
-        ", link='" + link + '\'' +
-        ", source='" + source + '\'' +
-        ", date=" + date +
-        ", createdAt=" + createdAt +
-        ", deletedAt=" + deletedAt +
-        ", commentCount=" + commentCount +
-        ", comments=" + comments +
-        ", commentLikes=" + commentLikes +
-        ", interests=" + interests +
-        '}';
+  public void increaseReadCount(){
+    viewCount++;
   }
+
 }
