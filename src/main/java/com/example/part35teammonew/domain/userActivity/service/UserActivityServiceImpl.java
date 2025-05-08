@@ -70,7 +70,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       userActivityRepository.save(userActivity);
     } catch (Exception e) {
       log.error("관심사 추가 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "관심사 추가 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "관심사 구독 중 오류가 발생했습니다.");
     }
   }
 
@@ -83,7 +83,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       userActivityRepository.save(userActivity);
     } catch (Exception e) {
       log.error("관심사 제거 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "관심사 제거 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "관심사 구취소 중 오류가 발생했습니다.");
     }
   }
 
@@ -97,7 +97,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       return userActivityMapper.toDto(userActivity);
     } catch (Exception e) {
       log.error("유저 정보 업데이트 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "유저 정보 업데이트 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "유저 정보를 유저활동에 업데이트 중 오류가 발생했습니다.");
     }
   }
 
@@ -110,7 +110,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       userActivityRepository.save(userActivity);
     } catch (Exception e) {
       log.error("댓글 정보 추가 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 정보 추가 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 정보를 유저활동에 추가 중 오류가 발생했습니다.");
     }
   }
 
@@ -125,7 +125,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 좋아요 업데이트 실패");
     } catch (Exception e) {
       log.error("댓글 좋아요 추가 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 좋아요 추가 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 좋아요를 유저활동에 추가 중 오류가 발생했습니다.");
     }
   }
 
@@ -138,7 +138,7 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
       userActivityRepository.save(userActivity);
     } catch (Exception e) {
       log.error("기사 정보 추가 중 예외 발생: {}", id, e);
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "기사 정보 추가 중 오류가 발생했습니다.");
+      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "기사 정보를 유저활동에 추가 중 오류가 발생했습니다.");
     }
   }
 

@@ -14,13 +14,14 @@ import java.time.Instant;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Tag(name = "Noticfication", description = "알람 관리 API")
-public interface NoticficationApi {
+@Tag(name = "Notification", description = "알람 관리 API")
+public interface NotificationApi {
 
   @Operation(summary = "알람 목록 조회", description = "알림 목록을 조회합니다.")
   @ApiResponses(value = {
@@ -37,18 +38,22 @@ public interface NoticficationApi {
           content = @Content
       )
   })
+  @GetMapping
   ResponseEntity<CursorPageResponse<NotificationDto>> getNotifications(
-      @RequestParam( required = false)
-      @Parameter(description = "커서 값", required = false)
+      @RequestParam(required = false)
+      @Parameter(description = "커서 값", required = false, example = "2024-12-31T23:59:59.999Z")
       Instant cursor,
-      @RequestParam( required = false)
-      @Parameter(description = "보조커서 값", required = false)
+
+      @RequestParam(required = false)
+      @Parameter(description = "보조커서 값", required = false, example = "2024-12-30T00:00:00.000Z")
       Instant after,
-      @RequestParam( )
-      @Parameter(description = "커서 페이지 크기")
+
+      @RequestParam
+      @Parameter(description = "커서 페이지 크기", example = "10")
       int limit,
+
       @RequestHeader("Monew-Request-User-ID")
-      @Parameter(description = "요청자 ID")
+      @Parameter(description = "요청자 ID", example = "b3bbdb66-64e0-4b44-8e6f-c9e0fbd37987")
       UUID requestUserId
   );
 
@@ -97,12 +102,14 @@ public interface NoticficationApi {
           content = @Content
       )
   })
+  @PatchMapping("/{notificationId}")
   ResponseEntity<String> getNotificationRead(
       @PathVariable("notificationId")
-      @Parameter(description = "알림 ID")
+      @Parameter(description = "알림 ID", example = "664750a7de6df049ab6d2a83")
       ObjectId notificationId,
+
       @RequestHeader("Monew-Request-User-ID")
-      @Parameter(description = "요청자 ID")
+      @Parameter(description = "요청자 ID", example = "b3bbdb66-64e0-4b44-8e6f-c9e0fbd37987")
       UUID requestUserId
   );
 

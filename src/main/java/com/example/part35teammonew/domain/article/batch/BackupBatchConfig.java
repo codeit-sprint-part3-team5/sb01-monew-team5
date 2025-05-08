@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.batch.core.Job;
@@ -29,6 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class BackupBatchConfig {
   private final JobRepository jobRepository;
   private final PlatformTransactionManager platformTransactionManager;
@@ -91,46 +93,13 @@ public class BackupBatchConfig {
                 }
               }
               if (!file.delete()) {
-                //System.err.println("⚠️ 파일 삭제 실패: " + file.getAbsolutePath());
+                log.error("파일 삭제 실패: " + file.getAbsolutePath());
               }
             }
-            //System.out.println("Loaded articles: " + queue.size());
           } catch (Exception e) {
+            log.error("S3 JSON 파일 로딩 실패", e);
             throw new RuntimeException("S3 JSON 파일 로딩 실패", e);
           }
-
-          /*  File file = new File("articles_" + today + "temp.json");
-            JSONArray jsonArray = new JSONArray();
-
-            if (s3UploadArticle.exists("articles_" + today + ".json")) {
-              s3UploadArticle.download(file);
-              String content = Files.readString(file.toPath());
-              jsonArray = new JSONArray(content);
-            } else {
-              throw new IllegalArgumentException("S3 Bucket에 파일이 존재하지 않습니다.");
-            }
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-              JSONObject obj = jsonArray.getJSONObject(i);
-              Article article = new Article(new ArticleBaseDto(
-                  obj.getString("title"),
-                  obj.getString("summary"),
-                  obj.getString("link"),
-                  obj.getString("source"),
-                  LocalDateTime.parse(obj.getString("date")),
-                  obj.getInt("commentCount")
-              ));
-              queue.add(article);
-            }
-            System.out.println("articleBackupReader_queue = " + queue.size());
-
-            // 파일 삭제
-            if (!file.delete()) {
-              System.err.println("⚠️ 파일 삭제 실패: " + file.getAbsolutePath());
-            }
-          } catch (Exception e) {
-            throw new RuntimeException("S3 JSON 파일 로딩 실패", e);
-          }*/
         }
         return queue.poll();
       }

@@ -32,7 +32,6 @@ public class SecurityConfig {
                                 "/api/users/{userId}",
                                 "/api/users/{userId}/hard",
                                 "/api/articles",
-                                "/api/articles2",
                                 "/api/articles/restore",
                                 "/api/articles/{articleId}/article-views",
                                 "/api/articles/{articleId}",

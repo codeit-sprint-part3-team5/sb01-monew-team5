@@ -3,7 +3,7 @@ package com.example.part35teammonew.domain.notification.controller;
 import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
 import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
 import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
-import com.example.part35teammonew.domain.notification.controller.docs.NoticficationApi;
+import com.example.part35teammonew.domain.notification.controller.docs.NotificationApi;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/notifications")
-public class NotificationController implements NoticficationApi {
+public class NotificationController implements NotificationApi {
 
   private final NotificationServiceInterface notificationServiceInterface;
 
