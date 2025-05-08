@@ -1,10 +1,12 @@
 package com.example.part35teammonew.domain.notification.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class NotificationSchedulerService {
 
   private final NotificationServiceInterface notificationService;
@@ -17,9 +19,9 @@ public class NotificationSchedulerService {
   public void runDeleteOldConfirmedNotice() {
     boolean result = notificationService.deleteOldConfirmedNotice();
     if (result) {
-      //로그 남기기
+      log.info("일주일 지난 확인된 알림 삭제 완료");
     } else {
-      //결과 없ㅇ므
+      log.info("알림 없음");
     }
   }
 }
