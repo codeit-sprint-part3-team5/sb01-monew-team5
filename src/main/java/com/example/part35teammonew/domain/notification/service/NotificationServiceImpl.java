@@ -117,7 +117,6 @@ public class NotificationServiceImpl implements NotificationServiceInterface {
     try {
       Instant threshold = Instant.now().minus(7, ChronoUnit.DAYS);
       notificationRepository.deleteAllByConfirmedIsTrueAndCreatedAtBefore(threshold);
-      log.info("일주일 지난 확인된 알림 삭제 완료");
       return true;
     } catch (Exception e) {
       log.error("오래된 알림 삭제 중 오류 발생", e);
