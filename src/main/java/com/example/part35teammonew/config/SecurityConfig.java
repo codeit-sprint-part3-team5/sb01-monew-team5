@@ -19,7 +19,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // csrf를 disable 함 -> 회원가입 시 403 에러 해결
+                // csrf를 disable 함 -> 추후 jwt 리팩토링 위함
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
@@ -28,35 +28,17 @@ public class SecurityConfig {
                                 "/index.html",
                                 "/assets/**",
                                 "/favicon.ico",
-                                "/api/users",
-                                "/api/users/{userId}",
-                                "/api/users/{userId}/hard",
-                                "/api/articles",
-                                "/api/articles/restore",
-                                "/api/articles/{articleId}/article-views",
-                                "/api/articles/{articleId}",
-                                "/api/articles/{articleId}/hard",
-                                "/api/comments/{commentId}/comment-likes",
-                                "/api/interests",
-                                "/api/interests/{interestsId}",
-                                "/api/interests/{interestId}/subscriptions",
-                                "api/comments",
-                                "api/comments/{commentId}",
-                                "/api/comments/{commentId}/hard",
-                                "/api/user-activities/{userId}",
-                                "/api/notifications/{notificationId}",
-                                "/api/notifications",
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/api-docs/**"
+                                "/signup",
+                                "/login",
+                                "/api/users/login",
+                                "/api/users"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // 세션을 사용하지 않기 때문에 STATELESS로 설정
+                // 세션 유지 - 새로고침하면 권한 없어지는 문제 해결
                 .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 );
         return http.build();
     }

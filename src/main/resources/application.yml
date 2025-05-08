@@ -2,13 +2,17 @@ spring:
   profiles:
     active: dev
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
   server:
     address: 0.0.0.0
     port: 8080
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
 
   batch:
