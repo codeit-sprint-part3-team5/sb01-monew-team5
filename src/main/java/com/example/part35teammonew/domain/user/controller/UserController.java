@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.user.controller;
 
+import com.example.part35teammonew.domain.user.controller.docs.UserApi;
 import com.example.part35teammonew.domain.user.dto.UserDto;
 import com.example.part35teammonew.domain.user.dto.UserLoginRequest;
 import com.example.part35teammonew.domain.user.dto.UserRegisterRequest;
@@ -26,14 +27,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/users")
-public class UserController {
+public class UserController implements UserApi {
 
     private final UserService userService;
     private final CustomUserDetailsService userDetailsService;
 
     // 회원가입
+    @Override
     @PostMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserRegisterRequest request){
+    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserRegisterRequest request){
         UserDto createdUserDto = userService.register(request);
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -41,8 +43,9 @@ public class UserController {
     }
 
     // 로그인
+    @Override
     @PostMapping("/login")
-    ResponseEntity<UserDto> login(@RequestBody UserLoginRequest request, HttpServletRequest httpRequest){
+    public ResponseEntity<UserDto> login(@RequestBody UserLoginRequest request, HttpServletRequest httpRequest){
         UserDto userDto = userService.login(request);
 
         // 인증 정보 생성
@@ -67,8 +70,9 @@ public class UserController {
     }
 
     // 닉네임 수정
+    @Override
     @PatchMapping("/{userId}")
-    ResponseEntity<UserDto> updateUser(@PathVariable(value = "userId") UUID userId, @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable(value = "userId") UUID userId, @RequestBody UserUpdateRequest request) {
         UserDto updatedUserDto = userService.update(userId, request);
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -76,8 +80,9 @@ public class UserController {
     }
 
     // 회원 논리 삭제
+    @Override
     @DeleteMapping("/{userId}")
-    ResponseEntity<Void> deleteUserLogical(@PathVariable(value = "userId") UUID userId){
+    public ResponseEntity<Void> deleteUserLogical(@PathVariable(value = "userId") UUID userId){
         userService.deleteLogical(userId);
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -85,8 +90,9 @@ public class UserController {
     }
 
     // 회원 물리 삭제
+    @Override
     @DeleteMapping("/{userId}/hard")
-    ResponseEntity<Void> deleteUserPhysical(@PathVariable(value = "userId") UUID userId){
+    public ResponseEntity<Void> deleteUserPhysical(@PathVariable(value = "userId") UUID userId){
         userService.deletePhysical(userId);
         return ResponseEntity
             .status(HttpStatus.OK)
