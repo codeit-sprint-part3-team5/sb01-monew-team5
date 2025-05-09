@@ -9,10 +9,17 @@ spring:
     mongodb:
       uri: mongodb://${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}
 
+  jackson:
+    time-zone: Asia/Seoul
+
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Seoul
 
 logging:
   level:
