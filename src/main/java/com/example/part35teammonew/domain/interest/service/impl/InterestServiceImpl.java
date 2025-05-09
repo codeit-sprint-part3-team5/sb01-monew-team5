@@ -174,14 +174,8 @@ public class InterestServiceImpl implements InterestService {
     log.info("커서 요청 수신 - 관심사 목록 조회: 정렬 = {}, 방향 = {}, 검색어 = {}, 커서 = {}", orderBy, direction,
         keyword, req.safeCursor());
 
-    int limit;
-    if (isSearching) {
-      limit = req.limit() > 0 ? req.limit() : 10;
-    } else {
-      limit = Integer.MAX_VALUE;
-    }
-
-    Pageable pageable = PageRequest.of(0, limit, sort);
+    int limit = req.limit() > 0 ? req.limit() : 10;
+    Pageable pageable = PageRequest.of(0, limit + 10, sort);
 
     List<Interest> interests;
     LocalDateTime nextAfter = null;
@@ -196,31 +190,42 @@ public class InterestServiceImpl implements InterestService {
       hasNext = page.hasNext();
     } else {
       String rawCursor = req.safeCursor();
+      String normalizedCursor = (rawCursor == null) ? null : rawCursor.replaceAll("\\s+", "");
+      LocalDateTime after = req.after();
 
-      boolean isBlankCursor = rawCursor == null || rawCursor.isBlank();
-      String nameCursor = isBlankCursor ? null : rawCursor;
-      Long countCursor =
-          (isBlankCursor || !orderBy.equals("subscriberCount")) ? null : Long.parseLong(rawCursor);
-
-      LocalDateTime after = (rawCursor == null) ? null : req.after();
-
-      log.debug("커서 기반 페이지네이션 적용 - orderBy = {}, cursor = {}, after = {}", orderBy, rawCursor,
-          after);
+      log.debug("커서 기반 페이지네이션 적용 - orderBy = {}, rawCursor = {}, normalizedCursor = {}, after = {}", orderBy, rawCursor, normalizedCursor, after);
 
       if (orderBy.equalsIgnoreCase("name")) {
-        interests = direction == Sort.Direction.ASC
-            ? interestRepository.findByNameAfter(nameCursor, after, pageable)
-            : interestRepository.findByNameBefore(nameCursor, after, pageable);
+        List<Interest> page = direction == Sort.Direction.ASC
+            ? interestRepository.findByNameAfter(null, after, pageable)
+            : interestRepository.findByNameBefore(null, after, pageable);
+
+        // 커서 이후 항목 필터링
+        interests = page.stream()
+            .filter(i -> {
+              if (normalizedCursor == null) return true;
+              String normalizedName = i.getName().replaceAll("\\s+", "");
+              return direction == Sort.Direction.ASC
+                  ? normalizedName.compareTo(normalizedCursor) > 0
+                  : normalizedName.compareTo(normalizedCursor) < 0;
+            })
+            .limit(limit)
+            .toList();
+
+        hasNext = page.size() > interests.size();
+
       } else if (orderBy.equalsIgnoreCase("subscriberCount")) {
+        Long countCursor = (rawCursor == null || rawCursor.isBlank()) ? null : Long.parseLong(rawCursor);
         interests = direction == Sort.Direction.ASC
             ? interestRepository.findBySubscriberCountAfter(countCursor, after, pageable)
             : interestRepository.findBySubscriberCountBefore(countCursor, after, pageable);
+
+        hasNext = interests.size() == limit;
+
       } else {
         log.error("정렬기준이 올바르지 않습니다 : orderBy = {}", req.orderBy());
         throw new IllegalArgumentException("지원하지 않는 정렬 기준입니다: " + req.orderBy());
       }
-
-      hasNext = interests.size() == req.limit();
 
       if (hasNext && !interests.isEmpty()) {
         Interest last = interests.get(interests.size() - 1);
