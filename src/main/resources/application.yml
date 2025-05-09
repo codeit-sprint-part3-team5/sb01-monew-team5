@@ -1,0 +1,47 @@
+spring:
+  profiles:
+    active: dev
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+
+  server:
+    address: 0.0.0.0
+    port: 8080
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+logging:
+  level:
+    root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, loggers
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+monew:
+  storage:
+    type: local
+    local:
+      root-path: ./monew/storage
+
+
