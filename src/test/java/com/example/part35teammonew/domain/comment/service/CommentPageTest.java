@@ -15,6 +15,7 @@ import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
 import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.comment.mapper.CommentMapper;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
+import com.example.part35teammonew.domain.comment.service.impl.CommentServiceImpl;
 import com.example.part35teammonew.domain.user.entity.User;
 
 import java.time.LocalDateTime;

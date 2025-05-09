@@ -1,23 +1,18 @@
 package com.example.part35teammonew.domain.userActivity;
 
-import static org.bson.assertions.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
-import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import com.example.part35teammonew.domain.userActivity.dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
-import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceImpl;
+import com.example.part35teammonew.domain.userActivity.service.impl.UserActivityServiceImpl;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;

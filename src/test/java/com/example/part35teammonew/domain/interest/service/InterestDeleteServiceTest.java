@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.InterestRepository;
-import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestDeleteServiceTest {

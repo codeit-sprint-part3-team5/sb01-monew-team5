@@ -1,7 +1,6 @@
 package com.example.part35teammonew.domain.articleView.service;
 
-import com.example.part35teammonew.domain.article.entity.Direction;
-import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
+import com.example.part35teammonew.domain.articleView.dto.ArticleViewDto;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;

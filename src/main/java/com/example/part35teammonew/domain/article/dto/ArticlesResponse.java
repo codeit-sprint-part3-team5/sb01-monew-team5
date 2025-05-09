@@ -1,6 +1,7 @@
 package com.example.part35teammonew.domain.article.dto;
 
 import java.util.List;
+
 import lombok.Data;
 
 @Data

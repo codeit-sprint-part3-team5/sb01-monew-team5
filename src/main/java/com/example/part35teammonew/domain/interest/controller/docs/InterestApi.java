@@ -1,9 +1,9 @@
 package com.example.part35teammonew.domain.interest.controller.docs;
 
-import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
-import com.example.part35teammonew.domain.interest.dto.request.InterestUpdateRequest;
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
-import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
+import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestUpdateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

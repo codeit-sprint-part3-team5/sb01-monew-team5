@@ -2,7 +2,6 @@ package com.example.part35teammonew.domain.interest.repository;
 
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
-import com.example.part35teammonew.domain.interest.InterestRepository;
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import java.util.List;
 import org.assertj.core.api.Assertions;

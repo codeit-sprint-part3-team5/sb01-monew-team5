@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.articleView.mapper;
 
-import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
+import com.example.part35teammonew.domain.articleView.dto.ArticleViewDto;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

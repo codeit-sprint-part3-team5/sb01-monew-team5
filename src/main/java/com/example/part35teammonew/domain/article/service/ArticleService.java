@@ -1,10 +1,8 @@
 package com.example.part35teammonew.domain.article.service;
 
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
-import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
-import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInterestsRequest;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
-import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse;
+
 import java.util.List;
 import java.util.UUID;
 

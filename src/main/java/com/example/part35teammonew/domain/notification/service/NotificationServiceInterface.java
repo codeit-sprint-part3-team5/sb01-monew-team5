@@ -1,9 +1,9 @@
 package com.example.part35teammonew.domain.notification.service;
 
 
-import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
-import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
-import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.dto.CursorPageRequest;
+import com.example.part35teammonew.domain.notification.dto.CursorPageResponse;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 

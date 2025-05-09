@@ -2,13 +2,12 @@ package com.example.part35teammonew.domain.notification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
-import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.dto.CursorPageRequest;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
-import com.example.part35teammonew.domain.notification.service.NotificationServiceImpl;
+import com.example.part35teammonew.domain.notification.service.impl.NotificationServiceImpl;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.DisplayName;

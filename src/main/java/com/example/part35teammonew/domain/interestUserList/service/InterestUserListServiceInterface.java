@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.interestUserList.service;
 
-import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListDto;
+import com.example.part35teammonew.domain.interestUserList.dto.InterestUserListDto;
 import java.util.List;
 import java.util.UUID;
 

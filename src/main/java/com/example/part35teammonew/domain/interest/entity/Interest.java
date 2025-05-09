@@ -1,6 +1,5 @@
 package com.example.part35teammonew.domain.interest.entity;
 
-import com.example.part35teammonew.domain.ArticleInterest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

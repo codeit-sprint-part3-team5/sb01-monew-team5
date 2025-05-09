@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.example.part35teammonew.domain.articleView.entity.ArticleView;
 import com.example.part35teammonew.domain.articleView.mapper.ArticleViewMapper;
 import com.example.part35teammonew.domain.articleView.repository.ArticleViewRepository;
-import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceImp;
+import com.example.part35teammonew.domain.articleView.service.impl.ArticleViewServiceImpl;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -16,12 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 
 @SpringBootTest
@@ -29,7 +26,7 @@ import org.springframework.data.domain.Pageable;
 class ArticleViewServiceTest {
 
   @Autowired
-  private ArticleViewServiceImp articleViewService;
+  private ArticleViewServiceImpl articleViewService;
 
   @Autowired
   private ArticleViewRepository articleViewRepository;

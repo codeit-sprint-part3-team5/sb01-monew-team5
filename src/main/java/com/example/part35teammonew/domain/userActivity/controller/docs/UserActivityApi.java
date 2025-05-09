@@ -1,7 +1,6 @@
 package com.example.part35teammonew.domain.userActivity.controller.docs;
 
-import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
-import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
+import com.example.part35teammonew.domain.userActivity.dto.UserActivityDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

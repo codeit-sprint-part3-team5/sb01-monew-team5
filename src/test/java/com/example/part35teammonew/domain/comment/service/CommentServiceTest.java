@@ -2,7 +2,6 @@ package com.example.part35teammonew.domain.comment.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.ArgumentMatchers.*;
 
 import com.example.part35teammonew.domain.article.entity.Article;
 import com.example.part35teammonew.domain.article.repository.ArticleRepository;
@@ -14,12 +13,13 @@ import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.comment.mapper.CommentMapper;
 import com.example.part35teammonew.domain.comment.repository.CommentLikeRepository;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
+import com.example.part35teammonew.domain.comment.service.impl.CommentServiceImpl;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 
-import com.example.part35teammonew.domain.userActivity.maper.RecentCommentMapper;
+import com.example.part35teammonew.domain.userActivity.mapper.RecentCommentMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exception.RestApiException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

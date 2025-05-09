@@ -1,8 +1,7 @@
 package com.example.part35teammonew.domain.notification.controller.docs;
 
-import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
-import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
-import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.dto.CursorPageResponse;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

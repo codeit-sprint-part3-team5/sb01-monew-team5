@@ -5,7 +5,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import com.example.part35teammonew.domain.interestUserList.mapper.InterestUserListMapper;
 import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
-import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceImp;
+import com.example.part35teammonew.domain.interestUserList.service.impl.InterestUserListServiceImpl;
 import java.util.UUID;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,18 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InterestUserListServiceTest {
 
   @Autowired
-  private InterestUserListServiceImp service;
+  private InterestUserListServiceImpl service;
 
   @Autowired
   private InterestUserListRepository repository;

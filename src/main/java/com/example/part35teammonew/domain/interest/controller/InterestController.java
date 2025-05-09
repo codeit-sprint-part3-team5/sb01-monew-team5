@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
-import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
-import com.example.part35teammonew.domain.interest.dto.request.InterestUpdateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.PageResponse;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.InterestUpdateRequest;
 import com.example.part35teammonew.domain.interest.service.InterestService;
 
 import jakarta.validation.Valid;

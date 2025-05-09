@@ -1,10 +1,9 @@
 package com.example.part35teammonew.domain.interest.service;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
-import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceImp;
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.maper.InterestViewMapper;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.mapper.InterestViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 import java.util.List;
 import java.util.Optional;
@@ -23,10 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.InterestRepository;
-import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestUpdateServiceTest {
