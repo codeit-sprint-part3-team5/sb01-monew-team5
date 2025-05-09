@@ -29,7 +29,7 @@ public class ArticleInfoViewMapper {
         .articlePublishedDate(article.getArticlePublishedDate())
         .articleSummary(article.getArticleSummary())
         .articleCommentCount(article.getArticleCommentCount())
-        .articleViewCount(article.getArticleViewCount())//조회 메서드
+        .articleViewCount(articleViewService.countReadUser(article.getId()))//조회 메서드
         .build();
   }
 
