@@ -103,7 +103,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         .build();
     log.debug("좋아요 응답 객체 생성 완료: likeId={}", response.getId());
 
-    userActivityServiceInterface.addLikeCommentView(comment.getUser().getId(), likeCommentMapper.toDto(
+    userActivityServiceInterface.addLikeCommentView(requestUserId, likeCommentMapper.toDto(
         commentMapper.toCommentDto(comment,hasLiked(comment.getId(),requestUserId)),response));
     log.debug("사용자 활동 업데이트 완료: userId={}", comment.getUser().getId());
 
