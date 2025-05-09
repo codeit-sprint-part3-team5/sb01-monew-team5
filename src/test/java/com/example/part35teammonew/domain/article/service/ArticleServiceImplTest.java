@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
-import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.domain.article.service.impl.ArticleServiceImpl;
+import com.example.part35teammonew.exception.RestApiException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

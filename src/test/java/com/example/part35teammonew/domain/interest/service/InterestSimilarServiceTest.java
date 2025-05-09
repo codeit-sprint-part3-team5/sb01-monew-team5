@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.interest.service;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +13,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 
-import com.example.part35teammonew.domain.interest.InterestRepository;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestSimilarServiceTest {

@@ -4,10 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,13 +20,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.PageResponse;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.InterestRepository;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
-import com.example.part35teammonew.domain.interestUserList.repository.InterestUserListRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestGetPageListServiceTest {

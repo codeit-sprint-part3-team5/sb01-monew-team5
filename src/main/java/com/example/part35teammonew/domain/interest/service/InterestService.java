@@ -5,10 +5,10 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
-import com.example.part35teammonew.domain.interest.dto.request.InterestPageRequest;
-import com.example.part35teammonew.domain.interest.dto.response.PageResponse;
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestPageRequest;
+import com.example.part35teammonew.domain.interest.dto.PageResponse;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
 
 public interface InterestService {
 

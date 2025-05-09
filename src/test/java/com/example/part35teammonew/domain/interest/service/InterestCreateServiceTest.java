@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,13 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
-import com.example.part35teammonew.domain.interest.dto.request.InterestCreateRequest;
+import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.InterestCreateRequest;
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.InterestRepository;
-import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListDto;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
+import com.example.part35teammonew.domain.interestUserList.dto.InterestUserListDto;
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
-import com.example.part35teammonew.exeception.RestApiException;
+import com.example.part35teammonew.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestCreateServiceTest {

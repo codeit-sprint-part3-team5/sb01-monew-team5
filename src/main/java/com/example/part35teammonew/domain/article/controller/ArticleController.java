@@ -2,29 +2,21 @@ package com.example.part35teammonew.domain.article.controller;
 
 import com.example.part35teammonew.domain.article.controller.docs.ArticleApi;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
-import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
 import com.example.part35teammonew.domain.article.dto.ArticleEnrollmentResponse;
-import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInterestsRequest;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
-import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse;
-import com.example.part35teammonew.domain.article.entity.Direction;
-import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.article.service.ArticleService;
 import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
 import com.example.part35teammonew.domain.comment.service.CommentService;
-import com.example.part35teammonew.domain.userActivity.maper.ArticleInfoViewMapper;
+import com.example.part35teammonew.domain.userActivity.mapper.ArticleInfoViewMapper;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
-import com.example.part35teammonew.exeception.RestApiException;
-import com.example.part35teammonew.exeception.errorcode.ArticleErrorCode;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import com.example.part35teammonew.exception.RestApiException;
+import com.example.part35teammonew.exception.errorcode.ArticleErrorCode;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;

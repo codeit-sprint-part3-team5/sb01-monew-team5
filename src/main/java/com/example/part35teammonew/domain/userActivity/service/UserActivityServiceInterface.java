@@ -3,12 +3,12 @@ package com.example.part35teammonew.domain.userActivity.service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
-import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import com.example.part35teammonew.domain.userActivity.dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.UserActivityDto;
+import com.example.part35teammonew.domain.userActivity.dto.UserInfoDto;
 
 public interface UserActivityServiceInterface {
 
