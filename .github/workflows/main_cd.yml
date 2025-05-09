@@ -2,7 +2,7 @@ name: <Docker 빌드 -> 이미지 ECR에 push -> 태스크 정의 이미지 버�
 
 on:
   push:
-    branches: dev
+    branches: main
   workflow_dispatch:
 
 jobs:
