@@ -6,9 +6,13 @@ COPY build/libs/part3-5team-monew-0.0.1-SNAPSHOT.jar app.jar
 
 # 3. 빌드 시 프로필을 prod로 설정
 ENV SPRING_PROFILES_ACTIVE=prod
+# 4. KST 설정 추가
+ENV TZ=Asia/Seoul
+RUN apt-get update && apt-get install -y tzdata && \
+    ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime && echo "Asia/Seoul" > /etc/timezone
 
-# 4. 앱 실행
+# 5. 앱 실행
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 
-# 5. 포트
+# 6. 포트
 EXPOSE 8080
