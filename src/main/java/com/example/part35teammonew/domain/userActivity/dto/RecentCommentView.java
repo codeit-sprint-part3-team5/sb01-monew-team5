@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.userActivity.dto;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,8 +19,10 @@ public class RecentCommentView {
   private String userNickname; //닉네임
 
   private String content; //내영
+
   private Integer likeCount; //좋아요 수
-  private LocalDateTime createdAt;
+
+  private Instant createdAt;
 
   @Override
   public boolean equals(Object o) {

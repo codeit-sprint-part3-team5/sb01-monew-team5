@@ -2,6 +2,7 @@ package com.example.part35teammonew.domain.userActivity.mapper;
 
 import com.example.part35teammonew.domain.comment.entity.Comment;
 import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +18,7 @@ public class RecentCommentMapper {
         .userNickname(comment.getUserNickname())
         .content(comment.getContent())
         .likeCount(comment.getLikeCount())
-        .createdAt(LocalDateTime.now())
+        .createdAt(Instant.now())
         .build();
   }
 }
