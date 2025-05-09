@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.userActivity.mapper;
 
-import com.example.part35teammonew.domain.interest.dto.InterestDto;
+import com.example.part35teammonew.domain.interest.dto.response.InterestDto;
 import com.example.part35teammonew.domain.interestUserList.service.InterestUserListServiceInterface;
 import com.example.part35teammonew.domain.userActivity.dto.InterestView;
 import java.time.Instant;

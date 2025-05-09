@@ -1,6 +1,10 @@
 package com.example.part35teammonew.domain.articleView.service;
 
+<<<<<<< HEAD
+import com.example.part35teammonew.domain.articleView.Dto.ArticleViewDto;
+=======
 import com.example.part35teammonew.domain.articleView.dto.ArticleViewDto;
+>>>>>>> 503e9752aa197baedf124638cd2bacc572828887
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +17,10 @@ public interface ArticleViewServiceInterface {
 
   Long countReadUser(UUID articleId);// 조회수 읽기
 
+<<<<<<< HEAD
+  List<UUID> getSortByViewCountPageNation(Long cursor, Pageable pageable,
+      String direction);//조회수 기반 페이지네이션
+=======
   List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction);//조회수 기반 페이지네이션
+>>>>>>> 503e9752aa197baedf124638cd2bacc572828887
 }

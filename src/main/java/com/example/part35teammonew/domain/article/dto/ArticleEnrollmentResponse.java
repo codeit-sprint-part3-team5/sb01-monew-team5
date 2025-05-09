@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ArticleEnrollmentResponse {
+
   //Vaildation 필요
   private UUID id;
   private UUID viewedBy;
