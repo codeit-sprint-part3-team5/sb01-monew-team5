@@ -1,10 +1,11 @@
 spring:
   profiles:
-    active: prod
+    active: dev
 
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
 
   server:
     address: 0.0.0.0
