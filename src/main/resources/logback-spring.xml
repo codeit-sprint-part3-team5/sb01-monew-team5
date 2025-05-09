@@ -7,9 +7,9 @@
   </appender>
 
   <appender name="MONGODB" class="com.example.part35teammonew.log.MongoDBAppender">
-    <host>localhost</host>
-    <port>27017</port>
-    <dbName>monew-log</dbName>
+    <host>${MONGO_HOST}</host>
+    <port>${MONGO_PORT}</port>
+    <dbName>${MONGO_DB}</dbName>
     <collectionName>logs</collectionName>
   </appender>
 
