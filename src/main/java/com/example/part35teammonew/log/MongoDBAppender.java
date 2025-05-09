@@ -29,7 +29,9 @@ public class MongoDBAppender extends AppenderBase<ILoggingEvent> {
     try {
       if (System.getenv("MONGO_HOST") != null) this.host = System.getenv("MONGO_HOST");
       if (System.getenv("MONGO_PORT") != null) this.port = Integer.parseInt(System.getenv("MONGO_PORT"));
-      if (System.getenv("MONGO_DB") != null) this.dbName = System.getenv("MONGO_DB");
+      if (System.getenv("LOG_MONGO_DB") != null) {
+        this.dbName = System.getenv("LOG_MONGO_DB");
+      }
 
       String uri = buildConnectionUri();
       mongoClient = MongoClients.create(uri);
