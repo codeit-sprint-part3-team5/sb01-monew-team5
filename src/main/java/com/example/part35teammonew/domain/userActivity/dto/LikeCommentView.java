@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.userActivity.dto;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public class LikeCommentView {
 
   private String commentContent;
   private Integer commentLikeCount;
-  private LocalDateTime commentCreatedAt;
+  private Instant commentCreatedAt;
 
   @Override
   public boolean equals(Object o) {

@@ -69,7 +69,7 @@ public class InterestServiceImpl implements InterestService {
   @Override
   @Transactional
   public InterestDto createInterest(InterestCreateRequest request) {
-    String name = request.getName().strip();
+    String name = request.getName().replaceAll("\\s+", "");
 
     //유사도 검증
     if (isNameTooSimilar(name)) {
