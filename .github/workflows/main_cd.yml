@@ -1,4 +1,4 @@
-name: Deploy to AWS with OIDC
+name: <Docker 빌드 -> 이미지 ECR에 push -> 태스크 정의 이미지 버전 수정 -> ECS 배포 서비스 업데이트>자동화 with OIDC
 
 on:
   push:
@@ -47,10 +47,24 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Download current task definition
+        id: taskdef
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition sb01-monew-team5-task \
+            --query taskDefinition \
+            > task-def.json
+
+      - name: Replace image URI with new tag
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          sed -i "s|170414696400.dkr.ecr.ap-northeast-2.amazonaws.com/prod/sb01-monew-team5:[^\"']*|170414696400.dkr.ecr.ap-northeast-2.amazonaws.com/prod/sb01-monew-team5:${IMAGE_TAG}|g" task-def.json
+
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ecs-task-def.json
+          task-definition: task-def.json
           service: sb01-monew-team5-fargate-service-ezlex9f6
           cluster: sb01-monew-team5-cluster
           wait-for-service-stability: true
