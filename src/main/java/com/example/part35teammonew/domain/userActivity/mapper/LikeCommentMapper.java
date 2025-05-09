@@ -4,6 +4,7 @@ import com.example.part35teammonew.domain.comment.dto.CommentDto;
 import com.example.part35teammonew.domain.comment.dto.CommentLikeResponse;
 import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class LikeCommentMapper {
         .commentUserNickname(comment.getUserNickname())
         .commentContent(comment.getContent())
         .commentLikeCount(comment.getLikeCount())
-        .commentCreatedAt(Instant.now())
+        .commentCreatedAt(LocalDateTime.now())
         .build();
 
   }

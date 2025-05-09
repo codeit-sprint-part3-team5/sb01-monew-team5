@@ -18,7 +18,7 @@ public class RecentCommentMapper {
         .userNickname(comment.getUserNickname())
         .content(comment.getContent())
         .likeCount(comment.getLikeCount())
-        .createdAt(Instant.now())
+        .createdAt(LocalDateTime.now())
         .build();
   }
 }
