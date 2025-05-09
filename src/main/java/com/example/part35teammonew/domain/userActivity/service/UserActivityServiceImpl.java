@@ -3,8 +3,6 @@ package com.example.part35teammonew.domain.userActivity.service;
 import com.example.part35teammonew.exeception.RestApiException;
 import com.example.part35teammonew.exeception.errorcode.CommentErrorCode;
 import com.example.part35teammonew.exeception.errorcode.UserActivityErrorCode;
-import com.example.part35teammonew.exeception.userActivity.UserActivityErrorUpdate;
-import com.example.part35teammonew.exeception.userActivity.UserActivityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -121,8 +119,6 @@ public class UserActivityServiceImpl implements UserActivityServiceInterface {
     try {
       userActivity.updateCommentLikes(likeCommentView);
       userActivityRepository.save(userActivity);
-    } catch (UserActivityErrorUpdate e) {
-      throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 좋아요 업데이트 실패");
     } catch (Exception e) {
       log.error("댓글 좋아요 추가 중 예외 발생: {}", id, e);
       throw new RestApiException(UserActivityErrorCode.USER_ACTIVITY_UPDATE_ERROR, "댓글 좋아요를 유저활동에 추가 중 오류가 발생했습니다.");

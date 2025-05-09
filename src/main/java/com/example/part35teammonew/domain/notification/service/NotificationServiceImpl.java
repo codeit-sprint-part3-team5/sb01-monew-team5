@@ -7,7 +7,6 @@ import com.example.part35teammonew.domain.notification.entity.Notification;
 import com.example.part35teammonew.domain.notification.repository.NotificationRepository;
 import com.example.part35teammonew.exeception.RestApiException;
 import com.example.part35teammonew.exeception.errorcode.NotificationErrorCode;
-import com.example.part35teammonew.exeception.notification.WrongUserNotification;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
