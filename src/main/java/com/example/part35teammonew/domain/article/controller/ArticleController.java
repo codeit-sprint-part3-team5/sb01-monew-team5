@@ -3,7 +3,6 @@ package com.example.part35teammonew.domain.article.controller;
 import com.example.part35teammonew.domain.article.dto.ArticleBaseDto;
 import com.example.part35teammonew.domain.article.dto.ArticleCursorRequest;
 import com.example.part35teammonew.domain.article.dto.ArticleEnrollmentResponse;
-import com.example.part35teammonew.domain.article.dto.ArticleRestoreRequestDto;
 import com.example.part35teammonew.domain.article.dto.ArticleSourceAndDateAndInterestsRequest;
 import com.example.part35teammonew.domain.article.dto.ArticlesRequestDto;
 import com.example.part35teammonew.domain.article.dto.ArticlesResponse;
@@ -11,7 +10,7 @@ import com.example.part35teammonew.domain.article.dto.findByCursorPagingResponse
 import com.example.part35teammonew.domain.article.entity.Direction;
 import com.example.part35teammonew.domain.article.entity.SortField;
 import com.example.part35teammonew.domain.article.service.ArticleService;
-import com.example.part35teammonew.domain.articleView.service.ArticleViewService;
+import com.example.part35teammonew.domain.articleView.service.ArticleViewServiceInterface;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,7 +22,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,30 +35,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class ArticleController {
+
   private final ArticleService articleService;
-  private final ArticleViewService articleViewService;
+  private final ArticleViewServiceInterface articleViewService;
   private final JobLauncher jobLauncher;
   private final Job backupJob;
 
   @PostMapping("/api/articles/{articleId}/article-views")
-  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(@PathVariable UUID articleId, @RequestHeader String monewRequestUserId) {
-    ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
+  public ResponseEntity<ArticleEnrollmentResponse> articleViewEnrollment(
+      @PathVariable UUID articleId, @RequestHeader String monewRequestUserId) {
+
     ArticleBaseDto articleBaseDto = articleService.findById(articleId);
+    ArticleEnrollmentResponse articleEnrollmentResponse = new ArticleEnrollmentResponse();
+
     articleEnrollmentResponse.setArticleId(articleId);
     articleEnrollmentResponse.setArticleTitle(articleBaseDto.getTitle());
     articleEnrollmentResponse.setArticlePublishedDate(articleBaseDto.getDate());
     articleEnrollmentResponse.setCreatedAt(articleBaseDto.getCreatedAt());
     articleEnrollmentResponse.setArticleSummary(articleBaseDto.getSummary());
-    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser());
+    articleEnrollmentResponse.setArticleViewCount(articleViewService.countReadUser(articleId));
     articleEnrollmentResponse.setSource(articleBaseDto.getSource());
     articleEnrollmentResponse.setSourceUrl(articleBaseDto.getLink());
     articleEnrollmentResponse.setArticleCommentCount(articleBaseDto.getCommentCount());
-    //articleEnrollmentResponse.setViewdBy(articleViewService.getViewedIds);
-    //monewRequestUserId의 역할?
+    articleEnrollmentResponse.setViewdBy(UUID.fromString(monewRequestUserId));
+
     return ResponseEntity.ok(articleEnrollmentResponse);
   }
+
   @GetMapping("/api/articles")
-  public ResponseEntity<ArticlesResponse> articles(@RequestBody ArticlesRequestDto articlesRequestDto) {
+  public ResponseEntity<ArticlesResponse> articles(
+      @RequestBody ArticlesRequestDto articlesRequestDto) {
     ArticlesResponse articlesResponse = new ArticlesResponse();
 
     String keyword = articlesRequestDto.getKeyword();
@@ -75,26 +79,38 @@ public class ArticleController {
     String monewRequestUserId = articlesRequestDto.getMonew_Request_User_ID();
     System.out.println("monewRequestUserId = " + monewRequestUserId);
 
-    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit, direction);
+    ArticleCursorRequest articleCursorRequest = new ArticleCursorRequest(cursor, sortField, limit,
+        direction);
 
     ArticleSourceAndDateAndInterestsRequest articleSourceAndDateAndInterestsRequest = new ArticleSourceAndDateAndInterestsRequest();
-    if(sourceIn != null) articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
-    if(publishDateFrom != null) articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
-    if(publishDateTo != null) articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
-    if(keyword != null) articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+    if (sourceIn != null) {
+      articleSourceAndDateAndInterestsRequest.setSourceIn(sourceIn);
+    }
+    if (publishDateFrom != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateFrom(publishDateFrom);
+    }
+    if (publishDateTo != null) {
+      articleSourceAndDateAndInterestsRequest.setPublishDateTo(publishDateTo);
+    }
+    if (keyword != null) {
+      articleSourceAndDateAndInterestsRequest.setKeyword(keyword);
+    }
 
-
-    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(articleCursorRequest);
+    findByCursorPagingResponse byCursorPaging = articleService.findByCursorPaging(
+        articleCursorRequest);
     System.out.println("byCursorPaging = " + byCursorPaging);
-    System.out.println("byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
+    System.out.println(
+        "byCursorPaging.getArticles().size() = " + byCursorPaging.getArticles().size());
 
-    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(articleSourceAndDateAndInterestsRequest);
+    List<ArticleBaseDto> bySourceAndDateAndInterests = articleService.findBySourceAndDateAndInterests(
+        articleSourceAndDateAndInterestsRequest);
     System.out.println("bySourceAndDateAndInterests = " + bySourceAndDateAndInterests);
-    System.out.println("bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
+    System.out.println(
+        "bySourceAndDateAndInterests.size() = " + bySourceAndDateAndInterests.size());
 
     List<ArticleBaseDto> result = new ArrayList<>();
     for (ArticleBaseDto bySourceAndDateAndInterest : bySourceAndDateAndInterests) {
-      if(byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)){
+      if (byCursorPaging.getArticles().contains(bySourceAndDateAndInterest)) {
         result.add(bySourceAndDateAndInterest);
       }
     }
@@ -102,22 +118,23 @@ public class ArticleController {
     System.out.println("result = " + result);
     System.out.println("result = " + result.size());
 
-
-    if(publishDateFrom != null){
+    if (publishDateFrom != null) {
       String onlyDate = publishDateFrom.substring(0, 10);
-      LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay();
+      LocalDateTime DateFrom = LocalDate.parse(onlyDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+          .atStartOfDay();
       System.out.println("DateFrom = " + DateFrom);
       System.out.println("byCursorPaging.getNextAfter() = " + byCursorPaging.getNextAfter());
-      if(byCursorPaging.getNextAfter()!=null && DateFrom.isBefore(byCursorPaging.getNextAfter())){
+      if (byCursorPaging.getNextAfter() != null && DateFrom.isBefore(
+          byCursorPaging.getNextAfter())) {
         articlesResponse.setNextAfter(String.valueOf(byCursorPaging.getNextAfter()));
-      }else {
+      } else {
         articlesResponse.setNextAfter("false");
       }
-    }else {
+    } else {
       articlesResponse.setNextAfter("false");
     }
 
-    if(publishDateTo != null){
+    if (publishDateTo != null) {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
       LocalDateTime dateTime = LocalDateTime.parse(publishDateTo, formatter);
       /*String onlyDate = publishDateTo.substring(0, 10); // "2025-04-24"
@@ -125,12 +142,13 @@ public class ArticleController {
           DateTimeFormatter.ofPattern("yyyy-MM-dd")).plusDays(1).atStartOfDay();
       System.out.println("publishDateTo = " + publishDateTo);
       System.out.println("localDate = " + localDate);*/
-      if(byCursorPaging.getNextAfter()!=null && !articlesResponse.getNextAfter().equals("false") && dateTime.isAfter(byCursorPaging.getNextAfter())){
+      if (byCursorPaging.getNextAfter() != null && !articlesResponse.getNextAfter().equals("false")
+          && dateTime.isAfter(byCursorPaging.getNextAfter())) {
         articlesResponse.setHasNext("true");
-      }else {
+      } else {
         articlesResponse.setHasNext("false");
       }
-    }else {
+    } else {
       articlesResponse.setHasNext("false");
     }
     articlesResponse.setNextCursor(byCursorPaging.getNextCursor());
@@ -161,6 +179,7 @@ public class ArticleController {
     articleService.deleteLogical(articleId);
     return ResponseEntity.noContent().build();
   }
+
   @DeleteMapping("/api/articles/{articleId}/hard")
   public ResponseEntity<Void> articlesDeleteHard(@PathVariable UUID articleId) {
     articleService.deletePhysical(articleId);
