@@ -47,13 +47,23 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Download current task definition
+      - name: Download and sanitize task definition
         id: taskdef
         run: |
           aws ecs describe-task-definition \
             --task-definition sb01-monew-team5-task \
-            --query taskDefinition \
-            > task-def.json
+            --query 'taskDefinition' \
+            | jq 'del(
+              .taskDefinitionArn,
+              .requiresAttributes,
+              .revision,
+              .status,
+              .registeredAt,
+              .registeredBy,
+              .compatibilities,
+              .enableFaultInjection
+            )' > task-def.json
+      
 
       - name: Replace image URI with new tag
         env:
