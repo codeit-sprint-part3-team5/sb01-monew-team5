@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.comment.controller;
 
+import com.example.part35teammonew.domain.comment.controller.docs.CommentApi;
 import com.example.part35teammonew.domain.comment.dto.CommentCreateRequest;
 import com.example.part35teammonew.domain.comment.dto.CommentDto;
 import com.example.part35teammonew.domain.comment.dto.CommentPageResponse;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentController implements CommentApi {
 
   private final CommentService commentService;
 
@@ -32,7 +33,7 @@ public class CommentController {
       @RequestParam(defaultValue = "DESC") String direction, //정렬 기본 방향: 내림차순 (최신 댓글이 위로 감)
       @RequestParam(required = false) String cursor, // 커서 기반 페이지네이션 기준이 되는 댓글 ID
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime after,
-      @RequestParam(defaultValue = "10") Integer limit, // 조회할 댓글 수 제한
+      @RequestParam(defaultValue = "50") Integer limit, // 조회할 댓글 수 제한
       @RequestHeader("Monew-Request-User-ID") UUID requestUserId) { // 요청 사용자 ID (헤더)
 
     log.info("댓글 목록 조회 요청: articleId={}, orderBy={}, direction={}, cursor={}, after={}, limit={}, requestUserId={}",
@@ -69,28 +70,20 @@ public class CommentController {
     return ResponseEntity.ok(response);
   }
 
-  //댓글 생성
   @PostMapping
   public ResponseEntity<CommentDto> createComment(
-      @Valid @RequestBody CommentCreateRequest request, //CommentCreateRequest(articleId, userId, content)
-      @RequestHeader(value = "Monew-Request-User-ID", required = false) UUID requestUserId) { // 다른 엔드포인트에서는 요청자 ID가 필수적이지만
-    //댓글 생성시에는 딱히 언급이 없어서 일단 추가하지만 필수는 아니도록 함.
+      @Valid @RequestBody CommentCreateRequest request) { //CommentCreateRequest(articleId, userId, content)
+    //헤더 제외함 (api상 생성에는 필요없음)
 
-    // Monew-Request-User-ID 헤더에 요청자 정보 없으면 요청 본문의 사용자 ID 사용
-    final UUID finalUserId;
-    if (requestUserId != null) {
-      finalUserId = requestUserId;
-    } else {
-      finalUserId = request.getUserId();
-    }
+    log.info("댓글 생성 요청: articleId={}, userId={}",
+        request.getArticleId(), request.getUserId());
 
-    log.info("댓글 생성 요청: articleId={}, userId={}, requestUserId={}",
-        request.getArticleId(), request.getUserId(), finalUserId);
-
-    CommentDto createdComment = commentService.createComment(request, finalUserId);
+    // 요청 본문의 userId를 직접 사용
+    UUID userId = request.getUserId();
+    CommentDto createdComment = commentService.createComment(request, userId);
 
     log.debug("댓글 생성 완료: commentId={}, articleId={}, userId={}",
-        createdComment.getId(), request.getArticleId(), finalUserId);
+        createdComment.getId(), request.getArticleId(), userId);
 
     return ResponseEntity
         .status(HttpStatus.CREATED)

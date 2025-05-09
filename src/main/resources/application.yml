@@ -1,18 +1,25 @@
 spring:
-  ### Spring batch를 위해 추가된 내용
+  profiles:
+    active: dev
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  server:
+    address: 0.0.0.0
+    port: 8080
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
   batch:
     job:
       enabled: false
     jdbc:
       initialize-schema: always
-  ###
-  profiles:
-    active: dev ## 설정
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
 
 logging:
   level:
@@ -35,10 +42,5 @@ monew:
     type: local
     local:
       root-path: ./monew/storage
-    #s3:
-    #  bucket: ${AWS_S3_BUCKET}
-    #credentials:
-    #  access-key: ${AWS_S3_ACCESS_KEY}
-    #  secret-key: ${AWS_S3_SECRET_KEY}
-    #region:
-    #  static-region: ${AWS_S3_REGION}
+
+

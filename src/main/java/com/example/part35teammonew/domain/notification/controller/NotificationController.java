@@ -1,10 +1,11 @@
 package com.example.part35teammonew.domain.notification.controller;
 
-import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
-import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
-import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.dto.CursorPageRequest;
+import com.example.part35teammonew.domain.notification.dto.CursorPageResponse;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.controller.docs.NotificationApi;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/notifications")
-public class NotificationController {
+public class NotificationController implements NotificationApi {
 
   private final NotificationServiceInterface notificationServiceInterface;
 
@@ -31,12 +32,19 @@ public class NotificationController {
 
   @GetMapping
   public ResponseEntity<CursorPageResponse<NotificationDto>> getNotifications(
-      @RequestParam(value = "cursor", required = false) String cursor,
-      @RequestParam(value = "after", required = false) LocalDateTime after,
+      @RequestParam(value = "cursor", required = false) Instant  cursor,
+      @RequestParam(value = "after", required = false) Instant after,
       @RequestParam(value = "limit") int limit,
       @RequestHeader("Monew-Request-User-ID") UUID requestUserId
   ) {
-    CursorPageRequest cursorPageRequest = new CursorPageRequest(cursor, after, limit);
+
+    CursorPageRequest cursorPageRequest=null;
+    if(limit<=0){
+      cursorPageRequest = new CursorPageRequest(cursor, after, 1);
+    }
+    else if (limit>0) {
+      cursorPageRequest = new CursorPageRequest(cursor, after, limit);
+    }
     CursorPageResponse<NotificationDto> result =
         notificationServiceInterface.getNoticePage(requestUserId, cursorPageRequest);
 

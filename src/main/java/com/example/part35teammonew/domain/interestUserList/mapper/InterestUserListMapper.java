@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.interestUserList.mapper;
 
-import com.example.part35teammonew.domain.interestUserList.Dto.InterestUserListDto;
+import com.example.part35teammonew.domain.interestUserList.dto.InterestUserListDto;
 import com.example.part35teammonew.domain.interestUserList.entity.InterestUserList;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

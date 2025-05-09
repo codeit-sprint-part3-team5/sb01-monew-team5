@@ -13,10 +13,16 @@ import com.example.part35teammonew.domain.comment.entity.CommentLike;
 import com.example.part35teammonew.domain.comment.mapper.CommentMapper;
 import com.example.part35teammonew.domain.comment.repository.CommentLikeRepository;
 import com.example.part35teammonew.domain.comment.repository.CommentRepository;
+import com.example.part35teammonew.domain.comment.service.impl.CommentLikeServiceImpl;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 
-import com.example.part35teammonew.exeception.comment.CommentLikeConflict;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.mapper.LikeCommentMapper;
+import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
+import com.example.part35teammonew.exception.RestApiException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,6 +56,15 @@ class CommentLikeServiceTest {
 
   @Mock
   private CommentMapper commentMapper;
+
+  @Mock
+  private NotificationServiceInterface notificationServiceInterface;
+
+  @Mock
+  private UserActivityServiceInterface userActivityServiceInterface;
+
+  @Mock
+  private LikeCommentMapper likeCommentMapper;
 
   private User testUser;
   private Article testArticle;
@@ -127,6 +142,18 @@ class CommentLikeServiceTest {
           .build();
     });
 
+    // UserActivityService 모킹 - void가 아닌 경우 when-thenReturn 사용
+    NotificationDto mockNotificationDto = mock(NotificationDto.class);
+    when(notificationServiceInterface.addCommentNotice(any(UUID.class), anyString(), any(UUID.class)))
+        .thenReturn(mockNotificationDto);
+    // NotificationService 모킹 - void가 아닌 경우 when-thenReturn 사용
+    when(notificationServiceInterface.addCommentNotice(any(UUID.class), anyString(), any(UUID.class))).thenReturn(null);
+
+    // LikeCommentMapper 모킹 - 실제 반환 타입 사용
+    LikeCommentView mockLikeCommentView = mock(LikeCommentView.class);
+    when(likeCommentMapper.toDto(any(CommentDto.class), any(CommentLikeResponse.class)))
+        .thenReturn(mockLikeCommentView);
+
     // 기본 모킹 설정
     setupMocks();
   }
@@ -188,6 +215,8 @@ class CommentLikeServiceTest {
       verify(commentLikeRepository, times(1)).save(any(CommentLike.class));
       verify(testComment, times(1)).incrementLikeCount();
       verify(commentRepository, times(1)).save(testComment);
+      verify(userActivityServiceInterface, times(1)).addLikeCommentView(any(UUID.class), any());
+      verify(notificationServiceInterface, times(1)).addCommentNotice(any(UUID.class), anyString(), any(UUID.class));
     }
   }
 
@@ -226,6 +255,20 @@ class CommentLikeServiceTest {
 
   @Test
   @Order(4)
+  @DisplayName("이미 좋아요를 누른 댓글에 다시 좋아요 시도시 충돌 오류 발생")
+  void addLike_conflict() {
+    // given
+    when(commentLikeRepository.findByUserIdAndCommentId(testUserId, testCommentId))
+        .thenReturn(Optional.of(testCommentLike)); // 이미 좋아요 존재
+
+    // when & then
+    assertThrows(RestApiException.class, () -> {
+      commentLikeService.addLike(testCommentId, testUserId);
+    }, "이미 좋아요를 누른 댓글입니다");
+  }
+
+  @Test
+  @Order(5)
   @DisplayName("댓글 좋아요 여부 확인 테스트 - 좋아요 없음")
   void hasLiked_false() {
     // given
@@ -239,7 +282,7 @@ class CommentLikeServiceTest {
   }
 
   @Test
-  @Order(5)
+  @Order(6)
   @DisplayName("댓글 좋아요 정보 조회 테스트")
   void getCommentLike() {
     // given

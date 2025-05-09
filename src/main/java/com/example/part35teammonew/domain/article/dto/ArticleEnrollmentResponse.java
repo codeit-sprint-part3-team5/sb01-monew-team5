@@ -1,5 +1,6 @@
 package com.example.part35teammonew.domain.article.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Data;
@@ -11,8 +12,8 @@ public class ArticleEnrollmentResponse {
 
   //Vaildation 필요
   private UUID id;
-  private UUID viewdBy;
-  private LocalDateTime createdAt;
+  private UUID viewedBy;
+  private LocalDate createdAt;
   private UUID articleId;
   private String source;
   private String sourceUrl;
@@ -22,11 +23,11 @@ public class ArticleEnrollmentResponse {
   private int articleCommentCount;
   private Long articleViewCount;
 
-  public ArticleEnrollmentResponse(UUID id, UUID viewdBy, LocalDateTime createdAt, UUID articleId,
+  public ArticleEnrollmentResponse(UUID id, UUID viewedBy, LocalDate createdAt, UUID articleId,
       String source, String sourceUrl, String articleTitle, LocalDateTime articlePublishedDate,
       String articleSummary, int articleCommentCount, Long articleViewCount) {
     this.id = id;
-    this.viewdBy = viewdBy;
+    this.viewedBy = viewedBy;
     this.createdAt = createdAt;
     this.articleId = articleId;
     this.source = source;

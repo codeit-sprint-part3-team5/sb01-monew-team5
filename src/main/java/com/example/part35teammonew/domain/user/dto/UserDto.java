@@ -21,10 +21,10 @@ public class UserDto {
 
     public static UserDto fromEntity(User user) {
         return UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .nickname(user.getNickname())
-                .createdAt(user.getCreatedAt())
-                .build();
+            .id(user.getId())
+            .email(user.getEmail())
+            .nickname(user.getNickname())
+            .createdAt(user.getCreatedAt())
+            .build();
     }
 }

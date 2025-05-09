@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
 import com.example.part35teammonew.domain.interest.repository.InterestRepository;
-import com.example.part35teammonew.exeception.InterestNotFoundException;
+import com.example.part35teammonew.exception.RestApiException;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestDeleteServiceTest {
@@ -35,8 +36,7 @@ public class InterestDeleteServiceTest {
 
 		//when then
 		assertThatThrownBy(() -> interestService.deleteInterest(id))
-			.isInstanceOf(InterestNotFoundException.class)
-			.hasMessageContaining("관심사를 찾을 수 없습니다: id 오류");
+			.isInstanceOf(RestApiException.class);
 
 		verify(interestRepository, never()).deleteById(any());
 	}

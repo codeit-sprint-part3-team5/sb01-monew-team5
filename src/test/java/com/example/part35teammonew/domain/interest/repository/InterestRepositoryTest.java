@@ -3,7 +3,6 @@ package com.example.part35teammonew.domain.interest.repository;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -29,9 +29,9 @@ public class Notification {
   private final UUID resourceId;
 
   @Builder
-  private Notification(UUID userId, String content, NotificationType type, UUID resourceId) {
+  private Notification(UUID userId, String content, NotificationType type, UUID resourceId, Instant createdAt) {
     this.userId = userId;
-    this.createdAt = Instant.now();
+    this.createdAt = createdAt;
     this.updateAt = Instant.EPOCH;
     this.confirmed = false;
     this.content = content;
@@ -39,21 +39,23 @@ public class Notification {
     this.resourceId = resourceId;
   }
 
-  public static Notification createCommentNotice(UUID userId, String content, UUID resourceId) {
+  public static Notification createCommentNotice(UUID userId, String content, UUID resourceId, Instant createdAt) {
     return Notification.builder()
         .userId(userId)
         .content(content)
         .type(NotificationType.COMMENT)
         .resourceId(resourceId)
+        .createdAt(createdAt)
         .build();
   }
 
-  public static Notification createNewsNotice(UUID userId, String content, UUID resourceId) {
+  public static Notification createNewsNotice(UUID userId, String content, UUID resourceId, Instant createdAt) {
     return Notification.builder()
         .userId(userId)
         .content(content)
         .type(NotificationType.NEWS)
         .resourceId(resourceId)
+        .createdAt(createdAt)
         .build();
   }
   //테슽트 용 설정자

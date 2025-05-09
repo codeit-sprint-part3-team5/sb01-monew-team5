@@ -15,7 +15,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +37,19 @@ public class Article {
   private UUID id;
 
   @NotNull
+  @Column(length = 500)
   private String title;
 
   @NotNull
+  @Column(length = 2000)
   private String summary;
 
   @NotNull
+  @Column(length = 1000)
   private String link;
 
   @NotNull
+  @Column(length = 500)
   private String source;
 
   @NotNull
@@ -59,6 +62,11 @@ public class Article {
 
   @NotNull
   private int commentCount = 0;
+
+  @NotNull
+  private Long viewCount;
+
+  private UUID interestId;
 
   @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments = new ArrayList<>();
@@ -73,18 +81,19 @@ public class Article {
   public Article(ArticleBaseDto articleBaseDto) {
     this.title = articleBaseDto.getTitle();
     this.summary = articleBaseDto.getSummary();
-    this.link = articleBaseDto.getLink();
+    this.link = articleBaseDto.getSourceUrl();
     this.source = articleBaseDto.getSource();
-    this.date = articleBaseDto.getDate();
+    this.date = articleBaseDto.getPublishDate();
     this.createdAt = LocalDateTime.now();
     this.commentCount = articleBaseDto.getCommentCount();
+    this.viewCount=0L;
   }
   public Article update(ArticleBaseDto articleUpdateDto) {
     if(articleUpdateDto.getTitle() != null) { this.title = articleUpdateDto.getTitle(); }
     if(articleUpdateDto.getSummary() != null) { this.summary = articleUpdateDto.getSummary(); }
-    if(articleUpdateDto.getLink() != null) { this.link = articleUpdateDto.getLink(); }
+    if(articleUpdateDto.getSourceUrl() != null) { this.link = articleUpdateDto.getSourceUrl(); }
     if(articleUpdateDto.getSource() != null) { this.source = articleUpdateDto.getSource(); }
-    if(articleUpdateDto.getDate() != null) { this.date = articleUpdateDto.getDate(); }
+    if(articleUpdateDto.getPublishDate() != null) { this.date = articleUpdateDto.getPublishDate(); }
     if(articleUpdateDto.getCommentCount() > 0) { this.commentCount = articleUpdateDto.getCommentCount(); }
     return this;
   }
@@ -95,22 +104,8 @@ public class Article {
     return this.getDeletedAt() == null;
   }
 
-
-  @Override
-  public String toString() {
-    return "Article{" +
-        "id=" + id +
-        ", title='" + title + '\'' +
-        ", summary='" + summary + '\'' +
-        ", link='" + link + '\'' +
-        ", source='" + source + '\'' +
-        ", date=" + date +
-        ", createdAt=" + createdAt +
-        ", deletedAt=" + deletedAt +
-        ", commentCount=" + commentCount +
-        ", comments=" + comments +
-        ", commentLikes=" + commentLikes +
-        ", interests=" + interests +
-        '}';
+  public void increaseReadCount(){
+    viewCount++;
   }
+
 }
