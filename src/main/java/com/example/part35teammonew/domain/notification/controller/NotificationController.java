@@ -1,12 +1,11 @@
 package com.example.part35teammonew.domain.notification.controller;
 
-import com.example.part35teammonew.domain.notification.Dto.CursorPageRequest;
-import com.example.part35teammonew.domain.notification.Dto.CursorPageResponse;
-import com.example.part35teammonew.domain.notification.Dto.NotificationDto;
+import com.example.part35teammonew.domain.notification.dto.CursorPageRequest;
+import com.example.part35teammonew.domain.notification.dto.CursorPageResponse;
+import com.example.part35teammonew.domain.notification.dto.NotificationDto;
 import com.example.part35teammonew.domain.notification.controller.docs.NotificationApi;
 import com.example.part35teammonew.domain.notification.service.NotificationServiceInterface;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.UUID;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;

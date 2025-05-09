@@ -2,8 +2,8 @@ package com.example.part35teammonew.domain.user.service.impl;
 
 import java.util.UUID;
 
-import com.example.part35teammonew.exeception.RestApiException;
-import com.example.part35teammonew.exeception.errorcode.UserErrorCode;
+import com.example.part35teammonew.exception.RestApiException;
+import com.example.part35teammonew.exception.errorcode.UserErrorCode;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,7 @@ import com.example.part35teammonew.domain.user.dto.UserUpdateRequest;
 import com.example.part35teammonew.domain.user.entity.User;
 import com.example.part35teammonew.domain.user.repository.UserRepository;
 import com.example.part35teammonew.domain.user.service.UserService;
-import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
+import com.example.part35teammonew.domain.userActivity.dto.UserInfoDto;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 
 import lombok.RequiredArgsConstructor;

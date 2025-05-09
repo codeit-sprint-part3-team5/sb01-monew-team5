@@ -3,8 +3,8 @@ package com.example.part35teammonew.domain.article.batch;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.part35teammonew.exeception.RestApiException;
-import com.example.part35teammonew.exeception.errorcode.ArticleErrorCode;
+import com.example.part35teammonew.exception.RestApiException;
+import com.example.part35teammonew.exception.errorcode.ArticleErrorCode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -2,21 +2,22 @@ package com.example.part35teammonew.domain.userActivity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
-import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.part35teammonew.domain.userActivity.repository.UserActivityRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest

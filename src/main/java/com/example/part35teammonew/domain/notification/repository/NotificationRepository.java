@@ -2,7 +2,6 @@ package com.example.part35teammonew.domain.notification.repository;
 
 import com.example.part35teammonew.domain.notification.entity.Notification;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

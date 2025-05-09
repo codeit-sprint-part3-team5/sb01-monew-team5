@@ -1,6 +1,6 @@
 package com.example.part35teammonew.domain.userActivity.controller;
 
-import com.example.part35teammonew.domain.userActivity.Dto.UserActivityDto;
+import com.example.part35teammonew.domain.userActivity.dto.UserActivityDto;
 import com.example.part35teammonew.domain.userActivity.controller.docs.UserActivityApi;
 import com.example.part35teammonew.domain.userActivity.service.UserActivityServiceInterface;
 

@@ -1,12 +1,12 @@
 package com.example.part35teammonew.domain.userActivity.entity;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.UserInfoDto;
-import com.example.part35teammonew.exeception.RestApiException;
-import com.example.part35teammonew.exeception.errorcode.InterestErrorCode;
+import com.example.part35teammonew.domain.userActivity.dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.UserInfoDto;
+import com.example.part35teammonew.exception.RestApiException;
+import com.example.part35teammonew.exception.errorcode.InterestErrorCode;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

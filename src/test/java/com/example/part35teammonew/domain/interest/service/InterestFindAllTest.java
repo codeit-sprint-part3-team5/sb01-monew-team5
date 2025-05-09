@@ -3,7 +3,7 @@ package com.example.part35teammonew.domain.interest.service;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.*;
 import static org.mockito.BDDMockito.*;
 
-import com.example.part35teammonew.domain.interest.service.InterestServiceImpl;
+import com.example.part35teammonew.domain.interest.service.impl.InterestServiceImpl;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -16,7 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.part35teammonew.domain.interest.entity.Interest;
-import com.example.part35teammonew.domain.interest.InterestRepository;
+import com.example.part35teammonew.domain.interest.repository.InterestRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class InterestFindAllTest {

@@ -3,13 +3,12 @@ package com.example.part35teammonew.domain.userActivity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.example.part35teammonew.domain.userActivity.Dto.ArticleInfoView;
-import com.example.part35teammonew.domain.userActivity.Dto.InterestView;
-import com.example.part35teammonew.domain.userActivity.Dto.LikeCommentView;
-import com.example.part35teammonew.domain.userActivity.Dto.RecentCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.ArticleInfoView;
+import com.example.part35teammonew.domain.userActivity.dto.InterestView;
+import com.example.part35teammonew.domain.userActivity.dto.LikeCommentView;
+import com.example.part35teammonew.domain.userActivity.dto.RecentCommentView;
 import com.example.part35teammonew.domain.userActivity.entity.UserActivity;
 
-import com.example.part35teammonew.exeception.RestApiException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
