@@ -64,7 +64,7 @@ http://3.38.205.137:8080/
 ### **🙋🏻‍♀️ 박지현**
 
 #### 댓글 도메인
-<img src="img/댓글 1.png" alt="댓글 1" width="500"/>
+<img src="img/댓글 1.png" alt="댓글 1" width="300"/>
 
 - **댓글**
   - 댓글에 관한 API 엔드포인트 제작
@@ -95,7 +95,7 @@ http://3.38.205.137:8080/
   - 로그를 MongoDB에 적재
 
 ### **🙋🏻‍♂️ 양병운**
-<img src="img/기사 1.png" alt="유저 1" width="500"/>
+<img src="img/기사 1.png" alt="유저 1" width="300"/>
 
 #### 기사 도메인
 
@@ -107,16 +107,9 @@ http://3.38.205.137:8080/
 
 #### 유저 도메인 및 배포 CI/CD
 <img src="img/유저1.png" alt="유저 1" width="300"/>
-
-
-![image](https://github.com/user-attachments/assets/cae09b0c-c60f-4816-aa5c-e81d5eac6327)
-
-
-![image](https://github.com/user-attachments/assets/c9be5e7f-ed65-490c-be39-c7581458a51c)
-
-
-![image](https://github.com/user-attachments/assets/bdecbbca-9cfe-4ce9-abc4-25b9f0f01384)
-
+<img src="https://github.com/user-attachments/assets/cae09b0c-c60f-4816-aa5c-e81d5eac6327" width="300"/>
+<img src="https://github.com/user-attachments/assets/c9be5e7f-ed65-490c-be39-c7581458a51c" width="300"/>
+<img src="https://github.com/user-attachments/assets/bdecbbca-9cfe-4ce9-abc4-25b9f0f01384" width="300"/>
 
 - **유저**
   - 유저 회원가입 로그인 기능 구현 - 로그인 성공 시, 사용자 ID를 헤더에 포함하여 API 요청하면 서버는 이로 사용자 식별 후, 쿠키 기반 세션을 통해 로그인 상태를 유지하도록 구성
@@ -127,7 +120,7 @@ http://3.38.205.137:8080/
 ---
 
 ## **🚗 배포 다이어그램**
-![image](https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf)
+<img src="https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf" width="300"/>
 
 ---
 
