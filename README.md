@@ -126,7 +126,7 @@ http://3.38.205.137:8080/
 ---
 
 ## **🚗 배포 다이어그램**
-<img src="https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf" width="500"/>
+<img src="https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf" width="700"/>
 
 ---
 
