@@ -64,7 +64,7 @@ http://3.38.205.137:8080/
 ### **🙋🏻‍♀️ 박지현**
 
 #### 댓글 도메인
-<img src="img/댓글 1.png" alt="댓글 1" width="300"/>
+<img src="img/댓글 1.png" alt="댓글 1" width="500"/>
 
 - **댓글**
   - 댓글에 관한 API 엔드포인트 제작
@@ -73,8 +73,8 @@ http://3.38.205.137:8080/
 ### **🙋🏻‍♂️ 강병훈**
 
 #### 관심사 도메인
-<img src="img/관심사 1.png" alt="관심사 1" width="300"/>
-<img src="img/관심사 2.png" alt="관심사 2" width="300"/>
+<img src="img/관심사 1.png" alt="관심사 1" width="500"/>
+<img src="img/관심사 2.png" alt="관심사 2" width="500"/>
 
 - **관심사**
   - 관심사를 등록하고 그에 맞는 키워드도 등록하는 API 엔드포인트 제작
@@ -83,8 +83,8 @@ http://3.38.205.137:8080/
 ### **🙋🏻‍♂️ 김승찬**
 
 #### 유저 활동 및 알림 도메인 및 로깅
-<img src="img/유저 활동 1.png" alt="유저 활동 1" width="300"/>
-<img src="img/알림 1.png" alt="알림 1" width="300"/>
+<img src="img/유저 활동 1.png" alt="유저 활동 1" width="500"/>
+<img src="img/알림 1.png" alt="알림 1" width="500"/>
 
 - **유저 활동**
   - 사용자의 정보 및 최근 활동을 기록하고 있는 정보를 제공하는 API 제작
@@ -95,7 +95,7 @@ http://3.38.205.137:8080/
   - 로그를 MongoDB에 적재
 
 ### **🙋🏻‍♂️ 양병운**
-<img src="img/기사 1.png" alt="유저 1" width="300"/>
+<img src="img/기사 1.png" alt="유저 1" width="500"/>
 
 #### 기사 도메인
 
@@ -106,10 +106,16 @@ http://3.38.205.137:8080/
 ### **🙋🏻‍♀️ 정연경**
 
 #### 유저 도메인 및 배포 CI/CD
-<img src="img/유저1.png" alt="유저 1" width="300"/>
-<img src="https://github.com/user-attachments/assets/cae09b0c-c60f-4816-aa5c-e81d5eac6327" width="300"/>
-<img src="https://github.com/user-attachments/assets/c9be5e7f-ed65-490c-be39-c7581458a51c" width="300"/>
-<img src="https://github.com/user-attachments/assets/bdecbbca-9cfe-4ce9-abc4-25b9f0f01384" width="300"/>
+<img src="img/유저1.png" alt="유저 1" width="500"/>
+
+
+<img src="https://github.com/user-attachments/assets/cae09b0c-c60f-4816-aa5c-e81d5eac6327" width="500"/>
+
+
+<img src="https://github.com/user-attachments/assets/c9be5e7f-ed65-490c-be39-c7581458a51c" width="500"/>
+
+
+<img src="https://github.com/user-attachments/assets/bdecbbca-9cfe-4ce9-abc4-25b9f0f01384" width="500"/>
 
 - **유저**
   - 유저 회원가입 로그인 기능 구현 - 로그인 성공 시, 사용자 ID를 헤더에 포함하여 API 요청하면 서버는 이로 사용자 식별 후, 쿠키 기반 세션을 통해 로그인 상태를 유지하도록 구성
@@ -120,7 +126,7 @@ http://3.38.205.137:8080/
 ---
 
 ## **🚗 배포 다이어그램**
-<img src="https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf" width="300"/>
+<img src="https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf" width="500"/>
 
 ---
 
