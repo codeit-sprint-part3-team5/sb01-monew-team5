@@ -2,7 +2,10 @@
 ---
 # 📰 뉴스 API 소셜 네트워킹 서비스, MONEW
 
-팀 노션 링크(<a href="https://codeit.notion.site/1ca6fd228e8d8130a23deec0dae79641#1ca6fd228e8d811fbe96f955fe9ee6cb">https://codeit.notion.site/1ca6fd228e8d8130a23deec0dae79641#1ca6fd228e8d811fbe96f955fe9ee6cb</a>)<br>
+**팀 노션 링크**
+(<a href="https://bit.ly/3S0c6cX">https://bit.ly/3S0c6cX</a>)<br>
+**배포 웹사이트**
+http://3.38.205.137:8080/
 
 ## **팀원 구성**
 
@@ -18,7 +21,7 @@
 
 - 💭 여러 뉴스 API를 통합하여 사용자에게 맞춤형 뉴스를 제공하고, 의견을 나눌 수 있는 소셜 기능을 갖춘 서비스
 - 🕛 프로젝트 기간: 2025.04.16 ~ 2025.05.12
-- 🖊️ **프로젝트 내용 요약**
+🖊️ **프로젝트 내용 요약**
 - **사용자 및 관심사 관리**  
   체계적인 사용자 정보 등록, 수정, 삭제 기능과  
   관심사 등록, 구독, 키워드 기반 필터링 기능 제공
@@ -37,18 +40,18 @@
 - **소셜 기능 및 커뮤니티**  
   기사별 댓글 등록 및 좋아요 기능 제공  
   뉴스 기반 사용자 간 실시간 상호작용 강호
-## 💡 Index
+### 💡 Index
 > 맞춤형 뉴스 제공 / 관심사 기반 필터링 / 안정적 배치 시스템 / 데이터 무결성 / 자동 백업 / 사용자 활동 분석
 
 ---
 
 ## **기술 스택**
 
-- 💻 Backend: Spring Boot, Spring Security, Spring Data JPA
-- 💽 Database: PostgreSQL, MongoDB
-- 🌐 Infrastructure: AWS (EC2, RDS, S3, ECR, ECS Fargate), Docker  
-- 🥫 CI/CD & DevOps: GitHub Actions, OIDC, Jacoco 
-- 💬 공통 Tool: Git & Github, Discord, Code with me
+- 💻 **Backend**: Spring Boot, Spring Security, Spring Data JPA
+- 💽 **Database**: PostgreSQL, MongoDB
+- 🌐 **Infrastructure**: AWS (EC2, RDS, S3, ECR, ECS Fargate), Docker  
+- 🥫 **CI/CD Pipeline**: GitHub Actions, OIDC, Jacoco 
+- 💬 **공통 Tool**: Git & Github, Discord, Code with me
 
 ---
 
@@ -417,12 +420,4 @@ src:.
 ---
 
 ## **🚗 배포 다이어그램**
-
-
----
-
-## **🖱️ 배포 웹사이트**
-
-http://3.38.205.137:8080/
-
 
