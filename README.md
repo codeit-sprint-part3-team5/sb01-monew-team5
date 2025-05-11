@@ -126,9 +126,8 @@ http://3.38.205.137:8080/
   - 이후 Github Actions CI/CD 파이프라인 구축 후 자동 배포 성공 (AWS IAM OIDC 인증 사용)
 ---
 
-
 ## **🚗 배포 다이어그램**
-
+![image](https://github.com/user-attachments/assets/e02c2c95-f75b-425a-b7d0-750152b217cf)
 
 ---
 
