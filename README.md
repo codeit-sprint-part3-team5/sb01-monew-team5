@@ -422,8 +422,38 @@ src:.
 |                   index-DF13B-h9.js
 |
 \---test
-   
-
+    |
+    \---java
+        \---com
+            \---example
+                \---part35teammonew
+                    │   Part35teamMonewApplicationTests.java
+                    │
+                    ├── config
+                    │   └── TestJpaConfig.java
+                    │
+                    ├── domain
+                    │   ├── article
+                    │   │   ├── api
+                    │   │   │   └── NewsSearchTest.java
+                    │   │   ├── batch
+                    │   │   │   └── ArticleScheduleTest.java
+                    │   │   ├── repository
+                    │   │   │   └── ArticleRepositoryTest.java
+                    │   │   └── service
+                    │   │       └── ArticleServiceImplTest.java
+                    │   ├── articleView***
+                    │   ├── comment***
+                    │   ├── interest***
+                    │   ├── interestUserList***
+                    │   ├── notification***
+                    │   ├── user***
+                    │   └── userActivity***
+                    │
+                    └── sprint
+                        └── mission
+                            └── monew_
+                                └── MonewApplicationTests.java
 
 ```
 
