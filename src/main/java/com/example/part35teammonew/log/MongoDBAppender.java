@@ -15,7 +15,7 @@ import java.util.Date;
 
 public class MongoDBAppender extends AppenderBase<ILoggingEvent> {
 
-  private String host = "localhost";
+  private String host =  "localhost";
   private int port = 27017;
   private String dbName;
   private String collectionName = "log";

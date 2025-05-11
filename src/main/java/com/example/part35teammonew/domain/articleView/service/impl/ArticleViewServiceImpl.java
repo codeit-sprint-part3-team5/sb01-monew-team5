@@ -76,7 +76,7 @@ public class ArticleViewServiceImpl implements ArticleViewServiceInterface {
   @Override
   @Transactional(readOnly = true) //조회순으로 테스트 그리고 같으면 id순으로  direction는 asc 아니면 desc 
   //디폴트는 desc임
-  public List<UUID> getSortByViewCountPageNation(Long cursor, Pageable pageable, String direction) {
+  public List<UUID> getSortByVewCountPageNation(Long cursor, Pageable pageable, String direction) {
     Sort.Order countOrder;
     if (direction.equalsIgnoreCase("asc")) {
       countOrder = Sort.Order.asc("count");

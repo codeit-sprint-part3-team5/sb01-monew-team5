@@ -23,7 +23,7 @@ public class LikeCommentView {
 
   private String commentContent;
   private Integer commentLikeCount;
-  private Instant commentCreatedAt;
+  private LocalDateTime commentCreatedAt;
 
   @Override
   public boolean equals(Object o) {

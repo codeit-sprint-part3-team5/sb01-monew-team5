@@ -3,6 +3,9 @@ name: PR시 CI & 테스트 커버리지 80 체크
 on:
   pull_request:
     branches: dev
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
     workflow_dispatch:
 
 jobs:

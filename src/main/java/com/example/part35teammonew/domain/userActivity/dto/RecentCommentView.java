@@ -19,10 +19,8 @@ public class RecentCommentView {
   private String userNickname; //닉네임
 
   private String content; //내영
-
   private Integer likeCount; //좋아요 수
-
-  private Instant createdAt;
+  private LocalDateTime createdAt;
 
   @Override
   public boolean equals(Object o) {
