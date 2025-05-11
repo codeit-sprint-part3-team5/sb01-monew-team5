@@ -73,15 +73,19 @@
 
 ### **정연경**
 
-#### 유저 도메인 및 배포
+#### 유저 도메인 및 배포 CI/CD
 <img src="img/유저1.png" alt="유저 1" width="300"/>
-<img src="img/유저2.png" alt="유저 2" width="300"/>
+![image](https://github.com/user-attachments/assets/cae09b0c-c60f-4816-aa5c-e81d5eac6327)
+![image](https://github.com/user-attachments/assets/c9be5e7f-ed65-490c-be39-c7581458a51c)
+![image.png](attachment:f5ec66b0-99dc-43fe-872a-0dfac00b6a88:2e91b849-6d6d-474d-83e2-75dd1f60312c.png)
+![image.png](attachment:ffcef3a0-2fd9-4d0b-a0ec-0a023812c00a:70557000-846e-4c20-abb9-e6a07bd3b69d.png)
 
 - **유저**
-  - 유저를 생성 및 관리하는 API 엔드포인트 제작
-  - 유저에 대한 정보만 볼 수 있도록 제한
+  - 유저 회원가입 로그인 기능 구현 - 로그인 성공 시, 사용자 ID를 헤더에 포함하여 API 요청하면 서버는 이로 사용자 식별 후, 쿠키 기반 세션을 통해 로그인 상태를 유지하도록 구성
+  - 닉네임 수정, 논리/물리 삭제 기능 구현
 - **배포**
-  - AWS를 이용하여 도커 이미지 빌드 후 배포
+  - Docker 이미지 빌드 후 AWS에 수동 배포 (RDS, EC2, ECR, ECS Fargate 사용)
+  - 이후 Github Actions CI/CD 파이프라인 구축 후 자동 배포 성공 (AWS IAM OIDC 인증 사용)
 ---
 
 ## **파일 구조**
@@ -381,9 +385,14 @@ src:.
 
 ---
 
+## **배포 다이어그램**
+
+
+---
+
 ## **구현 홈페이지**
 
-https://결과물링크
+http://3.38.205.137:8080/
 
 ---
 
