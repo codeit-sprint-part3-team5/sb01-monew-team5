@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5/branch/main/graph/badge.svg)](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5)
 
 
-**🖱️ 팀 노션 링크**
+**🖱️ 팀 노션**
 https://bit.ly/3S0c6cX
 
 
