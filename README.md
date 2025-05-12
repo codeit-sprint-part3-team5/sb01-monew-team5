@@ -164,22 +164,23 @@ src:.
 |   |               |       CorsConfig.java
 |   |               |       SecurityConfig.java
 |   |               |       SwaggerConfig.java
+|   |               |       WebMvcConfig.java
 |   |               |
 |   |               +---domain
-|   |               |   |   ArticleInterest.java
-|   |               |   |
 |   |               |   +---article
 |   |               |   |   +---api
-|   |               |   |   |       NewsSearch.java
+|   |               |   |   |      NewsSearch.java
 |   |               |   |   |
 |   |               |   |   +---batch
-|   |               |   |   |       ArticleSchedule.java
-|   |               |   |   |       BackupBatchConfig.java
-|   |               |   |   |       BatchConfig.java
-|   |               |   |   |       S3BatchConfig.java
-|   |               |   |   |       S3Config.java
-|   |               |   |   |       S3UploadArticle.java
-|   |               |   |   |       SharedArticleReader.java
+|   |               |   |   |   |   ArticleSchedule.java
+|   |               |   |   |   |   S3UploadArticle.java
+|   |               |   |   |   |   SharedArticleReader.java
+|   |               |   |   |   |
+|   |               |   |   |   \---config
+|   |               |   |   |            BackupBatchConfig.java
+|   |               |   |   |            BatchConfig.java
+|   |               |   |   |            S3BatchConfig.java
+|   |               |   |   |            S3Config.java
 |   |               |   |   |
 |   |               |   |   +---controller
 |   |               |   |   |   |   ArticleController.java
@@ -205,12 +206,14 @@ src:.
 |   |               |   |   +---repository
 |   |               |   |   |       ArticleRepository.java
 |   |               |   |   |
-|   |               |   |   \---service
-|   |               |   |           ArticleService.java
-|   |               |   |           ArticleServiceImpl.java
+|   |               |   |   +---service
+|   |               |   |        |   ArticleService.java
+|   |               |   |        | 
+|   |               |   |        \---impl
+|   |               |   |               ArticleServiceImpl.java
 |   |               |   |
 |   |               |   +---articleView
-|   |               |   |   +---Dto
+|   |               |   |   +---dto
 |   |               |   |   |       ArticleViewDto.java
 |   |               |   |   |
 |   |               |   |   +---entity
@@ -223,8 +226,10 @@ src:.
 |   |               |   |   |       ArticleViewRepository.java
 |   |               |   |   |
 |   |               |   |   \---service
-|   |               |   |           ArticleViewServiceImp.java
-|   |               |   |           ArticleViewServiceInterface.java
+|   |               |   |        |   ArticleViewServiceInterface.java
+|   |               |   |        | 
+|   |               |   |        \---impl
+|   |               |   |               ArticleViewServiceImpl.java
 |   |               |   |
 |   |               |   +---comment
 |   |               |   |   +---controller
@@ -254,14 +259,14 @@ src:.
 |   |               |   |   |       CommentRepository.java
 |   |               |   |   |
 |   |               |   |   \---service
-|   |               |   |           CommentLikeService.java
-|   |               |   |           CommentLikeServiceImpl.java
-|   |               |   |           CommentService.java
-|   |               |   |           CommentServiceImpl.java
+|   |               |   |        |   CommentLikeService.java
+|   |               |   |        |   CommentService.java
+|   |               |   |        | 
+|   |               |   |        \---impl
+|   |               |   |               CommentLikeServiceImpl.java
+|   |               |   |               CommentServiceImpl.java
 |   |               |   |
 |   |               |   +---interest
-|   |               |   |   |   InterestRepository.java
-|   |               |   |   |
 |   |               |   |   +---controller
 |   |               |   |   |   |   InterestController.java
 |   |               |   |   |   |
@@ -269,27 +274,28 @@ src:.
 |   |               |   |   |           InterestApi.java
 |   |               |   |   |
 |   |               |   |   +---dto
-|   |               |   |   |   +---request
-|   |               |   |   |   |       InterestCreateRequest.java
-|   |               |   |   |   |       InterestPageRequest.java
-|   |               |   |   |   |       InterestUpdateRequest.java
-|   |               |   |   |   |
-|   |               |   |   |   \---response
-|   |               |   |   |           InterestDto.java
-|   |               |   |   |           PageResponse.java
+|   |               |   |   |      InterestCreateRequest.java
+|   |               |   |   |      InterestPageRequest.java
+|   |               |   |   |      InterestUpdateRequest.java
+|   |               |   |   |      InterestDto.java
+|   |               |   |   |      PageResponse.java
 |   |               |   |   |
 |   |               |   |   +---entity
+|   |               |   |   |       ArticleInterest.java
 |   |               |   |   |       Interest.java
 |   |               |   |   |
 |   |               |   |   +---Enum
 |   |               |   |   |       SortBy.java
+|   |               |   |   |
+|   |               |   |   +---repository
+|   |               |   |   |       InterestRepository.java
 |   |               |   |   |
 |   |               |   |   \---service
 |   |               |   |           InterestService.java
 |   |               |   |           InterestServiceImpl.java
 |   |               |   |
 |   |               |   +---interestUserList
-|   |               |   |   +---Dto
+|   |               |   |   +---dto
 |   |               |   |   |       InterestUserListDto.java
 |   |               |   |   |
 |   |               |   |   +---entity
@@ -302,8 +308,10 @@ src:.
 |   |               |   |   |       InterestUserListRepository.java
 |   |               |   |   |
 |   |               |   |   \---service
-|   |               |   |           InterestUserListServiceImp.java
-|   |               |   |           InterestUserListServiceInterface.java
+|   |               |   |        |   InterestUserListServiceInterface.java
+|   |               |   |        | 
+|   |               |   |        \---impl
+|   |               |   |               InterestUserListServiceImpl.java
 |   |               |   |
 |   |               |   +---notification
 |   |               |   |   +---controller
@@ -312,7 +320,7 @@ src:.
 |   |               |   |   |   \---docs
 |   |               |   |   |           NotificationApi.java
 |   |               |   |   |
-|   |               |   |   +---Dto
+|   |               |   |   +---dto
 |   |               |   |   |       CursorPageRequest.java
 |   |               |   |   |       CursorPageResponse.java
 |   |               |   |   |       NotificationDto.java
@@ -327,9 +335,11 @@ src:.
 |   |               |   |   |       NotificationRepository.java
 |   |               |   |   |
 |   |               |   |   \---service
-|   |               |   |           NotificationSchedulerService.java
-|   |               |   |           NotificationServiceImpl.java
-|   |               |   |           NotificationServiceInterface.java
+|   |               |   |        |   NotificationServiceInterface.java
+|   |               |   |        | 
+|   |               |   |        \---impl
+|   |               |   |               NotificationSchedulerService.java
+|   |               |   |               NotificationServiceImpl.java
 |   |               |   |
 |   |               |   +---user
 |   |               |   |   +---controller
@@ -363,7 +373,7 @@ src:.
 |   |               |       |   \---docs
 |   |               |       |           UserActivityApi.java
 |   |               |       |
-|   |               |       +---Dto
+|   |               |       +---dto
 |   |               |       |       ArticleInfoView.java
 |   |               |       |       InterestView.java
 |   |               |       |       LikeCommentView.java
@@ -374,7 +384,7 @@ src:.
 |   |               |       +---entity
 |   |               |       |       UserActivity.java
 |   |               |       |
-|   |               |       +---maper
+|   |               |       +---mapper
 |   |               |       |       ArticleInfoViewMapper.java
 |   |               |       |       InterestViewMapper.java
 |   |               |       |       LikeCommentMapper.java
@@ -385,41 +395,27 @@ src:.
 |   |               |       |       UserActivityRepository.java
 |   |               |       |
 |   |               |       \---service
-|   |               |               UserActivityServiceImpl.java
-|   |               |               UserActivityServiceInterface.java
+|   |               |           |   UserActivityServiceInterface.java
+|   |               |           |
+|   |               |           \---impl
+|   |               |                  UserActivityServiceImpl.java
 |   |               |
-|   |               +---exeception
+|   |               +---exception
 |   |               |   |   ErrorCode.java
 |   |               |   |   ErrorResponse.java
 |   |               |   |   GlobalExceptionHandler.java
 |   |               |   |   RestApiException.java
 |   |               |   |
-|   |               |   +---comment
-|   |               |   |       CommentDeleteUnauthorized.java
-|   |               |   |       CommentLikeConflict.java
-|   |               |   |       CommentLikeNotFound.java
-|   |               |   |       CommentNotFound.java
-|   |               |   |       CommentUpdateUnauthorized.java
-|   |               |   |
 |   |               |   +---errorcode
-|   |               |   |       ArticleErrorCode.java
-|   |               |   |       ArticleViewErrorCode.java
-|   |               |   |       CommentErrorCode.java
-|   |               |   |       GlobalErrorCode.java
-|   |               |   |       InterestErrorCode.java
-|   |               |   |       InterestUserListErrorCode.java
-|   |               |   |       NotificationErrorCode.java
-|   |               |   |       UserActivityErrorCode.java
-|   |               |   |
-|   |               |   +---notification
-|   |               |   |       WrongUserNotification.java
-|   |               |   |
-|   |               |   \---userActivity
-|   |               |           UserActivityErrorUpdate.java
-|   |               |           UserActivityNotFoundException.java
-|   |               |
-|   |               +---health
-|   |               |       HealthCheckController.java
+|   |               |           ArticleErrorCode.java
+|   |               |           ArticleViewErrorCode.java
+|   |               |           CommentErrorCode.java
+|   |               |           GlobalErrorCode.java
+|   |               |           InterestErrorCode.java
+|   |               |           InterestUserListErrorCode.java
+|   |               |           NotificationErrorCode.java
+|   |               |           UserActivityErrorCode.java
+|   |               |           UserErrorCode.java
 |   |               |
 |   |               +---log
 |   |               |       MongoDBAppender.java
@@ -428,14 +424,18 @@ src:.
 |   |                       SecurityUtil.java
 |   |
 |   \---resources
+|       |      application.yml
+|       |      application-dev.yml
+|       |      application-prod.yml
 |       |
 |       \---static
-|           |   favicon.ico
-|           |   index.html
-|           |
-|           \---assets
+|            |   favicon.ico
+|            |   index.html
+|            |
+|            \---assets
 |                   index-D30UMZL2.css
 |                   index-DF13B-h9.js
+|       
 |
 \---test
     |
