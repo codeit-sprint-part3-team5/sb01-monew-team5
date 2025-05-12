@@ -3,7 +3,6 @@
 [![CI](https://github.com/codeit-sprint-part3-team5/sb01-monew-team5/actions/workflows/dev_ci.yml/badge.svg)](https://github.com/codeit-sprint-part3-team5/sb01-monew-team5/actions)
 [![codecov](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5/branch/main/graph/badge.svg)](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5)
 
----
 
 **🖱️ 팀 노션 링크**
 https://bit.ly/3S0c6cX
@@ -124,8 +123,8 @@ http://3.38.205.137:8080/
   - 유저 회원가입 로그인 기능 구현 - 로그인 성공 시, 사용자 ID를 헤더에 포함하여 API 요청하면 서버는 이로 사용자 식별 후, 쿠키 기반 세션을 통해 로그인 상태를 유지하도록 구성
   - 닉네임 수정, 논리/물리 삭제 기능 구현
 - **배포**
-  - Docker 이미지 빌드 후 AWS에 수동 배포 (RDS, EC2, ECR, ECS Fargate 사용)
-  - 이후 Github Actions CI/CD 파이프라인 구축 후 자동 배포 성공 (AWS IAM OIDC 인증 사용)
+  - Docker 이미지 빌드 후 AWS에 배포 (RDS, EC2, ECR, ECS Fargate 사용)
+  - Github Actions CI/CD 파이프라인 구축 (AWS IAM OIDC 인증 사용)
 ---
 
 ## **🚗 배포 다이어그램**
