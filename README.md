@@ -1,9 +1,9 @@
 # 👨🏻‍💻PART3_5팀
----
+# 📰 뉴스 API 소셜 네트워킹 서비스, MONEW
 [![CI](https://github.com/codeit-sprint-part3-team5/sb01-monew-team5/actions/workflows/dev_ci.yml/badge.svg)](https://github.com/codeit-sprint-part3-team5/sb01-monew-team5/actions)
 [![codecov](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5/branch/main/graph/badge.svg)](https://codecov.io/gh/codeit-sprint-part3-team5/sb01-monew-team5)
 
-# 📰 뉴스 API 소셜 네트워킹 서비스, MONEW
+---
 
 **🖱️ 팀 노션 링크**
 https://bit.ly/3S0c6cX
@@ -13,15 +13,11 @@ https://bit.ly/3S0c6cX
 http://3.38.205.137:8080/
 
 ## **팀원 구성**
-| <img src="![image](https://github.com/user-attachments/assets/5eafc182-d6a4-47be-b134-d56d84a57696)
-" width="200"/> | <img src="![image](https://github.com/user-attachments/assets/b116130f-658f-4fea-abaa-c6dcc3bd3c21)
-" width="200"/> | <img src="![image](https://github.com/user-attachments/assets/4a1bd414-7170-4180-af18-5e216c392952)
-" width="200"/> | <img src="![image](https://github.com/user-attachments/assets/d259a5cc-3a95-4e30-a169-1e910b64a8d2)
-" width="200"/> | <img src="![image](https://github.com/user-attachments/assets/73308d32-aeae-4630-9b9a-98e59bbcdaa2)
-" width="200"/> |
+| <img src="https://github.com/user-attachments/assets/5eafc182-d6a4-47be-b134-d56d84a57696" width="200"/> | <img src="https://github.com/user-attachments/assets/b116130f-658f-4fea-abaa-c6dcc3bd3c21" width="200"/> | <img src="https://github.com/user-attachments/assets/4a1bd414-7170-4180-af18-5e216c392952" width="200"/> | <img src="https://github.com/user-attachments/assets/d259a5cc-3a95-4e30-a169-1e910b64a8d2" width="200"/> | <img src="https://github.com/user-attachments/assets/73308d32-aeae-4630-9b9a-98e59bbcdaa2" width="200"/> |
 |------|------|------|------|------|
 | **박지현** | **강병훈** | **김승찬** | **양병운** | **정연경** |
 | [jjhparkk](https://github.com/jjhparkk) | [kbh-n](https://github.com/kbh-n) | [tmdcks801](https://github.com/tmdcks801) | [Yang-ByeongUn](https://github.com/Yang-ByeongUn) | [yeonkyung-jeong](https://github.com/yeonkyung-jeong) |
+
 
 <br>
 ---
