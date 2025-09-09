@@ -45,13 +45,11 @@ public class S3BatchConfig {
 
   @Bean
   public Job S3BatchJob() {
-    //JobBuilder("실행할 Job 이름", 작업 트래킹 > jobRepository)
     return new JobBuilder("S3BatchJob", jobRepository).start(S3articleStep()).build();
   }
 
   @Bean
   public Step S3articleStep() {
-    //System.out.println("S3BatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("S3articleStep", jobRepository).<Article, Article>chunk(10,
             platformTransactionManager)
@@ -122,12 +120,10 @@ public class S3BatchConfig {
           count++;
         }
 
-        // 📦 파일 덮어쓰기
         try (FileWriter writer = new FileWriter(file)) {
           writer.write(jsonArray.toString(2));
         }
 
-        // ☁️ S3 업로드
         s3UploadArticle.upload(file, file.getName());
         log.info("JSON 파일 S3 업로드 완료 (누적): " + file.getName());
         log.info("추가된 기사 수: " + count);

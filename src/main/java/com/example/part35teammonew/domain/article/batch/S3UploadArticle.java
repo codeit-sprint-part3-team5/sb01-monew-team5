@@ -69,18 +69,15 @@ public class S3UploadArticle {
       String today = LocalDate.now().toString();
       File file = new File("articles_" + today + ".json");
 
-      // 1. 다운로드
       if (exists(file.getName())) {
         download(file);
       } else {
         return; // 삭제할 것도 없음
       }
 
-      // 2. 파일 읽기
       String content = Files.readString(file.toPath());
       JSONArray jsonArray = new JSONArray(content);
 
-      // 3. 삭제 대상 필터링
       JSONArray updatedArray = new JSONArray();
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject obj = jsonArray.getJSONObject(i);
@@ -91,12 +88,10 @@ public class S3UploadArticle {
         }
       }
 
-      // 4. 덮어쓰기
       try (FileWriter writer = new FileWriter(file)) {
         writer.write(updatedArray.toString(2));
       }
 
-      // 5. 다시 업로드
       upload(file, file.getName());
 
     } catch (Exception e) {

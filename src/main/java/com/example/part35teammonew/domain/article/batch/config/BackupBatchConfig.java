@@ -46,7 +46,6 @@ public class BackupBatchConfig {
 
   @Bean
   public Step backupStep() {
-    //System.out.println("BackupBatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("backupStep", jobRepository).<Article, Article>chunk(10, platformTransactionManager)
         .reader(articleBackupReader(null, null))
@@ -72,7 +71,6 @@ public class BackupBatchConfig {
           try {
             LocalDate fromDate = LocalDate.parse(from);
             LocalDate toDate = LocalDate.parse(to);
-            //String today = LocalDate.now().toString();
             for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)){
               File file = new File("articles_" + date + "temp.json");
               if (s3UploadArticle.exists("articles_" + date + ".json")) {
