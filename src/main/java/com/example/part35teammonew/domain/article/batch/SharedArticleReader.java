@@ -35,12 +35,8 @@ public class SharedArticleReader implements ItemReader<Article> {
     if (page >= 10) {
       return null;
     }
-    //interestService.getInterests() 후 keyword 대체
     List<Pair<String, UUID>> interestList = interestService.getInterestList();
     if (interestList.isEmpty()) {
-      //디폴트 값
-      InterestDto interest = interestService.createInterest(
-          new InterestCreateRequest("지역", List.of("인천", "대구")));
       interestList = interestService.getInterestList();
     }
     for (Pair<String, UUID> stringUUIDPair : interestList) {

@@ -46,18 +46,15 @@ public class BatchConfig {
   private final ArticleService articleService;
   private final NewsSearch newsSearch;
   private final InterestService interestService;
-  //private final S3UploadArticle s3UploadArticle;
 
 
   @Bean
   public Job articleJob() {
-    //JobBuilder("실행할 Job 이름", 작업 트래킹 > jobRepository)
     return new JobBuilder("articleJob", jobRepository).start(articleStep()).build();
   }
 
   @Bean
   public Step articleStep() {
-    //System.out.println("BatchConfig");
     //10개씩 끊어서 처리
     return new StepBuilder("articleStep", jobRepository).<Article, Article>chunk(10,
             platformTransactionManager)
@@ -99,7 +96,6 @@ public class BatchConfig {
       Set<String> existingKeys = new HashSet<>();
       JSONArray jsonArray = new JSONArray();
 
-      // 1. 기존 JSON 파일 읽기
       if (file.exists()) {
         String content = Files.readString(file.toPath());
         //System.out.println("content = " + content);
@@ -111,7 +107,6 @@ public class BatchConfig {
         }
       }
 
-      // 2. DB에 저장할 기사 및 JSON에 추가할 기사 추리기
       List<Article> newArticlesForDB = new LinkedList<>();
       for (Article article : articles) {
         String key = article.getTitle() + "|" + article.getDate().toString();
@@ -133,12 +128,10 @@ public class BatchConfig {
         }
       }
 
-      // 3️⃣ 파일 덮어쓰기
       try (FileWriter writer = new FileWriter(file)) {
         writer.write(jsonArray.toString(2));
       }
 
-      // 4️⃣ DB 저장
       List<Article> fullSyncList = new LinkedList<>();
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject obj = jsonArray.getJSONObject(i);
